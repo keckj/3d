@@ -12,10 +12,11 @@ ObjLoader::ObjLoader (std::string const& filename) : filename(filename) {
     print();
 }
 void ObjLoader::print () {
-    std::cout << "size = " << n << std::endl;
+    std::cout << "size vertices = " << nv << std::endl;
+    std::cout << "size normals = " << nn << std::endl;
 
     std::cout << "vertices" << std::endl;
-    for (unsigned int i = 0; i < n; i++) {
+    for (unsigned int i = 0; i < nv; i++) {
         std::cout << vertices[i] << " ";
         if ((i + 1) % 3 == 0) {
             std::cout << std::endl;
@@ -23,7 +24,7 @@ void ObjLoader::print () {
     }
 
     std::cout << "normals" << std::endl;
-    for (unsigned int i = 0; i < n; i++) {
+    for (unsigned int i = 0; i < nn; i++) {
         std::cout << normals[i] << " ";
         if ((i + 1) % 3 == 0) {
             std::cout << std::endl;
@@ -34,7 +35,7 @@ void ObjLoader::print () {
 void ObjLoader::parse () {
     std::ifstream file(filename.c_str());
 
-    std::vector<unsigned int> iv, in, it;
+    std::vector<int> iv, in, it;
     std::vector<Vector3f> ver, nor, tex;
     std::vector<std::string> face;
 
@@ -81,11 +82,25 @@ void ObjLoader::parse () {
             // face
             case 'f':
                 face.clear();
-                face = splitOnWS(line.substr(3));
-                unsigned int v, vt, vn;
+                face = splitOnWS(line.substr(2));
+                int v, vt, vn;
 
                 for (unsigned int i = 0; i < face.size(); i++) {
-                    sscanf(face[i].c_str(), "%d/%d/%d", &v, &vt, &vn);
+                    switch (countSlashes(face[i])) {
+                        case 0:
+                            sscanf(face[i].c_str(), "%d", &v);
+                            vt = 0;
+                            vn = 0;
+                            break;
+
+                        case 2:
+                            sscanf(face[i].c_str(), "%d/%d/%d", &v, &vt, &vn);
+                            break;
+
+                        default:
+                            std::cerr << "Unsuported format" << std::endl;
+                            break;
+                    }
                     iv.push_back(v - 1);
                     it.push_back(vt - 1);
                     in.push_back(vn - 1);
@@ -102,7 +117,7 @@ void ObjLoader::parse () {
     // Now, we have to create vectors of vertices, normals and textures in the correct order
     std::vector<GLfloat> tv, tn, tt;
     for (unsigned int i = 0; i < iv.size(); i++) {
-        if (iv[i] < ver.size()) {
+        if (iv[i] < int(ver.size())) {
             tv.push_back(ver[iv[i]].getX());
             tv.push_back(ver[iv[i]].getY());
             tv.push_back(ver[iv[i]].getZ());
@@ -110,7 +125,7 @@ void ObjLoader::parse () {
     }
 
     for (unsigned int i = 0; i < in.size(); i++) {
-        if (in[i] < nor.size()) {
+        if (in[i] < int(nor.size()) && in[i] != -1) {
             tn.push_back(nor[in[i]].getX());
             tn.push_back(nor[in[i]].getY());
             tn.push_back(nor[in[i]].getZ());
@@ -118,7 +133,7 @@ void ObjLoader::parse () {
     }
 
     for (unsigned int i = 0; i < it.size(); i++) {
-        if (it[i] < tex.size()) {
+        if (it[i] < int(tex.size()) && it[i] != -1) {
             tt.push_back(tex[it[i]].getX());
             tt.push_back(tex[it[i]].getZ());
         }
@@ -128,7 +143,8 @@ void ObjLoader::parse () {
     vertices = vector2float(tv);
     normals = vector2float(tn);
     textures = vector2float(tt);
-    n = tv.size();
+    nv = tv.size();
+    nn = tn.size();
 
     ver.clear();
     nor.clear();
@@ -139,6 +155,20 @@ void ObjLoader::parse () {
     it.clear();
 }
 
+/* Count the number of '/' in a string */
+int ObjLoader::countSlashes (std::string const& str) {
+    int res = 0;
+
+    for (unsigned int i = 0; i < str.size(); i++) {
+        if (str[i] == '/') {
+            res++;
+        }
+    }
+
+    return res;
+}
+
+/* Convert a vector of a float into a GLfloat array */
 GLfloat* ObjLoader::vector2float (std::vector<float>& array) {
     GLfloat *res = new GLfloat[array.size()];
 
@@ -149,10 +179,7 @@ GLfloat* ObjLoader::vector2float (std::vector<float>& array) {
     return res;
 }
 
-/* Split a string on whitespaces
- * input: %d/%d/%d ...
- * output [%d/%d/%d, ...]
- */
+/* Split a string on whitespaces */
 std::vector<std::string> ObjLoader::splitOnWS (std::string const& str) {
     std::vector<std::string> res;
     std::string tmp;
@@ -175,20 +202,20 @@ std::vector<std::string> ObjLoader::splitOnWS (std::string const& str) {
 void ObjLoader::draw () {
     glPushMatrix();
 
-    if (normals) {
+    if (nn > 0) {
         glEnableClientState(GL_NORMAL_ARRAY);
     }
     glEnableClientState(GL_VERTEX_ARRAY);
 
-    if (normals) {
+    if (nn > 0) {
         glNormalPointer(GL_FLOAT, 0, normals);
     }
     glVertexPointer(3, GL_FLOAT, 0, vertices);
 
-    glDrawArrays(GL_TRIANGLES, 0, n / 3);
+    glDrawArrays(GL_TRIANGLES, 0, nv / 3);
 
     glDisableClientState(GL_VERTEX_ARRAY);
-    if (normals) {
+    if (nn > 0) {
         glDisableClientState(GL_NORMAL_ARRAY);
     }
 

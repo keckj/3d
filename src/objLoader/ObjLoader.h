@@ -22,12 +22,13 @@ class ObjLoader : public Renderable {
         std::string filename;
         GLfloat* vector2float (std::vector<float>& array);
         std::vector<std::string> splitOnWS (std::string const& str);
+        int countSlashes (std::string const& str);
         void parse ();
 
         GLfloat* vertices;
         GLfloat* normals;
         GLfloat* textures;
-        unsigned int n;
+        unsigned int nv, nn;
 };
 
 #endif
