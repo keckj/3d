@@ -2,6 +2,7 @@
 #define NODE_H
 
 #include "renderable.h"
+
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else
