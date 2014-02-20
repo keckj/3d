@@ -11,7 +11,7 @@ int main(int argc, char** argv)
     Viewer viewer;
 
     // build your scene here
-    viewer.addRenderable(new ObjLoader("src/objLoader/cube.obj"));
+    viewer.addRenderable(new ObjLoader("obj_files/cube.obj"));
 
     viewer.setWindowTitle("viewer");
     // Make the viewer window visible on screen.
