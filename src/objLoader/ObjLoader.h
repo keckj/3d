@@ -23,6 +23,7 @@ class ObjLoader : public Renderable {
         GLfloat* vector2float (std::vector<float>& array);
         std::vector<std::string> splitOnWS (std::string const& str);
         int countSlashes (std::string const& str);
+        void strToVector (std::string const& str, float &x, float &y, float &z);
         void parse ();
 
         GLfloat* vertices;

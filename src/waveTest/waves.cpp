@@ -17,7 +17,7 @@ void gen_sin_sum(int n, double max_height, double offset) {
     double tab[256] = {0};
     for (int i = 0; i < 256; i++) {
         for (int k = 1; k <= n; k++) {
-            tab[i] += max_height/std::pow(2,k) * sin((2*M_PI)/k + (double)i + offset);
+            tab[i] += max_height/std::pow(2.f,k) * sin((2*M_PI)/k + (double)i + offset);
         }
     }
 

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
-
+#include <sstream>
 #include <vector>
 
 #include "ObjLoader.h"
@@ -11,6 +11,7 @@ ObjLoader::ObjLoader (std::string const& filename) : filename(filename) {
     parse();
     print();
 }
+
 void ObjLoader::print () {
     std::cout << "size vertices = " << nv << std::endl;
     std::cout << "size normals = " << nn << std::endl;
@@ -52,26 +53,28 @@ void ObjLoader::parse () {
                 switch (line[1]) {
                     case ' ':
                         // vertex
-                        char x[255], y[255], z[255];
-                        sscanf(line.c_str(), "v  %s  %s  %s", x, y, z);
+                        float x, y, z;
+                        strToVector(line.substr(2), x, y, z);
+                        std::cout << "AAAAAA" << std::endl;
+                        std::cout << x << std::endl;
 
-                        ver.push_back(Vector3f(atof(x), atof(y), atof(z)));
+                        ver.push_back(Vector3f(x, y, z));
                         break;
 
                     case 'n':
                         // normal
-                        char xn[255], yn[255], zn[255];
-                        sscanf(line.c_str(), "vn  %s  %s  %s", xn, yn, zn);
+                        float xn, yn, zn;
+                        strToVector(line.substr(2), xn, yn, zn);
 
-                        nor.push_back(Vector3f(atof(xn), atof(yn), atof(zn)));
+                        nor.push_back(Vector3f(xn, yn, zn));
                         break;
 
                     case 't':
                         // textures
-                        char xt[255], yt[255];
-                        sscanf(line.c_str(), "vt  %s  %s", xt, yt);
+                        float xt, yt, zt;
+                        strToVector(line.substr(2), xt, yt, zt);
 
-                        tex.push_back(Vector3f(atof(xt), atof(yt)));
+                        tex.push_back(Vector3f(xt, yt));
                         break;
 
                     default:
@@ -155,6 +158,12 @@ void ObjLoader::parse () {
     it.clear();
 }
 
+/* Convert string to float */
+void ObjLoader::strToVector (std::string const& str, float &x, float &y, float &z) {
+    std::stringstream ss(str);
+    ss >> x >> y >> z;
+}
+
 /* Count the number of '/' in a string */
 int ObjLoader::countSlashes (std::string const& str) {
     int res = 0;
@@ -223,8 +232,8 @@ void ObjLoader::draw () {
 }
 
 ObjLoader::~ObjLoader () {
-    delete vertices;
-    delete normals;
-    delete textures;
+    delete [] vertices;
+    delete [] normals;
+    delete [] textures;
 }
 
