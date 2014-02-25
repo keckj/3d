@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     Viewer viewer;
 
     // build your scene here
-    viewer.addRenderable(new ObjLoader("obj_files/teapot_bis.obj"));
+    viewer.addRenderable(new ObjLoader("obj_files/cow.obj"));
 
     viewer.setWindowTitle("viewer");
     // Make the viewer window visible on screen.
