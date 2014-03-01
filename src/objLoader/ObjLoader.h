@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "renderable.h"
+#include "../renderable.h"
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else
