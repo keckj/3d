@@ -44,7 +44,11 @@ void Viewer::init()
 	else
 		glDisable(GL_LIGHTING);
 	
-	setSceneRadius(5.0f);
+	//setSceneRadius(5.0f);
+    setSceneRadius(1.0f);
+
+    //Added
+    setAnimationPeriod(20); // 50Hz
 
 	list<Renderable *>::iterator it;
 	for (it = renderableList.begin(); it != renderableList.end(); ++it) {
