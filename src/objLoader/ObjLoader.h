@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "../Node.h"
+
 #include "../renderable.h"
 #ifndef __APPLE__
 #include <GL/glut.h>
@@ -16,7 +18,6 @@ class ObjLoader : public Renderable {
         ObjLoader (std::string const& filename);
         void print ();
         void draw();
-        ~ ObjLoader ();
 
     private:
         std::string filename;
@@ -26,10 +27,7 @@ class ObjLoader : public Renderable {
         void strToVector (std::string const& str, float &x, float &y, float &z);
         void parse ();
 
-        GLfloat* vertices;
-        GLfloat* normals;
-        GLfloat* textures;
-        unsigned int nv, nn;
+        Node node;
 };
 
 #endif

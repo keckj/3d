@@ -7,30 +7,13 @@
 #include "ObjLoader.h"
 #include "Vector3f.h"
 
-ObjLoader::ObjLoader (std::string const& filename) : filename(filename) {
+ObjLoader::ObjLoader (std::string const& filename) : filename(filename), node(filename) {
     parse();
     print();
 }
 
 void ObjLoader::print () {
-    std::cout << "size vertices = " << nv << std::endl;
-    std::cout << "size normals = " << nn << std::endl;
-
-    std::cout << "vertices" << std::endl;
-    for (unsigned int i = 0; i < nv; i++) {
-        std::cout << vertices[i] << " ";
-        if ((i + 1) % 3 == 0) {
-            std::cout << std::endl;
-        }
-    }
-
-    std::cout << "normals" << std::endl;
-    for (unsigned int i = 0; i < nn; i++) {
-        std::cout << normals[i] << " ";
-        if ((i + 1) % 3 == 0) {
-            std::cout << std::endl;
-        }
-    }
+    node.print();
 }
 
 void ObjLoader::parse () {
@@ -55,8 +38,6 @@ void ObjLoader::parse () {
                         // vertex
                         float x, y, z;
                         strToVector(line.substr(2), x, y, z);
-                        std::cout << "AAAAAA" << std::endl;
-                        std::cout << x << std::endl;
 
                         ver.push_back(Vector3f(x, y, z));
                         break;
@@ -143,11 +124,13 @@ void ObjLoader::parse () {
     }
 
     // Everything is in the appropriate order, we convert the vectors into GLfloat*
-    vertices = vector2float(tv);
-    normals = vector2float(tn);
-    textures = vector2float(tt);
-    nv = tv.size();
-    nn = tn.size();
+    node.setSizeVertices(tv.size());
+    node.setSizeNormals(tn.size());
+    node.setSizeTextures(tt.size());
+
+    node.setVertices(vector2float(tv));
+    node.setNormals(vector2float(tn));
+    node.setTextures(vector2float(tt));
 
     ver.clear();
     nor.clear();
@@ -209,31 +192,6 @@ std::vector<std::string> ObjLoader::splitOnWS (std::string const& str) {
 }
 
 void ObjLoader::draw () {
-    glPushMatrix();
-
-    if (nn > 0) {
-        glEnableClientState(GL_NORMAL_ARRAY);
-    }
-    glEnableClientState(GL_VERTEX_ARRAY);
-
-    if (nn > 0) {
-        glNormalPointer(GL_FLOAT, 0, normals);
-    }
-    glVertexPointer(3, GL_FLOAT, 0, vertices);
-
-    glDrawArrays(GL_TRIANGLES, 0, nv / 3);
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    if (nn > 0) {
-        glDisableClientState(GL_NORMAL_ARRAY);
-    }
-
-    glPopMatrix();
-}
-
-ObjLoader::~ObjLoader () {
-    delete [] vertices;
-    delete [] normals;
-    delete [] textures;
+    node.draw();
 }
 

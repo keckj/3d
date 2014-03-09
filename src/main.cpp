@@ -15,8 +15,8 @@ int main(int argc, char** argv) {
     Viewer viewer;
 
     // build your scene here
-    //viewer.addRenderable(new ObjLoader("obj_files/cube.obj"));
-    viewer.addRenderable(new Waves(1.0f,1.0f,0.0f, &viewer));
+    viewer.addRenderable(new ObjLoader("obj_files/cube_bis.obj"));
+    /* viewer.addRenderable(new Waves(1.0f,1.0f,0.0f, &viewer)); */
 
     viewer.setWindowTitle("viewer");
     // Make the viewer window visible on screen.
