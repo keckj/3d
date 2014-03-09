@@ -5,12 +5,12 @@
 #include "../viewer.h"
 
 struct Mobile {
-    GLfloat x,y,z;
+    GLfloat x,y,z; // coordinates
+    float vx,vz; // speeds
     GLfloat nx,ny,nz; // normal
     bool isExciter; // is artificially moved
     float frequency; // only in use if isFree == false
     float amplitude; // only in use if isFree == false
-    float speed; // y coord speed
     float nextY; // store y coord to be used next time animate() is called
 };
 
@@ -19,15 +19,16 @@ class Waves : public Renderable
 {
     public:
         ~Waves();
-        Waves(float xWidth, float zWidth, float meanHeight, Viewer *v);
+        Waves(float xPos, float zPos, float xWidth, float zWidth, float meanHeight, Viewer *v);
         void draw();
         void animate();
         
     private:
+        float xPos, zPos, xWidth, zWidth, meanHeight;
+
         Viewer *viewer;
         struct Mobile *mobiles;
         unsigned int nMobiles;
-        float meanHeight;
         float time;
 
         GLuint *indices;
