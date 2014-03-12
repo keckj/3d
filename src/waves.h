@@ -1,8 +1,8 @@
 #ifndef _WAVES_H
 #define _WAVES_H
 
-#include "../renderable.h"
-#include "../viewer.h"
+#include "renderable.h"
+#include "viewer.h"
 
 struct Mobile {
     GLfloat x,y,z; // coordinates
