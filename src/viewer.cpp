@@ -45,6 +45,8 @@ void Viewer::init()
     else
         glDisable(GL_LIGHTING);
 
+    setSnapshotFileName(QString("rec_images/image.jpg"));
+
     //setSceneRadius(5.0f);
     setSceneRadius(1.0f);
 
