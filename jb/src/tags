@@ -1,0 +1,226 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ALL_AXES	camera.hpp	13;"	d
+ALL_ROTATION	camera.hpp	12;"	d
+ALL_TRANSLATION	camera.hpp	11;"	d
+Box	box.hpp	/^class Box : public Renderable {$/;"	c
+Box	box.cpp	/^Box::Box(float width, float height, float length, $/;"	f	class:Box
+Camera	camera.hpp	/^class Camera {$/;"	c
+Camera	camera.cpp	/^Camera::Camera(float near, float far, float fov, float aspectRatio, vec3 &initialPosition, Rotation initialRotation, unsigned int degreesOfFreedom) {$/;"	f	class:Camera
+Data	data.hpp	/^class Data {$/;"	c
+DegreesOfFreedom	camera.hpp	/^struct DegreesOfFreedom {$/;"	s
+EULER_ORIENTATION	rotation.hpp	/^	EULER_ORIENTATION = 0,$/;"	e	enum:OrientationType
+EXTRINSIC_ROTATION	rotation.hpp	/^	EXTRINSIC_ROTATION$/;"	e	enum:RotationType
+EulerOrder	rotation.hpp	/^enum EulerOrder {$/;"	g
+GLFW_DLL	window.hpp	4;"	d
+INTRINSIC_ROTATION	rotation.hpp	/^	INTRINSIC_ROTATION = 0,$/;"	e	enum:RotationType
+Image	image.hpp	/^class Image {$/;"	c
+NO_AXE	camera.hpp	3;"	d
+ONE_DEG_IN_RAD	main.cpp	8;"	d	file:
+ORDER_XYX	rotation.hpp	/^	ORDER_XYX,$/;"	e	enum:EulerOrder
+ORDER_XYZ	rotation.hpp	/^	ORDER_XYZ = 0,$/;"	e	enum:TaitBryanOrder
+ORDER_XZX	rotation.hpp	/^	ORDER_XZX = 0,$/;"	e	enum:EulerOrder
+ORDER_XZY	rotation.hpp	/^	ORDER_XZY$/;"	e	enum:TaitBryanOrder
+ORDER_YXY	rotation.hpp	/^	ORDER_YXY,$/;"	e	enum:EulerOrder
+ORDER_YXZ	rotation.hpp	/^	ORDER_YXZ,$/;"	e	enum:TaitBryanOrder
+ORDER_YZX	rotation.hpp	/^	ORDER_YZX,$/;"	e	enum:TaitBryanOrder
+ORDER_YZY	rotation.hpp	/^	ORDER_YZY,$/;"	e	enum:EulerOrder
+ORDER_ZXY	rotation.hpp	/^	ORDER_ZXY,$/;"	e	enum:TaitBryanOrder
+ORDER_ZXZ	rotation.hpp	/^	ORDER_ZXZ$/;"	e	enum:EulerOrder
+ORDER_ZYX	rotation.hpp	/^	ORDER_ZYX,$/;"	e	enum:TaitBryanOrder
+ORDER_ZYZ	rotation.hpp	/^	ORDER_ZYZ,$/;"	e	enum:EulerOrder
+Order	rotation.hpp	/^union Order {$/;"	u
+OrientationType	rotation.hpp	/^enum OrientationType {$/;"	g
+Polygon	polygon.hpp	/^class Polygon {$/;"	c
+Polygon	polygon.cpp	/^Polygon::Polygon(float *points, float *colours, size_t size) {$/;"	f	class:Polygon
+QUATERNION_ORIENTATION	rotation.hpp	/^	QUATERNION_ORIENTATION$/;"	e	enum:OrientationType
+RX_AXE	camera.hpp	7;"	d
+RX	camera.hpp	/^	unsigned int RX : 1;$/;"	m	struct:DegreesOfFreedom
+RY_AXE	camera.hpp	8;"	d
+RY	camera.hpp	/^	unsigned int RY : 1;$/;"	m	struct:DegreesOfFreedom
+RZ_AXE	camera.hpp	9;"	d
+RZ	camera.hpp	/^	unsigned int RZ : 1;$/;"	m	struct:DegreesOfFreedom
+RenderTree	renderTree.hpp	/^class RenderTree {$/;"	c
+RenderTree	renderTree.cpp	/^RenderTree::RenderTree(Renderable *object, bool active) $/;"	f	class:RenderTree
+Renderable	renderable.hpp	/^class Renderable {$/;"	c
+RotationType	rotation.hpp	/^enum RotationType {$/;"	g
+Rotation	rotation.hpp	/^class Rotation {$/;"	c
+Rotation	rotation.cpp	/^Rotation::Rotation() {$/;"	f	class:Rotation
+Rotation	rotation.cpp	/^Rotation::Rotation(RotationType rotationType, OrientationType orientationType, EulerOrder eulerOrder, float *eulerAngles) {$/;"	f	class:Rotation
+Rotation	rotation.cpp	/^Rotation::Rotation(RotationType rotationType, OrientationType orientationType, TaitBryanOrder taitBryanOrder, float *cardanAngles) {$/;"	f	class:Rotation
+Rotation	rotation.cpp	/^Rotation::Rotation(const Rotation& other) {$/;"	f	class:Rotation
+Shader	shader.hpp	/^class Shader {$/;"	c
+Shader	shader.cpp	/^Shader::Shader(const char* location, GLenum shaderType) {$/;"	f	class:Shader
+TAIT_BRYAN_ORIENTATION	rotation.hpp	/^	TAIT_BRYAN_ORIENTATION,$/;"	e	enum:OrientationType
+TX	camera.hpp	/^	unsigned int TX : 1;$/;"	m	struct:DegreesOfFreedom
+TY	camera.hpp	/^	unsigned int TY : 1;$/;"	m	struct:DegreesOfFreedom
+TZ	camera.hpp	/^	unsigned int TZ : 1;$/;"	m	struct:DegreesOfFreedom
+TaitBryanOrder	rotation.hpp	/^enum TaitBryanOrder {$/;"	g
+Terrain	terrain.hpp	/^class Terrain : public Renderable {$/;"	c
+Terrain	terrain.cpp	/^Terrain::Terrain(unsigned char *heightmap, unsigned int width, unsigned int height, bool centered, $/;"	f	class:Terrain
+USE_ROW_MAJOR	main.cpp	22;"	d	file:
+VAO	box.hpp	/^		unsigned int VAO, VBO;$/;"	m	class:Box
+VAO	terrain.hpp	/^		unsigned int VAO, VBO;$/;"	m	class:Terrain
+VBO	box.hpp	/^		unsigned int VAO, VBO;$/;"	m	class:Box
+VBO	terrain.hpp	/^		unsigned int VAO, VBO;$/;"	m	class:Terrain
+Window	window.hpp	/^class Window {$/;"	c
+Window	window.cpp	/^Window::Window(unsigned int width, unsigned int height, const char *title) {$/;"	f	class:Window
+X_AXE	camera.hpp	4;"	d
+Y_AXE	camera.hpp	5;"	d
+Z_AXE	camera.hpp	6;"	d
+_USE_MATH_DEFINES	main.cpp	7;"	d	file:
+_update_fps_counter	main.cpp	/^double _update_fps_counter (GLFWwindow* window) {$/;"	f
+activateChild	renderTree.cpp	/^void RenderTree::activateChild(std::string childName) {$/;"	f	class:RenderTree
+active	renderTree.hpp	/^		bool active;$/;"	m	class:RenderTree
+addChild	renderTree.cpp	/^void RenderTree::addChild(std::string key, RenderTree *child) {$/;"	f	class:RenderTree
+aspectRatio	camera.hpp	/^		float aspectRatio;$/;"	m	class:Camera
+axeOrder	rotation.hpp	/^		Order axeOrder;$/;"	m	class:Rotation
+centered	box.hpp	/^		bool centered;$/;"	m	class:Box
+centered	terrain.hpp	/^		bool centered;$/;"	m	class:Terrain
+children	renderTree.hpp	/^		std::map<std::string, RenderTree*> children;$/;"	m	class:RenderTree
+close	window.cpp	/^int Window::close() {$/;"	f	class:Window
+colorBufferObject	polygon.hpp	/^		unsigned int colorBufferObject;$/;"	m	class:Polygon
+colors	box.hpp	/^		float *vertex, *normals, *colors;$/;"	m	class:Box
+colors	terrain.hpp	/^		float *vertex, *colors;$/;"	m	class:Terrain
+computeGradientVectorFlow	image.cpp	/^void Image::computeGradientVectorFlow() {$/;"	f	class:Image
+computeVertex	box.cpp	/^void inline Box::computeVertex() {$/;"	f	class:Box
+consts	consts.hpp	/^namespace consts {$/;"	n
+desactivateChild	renderTree.cpp	/^void RenderTree::desactivateChild(std::string childName) {$/;"	f	class:RenderTree
+displayImage	image.cpp	/^void Image::displayImage(Mat &m) {$/;"	f	class:Image
+dof	camera.hpp	/^		DegreesOfFreedom dof;$/;"	m	class:Camera
+draw	box.cpp	/^void Box::draw(const float *modelMatrix) const {$/;"	f	class:Box
+draw	renderTree.cpp	/^void RenderTree::draw(const float *currentTransformationMatrix) const {$/;"	f	class:RenderTree
+draw	terrain.cpp	/^void Terrain::draw(const float *modelMatrix) const {$/;"	f	class:Terrain
+eulerOrderString	rotation.cpp	/^const char* eulerOrderString[] = { "XZX", "XYX", "YXY", "YZY", "ZYZ", "ZXZ"}; $/;"	v
+euler	rotation.hpp	/^	EulerOrder euler;$/;"	m	union:Order
+far	camera.hpp	/^		float far, near;$/;"	m	class:Camera
+fov	camera.hpp	/^		float fov;$/;"	m	class:Camera
+g_gl_height	main.cpp	/^int g_gl_height;$/;"	v
+g_gl_width	main.cpp	/^int g_gl_width;$/;"	v
+getColorBufferObject	polygon.cpp	/^unsigned int Polygon::getColorBufferObject() {$/;"	f	class:Polygon
+getForwardDirection	camera.cpp	/^vec3 Camera::getForwardDirection() {$/;"	f	class:Camera
+getPoints	polygon.cpp	/^float *Polygon::getPoints() {$/;"	f	class:Polygon
+getProjectionMatrix	camera.cpp	/^mat4 Camera::getProjectionMatrix() {$/;"	f	class:Camera
+getRelativeModelMatrix	box.cpp	/^const float *Box::getRelativeModelMatrix() const {$/;"	f	class:Box
+getRelativeModelMatrix	renderable.hpp	/^		virtual const float* getRelativeModelMatrix() const {$/;"	f	class:Renderable
+getRelativeModelMatrix	terrain.cpp	/^const float *Terrain::getRelativeModelMatrix() const {$/;"	f	class:Terrain
+getRightDirection	camera.cpp	/^vec3 Camera::getRightDirection() {$/;"	f	class:Camera
+getRotationMatrix	rotation.cpp	/^float *Rotation::getRotationMatrix() {$/;"	f	class:Rotation
+getShaderType	shader.cpp	/^GLenum Shader::getShaderType() {$/;"	f	class:Shader
+getShader	shader.cpp	/^unsigned int Shader::getShader() {$/;"	f	class:Shader
+getSize	polygon.cpp	/^size_t Polygon::getSize() {$/;"	f	class:Polygon
+getUpwardDirection	camera.cpp	/^vec3 Camera::getUpwardDirection() {$/;"	f	class:Camera
+getVertexBufferObject	polygon.cpp	/^unsigned int Polygon::getVertexBufferObject() {$/;"	f	class:Polygon
+getViewMatrix	camera.cpp	/^mat4 Camera::getViewMatrix() {$/;"	f	class:Camera
+getWindow	window.cpp	/^GLFWwindow *Window::getWindow() {$/;"	f	class:Window
+glfw_error_callback	main.cpp	/^void glfw_error_callback (int error, const char* description) {$/;"	f
+glfw_window_size_callback	main.cpp	/^void glfw_window_size_callback (GLFWwindow* window, int width, int height) {$/;"	f
+height	box.hpp	/^		float width, height, length;$/;"	m	class:Box
+height	terrain.hpp	/^		unsigned int width, height;$/;"	m	class:Terrain
+identity	consts.hpp	/^	static const float identity[] = {$/;"	m	namespace:consts
+images	image.hpp	/^		list<Mat*> images;$/;"	m	class:Image
+initLogs	log.cpp	/^void initLogs() {$/;"	f
+initializeRotation	rotation.cpp	/^void Rotation::initializeRotation(RotationType rotationType, OrientationType orientationType, Order axeOrder, float *orientationData) {$/;"	f	class:Rotation
+length	box.hpp	/^		float width, height, length;$/;"	m	class:Box
+length	data.hpp	/^		int length;$/;"	m	class:Data
+listdir	image.cpp	/^vector<string> *listdir(const char *dirname) {$/;"	f
+loadData	data.cpp	/^int Data::loadData(const char *location) {$/;"	f	class:Data
+loadImageFolder	image.cpp	/^int Image::loadImageFolder(const char* folder) {$/;"	f	class:Image
+loadImage	image.cpp	/^int Image::loadImage(const char *name) {$/;"	f	class:Image
+log_file	log.cpp	/^Category& log_file = Category::getInstance(std::string("log_file"));$/;"	v
+log_gl_params	utils.hpp	/^void log_gl_params () {$/;"	f
+main	main.cpp	/^int main( int argc, const char* argv[] )$/;"	f
+mat3	types.hpp	/^typedef float *mat3;$/;"	t
+mat4	types.hpp	/^typedef float *mat4;$/;"	t
+modelMatrixLocation	box.hpp	/^		int modelMatrixLocation;$/;"	m	class:Box
+modelMatrixLocation	terrain.hpp	/^		unsigned int modelMatrixLocation, program;$/;"	m	class:Terrain
+moveTo	camera.cpp	/^void Camera::moveTo(float x, float y, float z) {$/;"	f	class:Camera
+moveTo	camera.cpp	/^void Camera::moveTo(vec3 &vector) {$/;"	f	class:Camera
+multMat4f	renderTree.cpp	/^const float* RenderTree::multMat4f(const float *m1, const float* m2) {$/;"	f	class:RenderTree
+nVertex	terrain.hpp	/^		unsigned int nVertex;$/;"	m	class:Terrain
+near	camera.hpp	/^		float far, near;$/;"	m	class:Camera
+normals	box.hpp	/^		float *vertex, *normals, *colors;$/;"	m	class:Box
+object	renderTree.hpp	/^		Renderable *object;$/;"	m	class:RenderTree
+oneDegInRad	consts.hpp	/^	static const float oneDegInRad = 0.0174532925;$/;"	m	namespace:consts
+operator =	rotation.cpp	/^Rotation& Rotation::operator= (const Rotation& other) {$/;"	f	class:Rotation
+orientate	camera.cpp	/^void Camera::orientate(float phi, float theta, float psi) {$/;"	f	class:Camera
+orientate	camera.cpp	/^void Camera::orientate(vec3 &eulerAngles) {$/;"	f	class:Camera
+orientationData	rotation.hpp	/^		float *orientationData;$/;"	m	class:Rotation
+orientationTypeString	rotation.cpp	/^const char* orientationTypeString[] = { "Euler", "Tait-Bryan", "Quaternion" };$/;"	v
+orientationType	rotation.hpp	/^		OrientationType orientationType;$/;"	m	class:Rotation
+pi	consts.hpp	/^	static const float pi = 3.14159265359f;$/;"	m	namespace:consts
+points	polygon.hpp	/^		float *points;$/;"	m	class:Polygon
+position	camera.hpp	/^		vec3 position;$/;"	m	class:Camera
+printData	data.cpp	/^	void Data::printData() {	$/;"	f	class:Data
+printMat3	types.cpp	/^string printMat3(mat3 m) {$/;"	f
+printMat4	types.cpp	/^string printMat4(mat4 m) {$/;"	f
+printVec3	types.cpp	/^string printVec3(vec3 v) {$/;"	f
+printVec4	types.cpp	/^string printVec4(vec4 v) {$/;"	f
+program	box.hpp	/^		unsigned int program;$/;"	m	class:Box
+program	terrain.hpp	/^		unsigned int modelMatrixLocation, program;$/;"	m	class:Terrain
+projectionMatrix	camera.hpp	/^		mat4 projectionMatrix;$/;"	m	class:Camera
+removeChild	renderTree.cpp	/^void RenderTree::removeChild(std::string key) {$/;"	f	class:RenderTree
+resize	main.cpp	/^bool resize = false;$/;"	v
+reverseImage	image.hpp	/^		reverseImage(&Mat src, &Mat dst);$/;"	m	class:Image
+rotate	camera.cpp	/^void Camera::rotate(float phi, float theta, float psi) {$/;"	f	class:Camera
+rotate	camera.cpp	/^void Camera::rotate(vec3 &eulerAngles) {$/;"	f	class:Camera
+rotationTypeString	rotation.cpp	/^const char* rotationTypeString[] = { "Intrinsic", "Extrinsic" };$/;"	v
+rotationType	rotation.hpp	/^		RotationType rotationType;$/;"	m	class:Rotation
+rotation	camera.hpp	/^		Rotation rotation;$/;"	m	class:Camera
+rx	data.hpp	/^		float *rx, *ry, *rz;$/;"	m	class:Data
+ry	data.hpp	/^		float *rx, *ry, *rz;$/;"	m	class:Data
+rz	data.hpp	/^		float *rx, *ry, *rz;$/;"	m	class:Data
+sendToDevice	box.cpp	/^void inline Box::sendToDevice() {$/;"	f	class:Box
+sendToDevice	terrain.cpp	/^void inline Terrain::sendToDevice() {$/;"	f	class:Terrain
+setAspectRatio	camera.cpp	/^void Camera::setAspectRatio(float aspectRatio) {$/;"	f	class:Camera
+setPosition	box.cpp	/^void Box::setPosition(float x, float y, float z) {$/;"	f	class:Box
+shaderType	shader.hpp	/^		GLenum shaderType;$/;"	m	class:Shader
+shader	shader.hpp	/^		unsigned int shader;$/;"	m	class:Shader
+size	polygon.hpp	/^		size_t size;$/;"	m	class:Polygon
+taitBryanOrderString	rotation.cpp	/^const char* taitBryanOrderString[] = { "XYZ", "YZX", "ZXY", "ZYX", "YXZ", "XZY"}; $/;"	v
+tb	rotation.hpp	/^	TaitBryanOrder tb;$/;"	m	union:Order
+t	types.hpp	/^	float t;$/;"	m	struct:vec4
+toStringAxeOrder	rotation.cpp	/^const char* toStringAxeOrder(Order o, OrientationType t) {$/;"	f
+toStringEulerOrder	rotation.cpp	/^const char* toStringEulerOrder(EulerOrder e) {$/;"	f
+toStringOrientationType	rotation.cpp	/^const char* toStringOrientationType(OrientationType o) { $/;"	f
+toStringRotationType	rotation.cpp	/^const char* toStringRotationType(RotationType r) {$/;"	f
+toStringTaitBryanOrder	rotation.cpp	/^const char* toStringTaitBryanOrder(TaitBryanOrder e) { $/;"	f
+toString	rotation.cpp	/^string Rotation::toString() {$/;"	f	class:Rotation
+translate	camera.cpp	/^void Camera::translate(float x, float y, float z) {$/;"	f	class:Camera
+translate	camera.cpp	/^void Camera::translate(vec3 &vector) {$/;"	f	class:Camera
+updateProjectionMatrix	camera.cpp	/^void Camera::updateProjectionMatrix() {$/;"	f	class:Camera
+updateViewMatrix	camera.cpp	/^void Camera::updateViewMatrix() {$/;"	f	class:Camera
+vec3	types.hpp	/^struct vec3 {$/;"	s
+vec4	types.hpp	/^struct vec4 {$/;"	s
+vertexBufferObject	polygon.hpp	/^		unsigned int vertexBufferObject;$/;"	m	class:Polygon
+vertex	box.hpp	/^		float *vertex, *normals, *colors;$/;"	m	class:Box
+vertex	terrain.hpp	/^		float *vertex, *colors;$/;"	m	class:Terrain
+viewMatrix	camera.hpp	/^		mat4 viewMatrix;$/;"	m	class:Camera
+width	box.hpp	/^		float width, height, length;$/;"	m	class:Box
+width	terrain.hpp	/^		unsigned int width, height;$/;"	m	class:Terrain
+window	window.hpp	/^		GLFWwindow* window;$/;"	m	class:Window
+writeColor	terrain.cpp	/^void Terrain::writeColor(int height, unsigned int &idx, float *color) {$/;"	f	class:Terrain
+writeVec3f	box.cpp	/^void Box::writeVec3f(float *array, unsigned int &idx, float x, float y, float z) {$/;"	f	class:Box
+writeVec3f	terrain.cpp	/^void Terrain::writeVec3f(float *array, unsigned int &idx, float x, float y, float z) {$/;"	f	class:Terrain
+x	box.hpp	/^		float x, y, z;$/;"	m	class:Box
+x	data.hpp	/^		int *x, *y, *z;$/;"	m	class:Data
+x	types.hpp	/^	float x;$/;"	m	struct:vec3
+x	types.hpp	/^	float x;$/;"	m	struct:vec4
+y	box.hpp	/^		float x, y, z;$/;"	m	class:Box
+y	data.hpp	/^		int *x, *y, *z;$/;"	m	class:Data
+y	types.hpp	/^	float y;$/;"	m	struct:vec3
+y	types.hpp	/^	float y;$/;"	m	struct:vec4
+z	box.hpp	/^		float x, y, z;$/;"	m	class:Box
+z	data.hpp	/^		int *x, *y, *z;$/;"	m	class:Data
+z	types.hpp	/^	float z;$/;"	m	struct:vec3
+z	types.hpp	/^	float z;$/;"	m	struct:vec4
+~Box	box.cpp	/^Box::~Box() {$/;"	f	class:Box
+~Camera	camera.cpp	/^Camera::~Camera() {$/;"	f	class:Camera
+~RenderTree	renderTree.cpp	/^RenderTree::~RenderTree() {$/;"	f	class:RenderTree
+~Renderable	renderable.hpp	/^		virtual ~Renderable() {};$/;"	f	class:Renderable
+~Rotation	rotation.cpp	/^Rotation::~Rotation() {$/;"	f	class:Rotation
+~Terrain	terrain.cpp	/^Terrain::~Terrain() {$/;"	f	class:Terrain

@@ -1,0 +1,14 @@
+syn keyword CTagsStructure DegreesOfFreedom vec3 vec4
+syn keyword CTagsMember size orientationType axeOrder projectionMatrix VBO near height colors rz images children reverseImage nVertex x fov TZ TX TY RX RY RZ far window program shaderType pi tb orientationData euler viewMatrix rx VAO centered object vertex colorBufferObject active modelMatrixLocation rotation oneDegInRad identity ry vertexBufferObject dof shader rotationType length points t normals y position aspectRatio z width
+syn keyword CTagsUnion Order
+syn keyword CTagsGlobalVariable g_gl_width log_file g_gl_height resize
+syn keyword CTagsConstant taitBryanOrderString eulerOrderString orientationTypeString rotationTypeString
+syn keyword CTagsEnumeratorName OrientationType EulerOrder TaitBryanOrder RotationType
+syn keyword CTagsEnumerationValue INTRINSIC_ROTATION ORDER_YZX EULER_ORIENTATION ORDER_YXZ QUATERNION_ORIENTATION ORDER_ZYZ EXTRINSIC_ROTATION ORDER_YXY ORDER_XZX ORDER_XZY TAIT_BRYAN_ORIENTATION ORDER_XYZ ORDER_YZY ORDER_XYX ORDER_ZXZ ORDER_ZYX ORDER_ZXY
+syn keyword CTagsFunction glfw_window_size_callback addChild moveTo writeVec3f Polygon activateChild orientate loadImageFolder listdir toStringOrientationType getSize Window Camera getShader initializeRotation getWindow toStringAxeOrder close getUpwardDirection multMat4f initLogs getColorBufferObject getRelativeModelMatrix computeGradientVectorFlow removeChild getProjectionMatrix toStringTaitBryanOrder getForwardDirection writeColor desactivateChild toString loadImage updateViewMatrix loadData Rotation
+syn keyword CTagsFunction main getRotationMatrix displayImage Box draw getVertexBufferObject setAspectRatio Shader _update_fps_counter getRightDirection updateProjectionMatrix setPosition getShaderType log_gl_params RenderTree rotate translate getPoints getViewMatrix toStringEulerOrder Terrain printVec4 sendToDevice printMat3 toStringRotationType computeVertex printMat4 printVec3 glfw_error_callback printData
+syn keyword CTagsType mat4 mat3
+syn keyword CTagsDefinedName GLFW_DLL NO_AXE RX_AXE USE_ROW_MAJOR ALL_AXES Y_AXE ONE_DEG_IN_RAD RY_AXE _USE_MATH_DEFINES Z_AXE ALL_ROTATION RZ_AXE X_AXE ALL_TRANSLATION
+syn keyword CTagsClass Box RenderTree Polygon Image Terrain Renderable Shader Window Camera Rotation Data
+syn keyword CTagsNamespace consts
+
