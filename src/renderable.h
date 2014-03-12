@@ -46,6 +46,10 @@ class Renderable
 		 */
 		virtual void mouseMoveEvent(QMouseEvent*, Viewer&) {};
 
+        virtual float* getModelMatrix () const;
+
+        static float Identity[];
+
 };
 
 #endif
