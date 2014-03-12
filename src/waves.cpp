@@ -2,7 +2,7 @@
 #include <iostream> 
 #include <cstdio>
 #include <ctime>
-#include "../viewer.h"
+#include "viewer.h"
 #include "waves.h"
 
 

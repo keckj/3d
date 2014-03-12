@@ -2,7 +2,7 @@
 #include <ctime>
 #include "viewer.h"
 #include "objLoader/ObjLoader.h"
-#include "waveTest/waves.h"
+#include "waves.h"
 
 int main(int argc, char** argv) {
 
