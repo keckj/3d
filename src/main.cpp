@@ -2,7 +2,7 @@
 #include <ctime>
 #include "viewer.h"
 #include "objLoader/ObjLoader.h"
-#include "waveTest/waves.h"
+#include "waves.h"
 
 int main(int argc, char** argv) {
 
@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
     // build your scene here
     //viewer.addRenderable(new ObjLoader("obj_files/cube.obj"));
-    viewer.addRenderable(new Waves(0.0f, 0.0f, 1.0f,1.0f,10.0f, &viewer));
+    viewer.addRenderable(new Waves(0.0f, 0.0f, 50.0f,50.0f,10.0f, &viewer));
 
     viewer.setWindowTitle("Waves");
     // Make the viewer window visible on screen.
