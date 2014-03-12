@@ -35,7 +35,7 @@ void Node::draw () {
     glPopMatrix();
 
     // Then, its sons
-    for (int i = 0; i < sons.size(); i++) {
+    for (unsigned int i = 0; i < sons.size(); i++) {
         sons[i].draw();
     }
 }
@@ -63,7 +63,7 @@ void Node::print () const {
 void Node::setVertices (GLfloat* vertices) {
     this->vertices = new GLfloat[nv];
 
-    for (int i = 0; i < nv; i++) {
+    for (unsigned int i = 0; i < nv; i++) {
         this->vertices[i] = vertices[i];
     }
 }
@@ -71,7 +71,7 @@ void Node::setVertices (GLfloat* vertices) {
 void Node::setNormals (GLfloat* normals) {
     this->normals = new GLfloat[nn];
 
-    for (int i = 0; i < nn; i++) {
+    for (unsigned int i = 0; i < nn; i++) {
         this->normals[i] = normals[i];
     }
 }
@@ -79,7 +79,7 @@ void Node::setNormals (GLfloat* normals) {
 void Node::setTextures (GLfloat* textures) {
     this->textures = new GLfloat[nt];
 
-    for (int i = 0; i < nt; i++) {
+    for (unsigned int i = 0; i < nt; i++) {
         this->textures[i] = textures[i];
     }
 }
