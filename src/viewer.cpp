@@ -45,13 +45,14 @@ void Viewer::init()
     else
         glDisable(GL_LIGHTING);
 
-    setSnapshotFileName(QString("rec_images/image.jpg"));
+    //TODO: decommenter sur les PCs ou ça marche
+    //setSnapshotFileName(QString("rec_images/image.jpg"));
 
     //setSceneRadius(5.0f);
     setSceneRadius(1.0f);
 
     //Added
-    setAnimationPeriod(20); // 50Hz
+    //setAnimationPeriod(20); // 50Hz
 
     list<Renderable *>::iterator it;
     for (it = renderableList.begin(); it != renderableList.end(); ++it) {
