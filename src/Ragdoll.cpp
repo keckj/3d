@@ -19,7 +19,7 @@ void Ragdoll::removePart (std::string const& name) {
     parts.erase(name);
 }
 
-void Ragdoll::draw () const {
+void Ragdoll::draw () {
     for (std::map<std::string, BodyPart*>::const_iterator it = parts.begin(); it != parts.end(); it++) {
         if (it->second->isEnabled()) {
             it->second->draw();
@@ -27,7 +27,7 @@ void Ragdoll::draw () const {
     }
 }
 
-void Ragdoll::animate () const {
+void Ragdoll::animate () {
     for (std::map<std::string, BodyPart*>::const_iterator it = parts.begin(); it != parts.end(); it++) {
         if (it->second->isEnabled()) {
             it->second->animate();

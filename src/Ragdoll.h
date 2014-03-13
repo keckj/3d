@@ -23,10 +23,10 @@ class Ragdoll : public Renderable {
         void disablePart (std::string const& name);
         void enablePart (std::string const& name);
 
-        void draw() const;
-        void animate () const;
+        void draw();
+        void animate ();
 
-    private:
+    protected:
         std::map<std::string, BodyPart*> parts;
 };
 

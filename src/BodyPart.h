@@ -17,8 +17,6 @@ class BodyPart : public Renderable {
         void enable ();
         bool isEnabled () const;
 
-        virtual void draw () = 0;
-
     protected:
         BodyPart (bool enabled = true);
         bool enabled;
