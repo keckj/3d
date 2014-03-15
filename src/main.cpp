@@ -7,7 +7,7 @@
 #include "waves.h"
 #include "fog.h"
 
-#include "SeaDiver.h"
+#include "diver/SeaDiver.h"
 
 int main(int argc, char** argv) {
 

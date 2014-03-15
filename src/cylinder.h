@@ -8,11 +8,15 @@
 #include <GLUT/glut.h>
 #endif
 
-class Cylinder : public Renderable
-{
+class Cylinder : public Renderable {
     public:
         Cylinder (float radius, float height);
+
+        float getRadius() const;
+        float getHeight() const;
+
         void draw ();
+
         ~Cylinder();
 
     private:

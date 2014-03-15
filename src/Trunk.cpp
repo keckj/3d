@@ -2,17 +2,26 @@
 
 #include <iostream>
 
-Trunk::Trunk () : BodyPart(true), cyl(WIDTH_TRUNK, HEIGHT_TRUNK) {
+Trunk::Trunk (float width, float height, float depth) : BodyPart(true), rect(width, height, depth) {
 }
 
 void Trunk::draw () {
     glPushMatrix();
 
-    cyl.draw();
+    rect.draw();
 
     glPopMatrix();
 }
 
-Trunk::~Trunk () {
+float Trunk::getWidth () const {
+    return rect.getWidth();
+}
+
+float Trunk::getHeight () const {
+    return rect.getHeight();
+}
+
+float Trunk::getDepth () const {
+    return rect.getDepth();
 }
 

@@ -1,17 +1,13 @@
-#include "cylinder.h"
-
 #include <iostream>
 
-/* Number of points used to draw the cylinder */
+#include "cylinder.h"
+
 int Cylinder::NB_POINTS = 100;
 
-/* Constructor */
 Cylinder::Cylinder (float radius, float height) : radius(radius), height(height) {
 }
 
-/* Drawing Method */
 void Cylinder::draw () {
-    // TODO: pourquoi ça marche pas quand on le met dans le constructeur ?
     cyl = gluNewQuadric();
     d = gluNewQuadric();
 
@@ -31,6 +27,14 @@ void Cylinder::draw () {
     glPopMatrix();
 
     glPopMatrix();
+}
+
+float Cylinder::getRadius () const {
+    return radius;
+}
+
+float Cylinder::getHeight () const {
+    return height;
 }
 
 Cylinder::~Cylinder() {

@@ -2,19 +2,20 @@
 #define TRUNK_H
 
 #include "BodyPart.h"
-#include "cylinder.h"
-
-#define WIDTH_TRUNK 1
-#define HEIGHT_TRUNK 2
+#include "Rectangle.h"
 
 class Trunk : public BodyPart {
     public:
-        Trunk ();
+        Trunk (float width, float height, float depth);
+
+        float getWidth () const;
+        float getHeight() const;
+        float getDepth () const;
+
         void draw();
-        ~Trunk ();
 
     private:
-        Cylinder cyl;
+        Rectangle rect;
 };
 
 #endif

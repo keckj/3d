@@ -18,6 +18,7 @@ class Ragdoll : public Renderable {
         Ragdoll ();
 
         void addPart (std::string const& name, BodyPart* part);
+        BodyPart* getPart (std::string const& name) const;
         void removePart (std::string const& name);
 
         void disablePart (std::string const& name);
