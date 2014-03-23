@@ -3,6 +3,7 @@
 #include "Arm.h"
 #include "Trunk.h"
 #include "Thigh.h"
+#include "Head.h"
 
 SeaDiver::SeaDiver() : Ragdoll() {
     trunk = new Trunk(WIDTH_TRUNK, HEIGHT_TRUNK, DEPTH_TRUNK);
@@ -19,6 +20,9 @@ SeaDiver::SeaDiver() : Ragdoll() {
 
     rightForearm = new Arm(WIDTH_FOREARM, HEIGHT_FOREARM);
     addPart("rightForearm", rightForearm);
+
+    head = new Head(RADIUS_HEAD);
+    addPart("head", head);
 }
 
 void SeaDiver::draw () {
@@ -26,6 +30,11 @@ void SeaDiver::draw () {
     glPushMatrix();
 
     getPart("trunk")->draw();
+
+    glPushMatrix();
+    glTranslatef(0, 0, HEIGHT_NECK + trunk->getHeight() / 2);
+    getPart("head")->draw();
+    glPopMatrix();
 
     glPushMatrix();
     glTranslatef(0, -trunk->getWidth() / 2, 0);
@@ -53,6 +62,8 @@ void SeaDiver::draw () {
 }
 
 SeaDiver::~SeaDiver() {
+    delete head;
+
     delete leftForearm;
     delete rightForearm;
 

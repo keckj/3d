@@ -15,6 +15,7 @@ class SeaDiver : public Ragdoll {
         ~SeaDiver();
 
     private:
+        BodyPart *head;
         BodyPart *leftForearm, *rightForearm;
         BodyPart *trunk;
         BodyPart *leftThigh, *rightThigh;

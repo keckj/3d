@@ -49,7 +49,6 @@ class Renderable
         virtual float* getModelMatrix () const;
 
         static float Identity[];
-
 };
 
 #endif

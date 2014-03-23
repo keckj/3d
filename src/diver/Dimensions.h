@@ -1,5 +1,9 @@
 // Dimensions of all the elements of the sea diver
 
+// HEAD
+#define RADIUS_HEAD 0.3
+#define HEIGHT_NECK RADIUS_HEAD
+
 // FOREARM
 #define WIDTH_FOREARM 0.2
 #define HEIGHT_FOREARM 0.7
