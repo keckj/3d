@@ -3,8 +3,8 @@
 
 #include "Dimensions.h"
 
-#include "../Ragdoll.h"
-#include "../BodyPart.h"
+#include "Ragdoll.h"
+#include "BodyPart.h"
 
 class SeaDiver : public Ragdoll {
     public:

@@ -1,7 +1,7 @@
 #ifndef ARM_H
 #define ARM_H
 
-#include "../BodyPart.h"
+#include "BodyPart.h"
 #include "../Cylinder.h"
 
 class Arm : public BodyPart {

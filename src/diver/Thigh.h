@@ -1,7 +1,7 @@
 #ifndef THIGH_H
 #define THIGH_H
 
-#include "../BodyPart.h"
+#include "BodyPart.h"
 #include "../Cylinder.h"
 
 class Thigh : public BodyPart {

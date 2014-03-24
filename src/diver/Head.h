@@ -1,7 +1,7 @@
 #ifndef HEAD_H
 #define HEAD_H
 
-#include "../BodyPart.h"
+#include "BodyPart.h"
 
 class Head : public BodyPart {
     public:
