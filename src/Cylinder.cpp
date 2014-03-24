@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "cylinder.h"
+#include "Cylinder.h"
 
 int Cylinder::NB_POINTS = 100;
 
