@@ -2,7 +2,7 @@
 #define TRUNK_H
 
 #include "BodyPart.h"
-#include "Rectangle.h"
+#include "../Rectangle.h"
 
 class Trunk : public BodyPart {
     public:

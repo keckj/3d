@@ -17,9 +17,9 @@ class BodyPart : public Renderable {
         void enable ();
         bool isEnabled () const;
 
-        virtual float getWidth() const {};
-        virtual float getHeight() const {};
-        virtual float getDepth () const {};
+        virtual float getWidth() const {return 0.0f;};
+        virtual float getHeight() const {return 0.0f;};
+        virtual float getDepth () const {return 0.0f;};
 
     protected:
         BodyPart (bool enabled = true);
