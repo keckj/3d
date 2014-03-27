@@ -29,7 +29,7 @@ void Viewer::addRenderable(Renderable *r)
 void Viewer::init()
 {
     // glut initialisation (mandatory) 
-    int dum;
+    int dum = 0;
     glutInit(&dum, NULL);
 
     //=== VIEWING PARAMETERS
@@ -45,8 +45,8 @@ void Viewer::init()
     else
         glDisable(GL_LIGHTING);
 
-    //TODO: decommenter sur les PCs ou ça marche
-    //setSnapshotFileName(QString("rec_images/image.jpg"));
+    setSnapshotFileName(QString("rec_images/image.jpg")); // Note: créer le dossier par avance
+    setAddKeyFrameKeyboardModifiers(Qt::ControlModifier); // Alt ne marchait pas
 
     //setSceneRadius(5.0f);
     setSceneRadius(1.0f);
@@ -62,7 +62,7 @@ void Viewer::init()
 
 
 void Viewer::draw()
-{  
+{ 
     // draw every objects in renderableList
     list<Renderable *>::iterator it;
     for(it = renderableList.begin(); it != renderableList.end(); ++it) {
@@ -129,7 +129,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
         toggleRecord = !toggleRecord;
 
     // ... and so on with all events to handle here!
-
+    
     } else {
         // if the event is not handled here, process it as default
         QGLViewer::keyPressEvent(e);
@@ -145,7 +145,7 @@ QString Viewer::helpString() const
     text += "Use the mouse to move the camera around the object. ";
     text += "You can respectively revolve around, zoom and translate with the three mouse buttons. ";
     text += "Left and middle buttons pressed together rotate around the camera view direction axis<br><br>";
-    text += "Pressing <b>Alt</b> and one of the function keys (<b>F1</b>..<b>F12</b>) defines a camera keyFrame. ";
+    text += "Pressing <b>Control</b> and one of the function keys (<b>F1</b>..<b>F12</b>) defines a camera keyFrame. ";
     text += "Simply press the function key again to restore it. Several keyFrames define a ";
     text += "camera path. Paths are saved when you quit the application and restored at next start.<br><br>";
     text += "Press <b>F</b> to display the frame rate, <b>A</b> for the world axis, ";

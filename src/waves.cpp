@@ -35,6 +35,8 @@ Waves::Waves(float xPos, float zPos, float xWidth, float zWidth, float meanHeigh
     this->zWidth = zWidth;
     this->meanHeight = meanHeight;
 
+    this->stopAnimating = false;
+
 
     // Indices used for drawing
     nIndices = 6*(N_MOBILES_X-1)*(N_MOBILES_Z-1);
@@ -126,6 +128,9 @@ void Waves::draw() {
 
 
 void Waves::animate() {
+
+    // Check if we were told to stop animating
+    if (stopAnimating) return;
 
     // Approximate time passed since last frame was drawn (at the start we have 0 FPS so we need to cheat a bit)
     //float deltaT = 1.0 / (viewer->currentFPS() > 0 ? viewer->currentFPS() : 50);
@@ -267,3 +272,9 @@ void Waves::animate() {
     //std::cout << "time=" << time << std::endl;
 }
 
+void Waves::keyPressEvent(QKeyEvent *e, Viewer &v) {
+    if (e->key() == Qt::Key_P && e->modifiers() == Qt::NoButton) {
+        stopAnimating = !stopAnimating;
+    }
+    (void)v; // suppress warning
+}

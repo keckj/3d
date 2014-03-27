@@ -21,8 +21,8 @@ int main(int argc, char** argv) {
 
     // build your scene here
     //viewer.addRenderable(new ObjLoader("obj_files/cube.obj"));
-    /* viewer.addRenderable(new Waves(0.0f, 0.0f, 50.0f,50.0f,10.0f, &viewer)); */
-    /* viewer.addRenderable(new Fog(0.01f, 0.05f, 10.0f)); */
+    viewer.addRenderable(new Waves(0.0f, 0.0f, 50.0f,50.0f,10.0f, &viewer)); 
+    viewer.addRenderable(new Fog(0.01f, 0.05f, 10.0f)); 
     viewer.addRenderable(new SeaDiver());
 
     viewer.setWindowTitle("Sea diver");
