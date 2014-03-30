@@ -2,23 +2,24 @@
 #pragma once
 
 #include "consts.hpp"
-#include "renderable.hpp"
+#include "renderable.h"
 
 class Terrain : public Renderable {
 
 	public:
 		Terrain(unsigned char *heightmap, unsigned int width, unsigned int height, bool centered, 
-				unsigned int modelMatrixLocation, unsigned int program);
+				unsigned int program);
 		~Terrain();
 		
-		void draw(const float *modelMatrix = consts::identity) const;
+		void draw() const;
+		
 		const float *getRelativeModelMatrix() const;
 
 	
 	private:
 		unsigned int width, height;
 		bool centered;
-		unsigned int modelMatrixLocation, program;
+		unsigned int program;
 		unsigned int VAO, VBO;
 		
 		unsigned int nVertex;

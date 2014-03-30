@@ -20,23 +20,36 @@ endif
 
 # Linux
 ifeq ($(OS), Linux)
+
 VIEWER_LIBPATH = -L/usr/X11R6/lib64 -L/usr/lib/x86_64-linux-gnu
 VIEWER_INCLUDEPATH = -I/usr/share/qt4/mkspecs/linux-g++-64 -I/usr/include/QtOpenGL -I/usr/include/QtXml -I/usr/X11R6/include -I/usr/include/qt4/ $(foreach dir, $(shell ls /usr/include/qt4 | xargs), -I/usr/include/qt4/$(dir))
-VIEWER_LIBS = -lQGLViewer -lGLU -lglut -lGL -lQtXml -lQtOpenGL -lQtGui -lQtCore -lpthread
+VIEWER_LIBS = -lGLU -lglut -lGL -lQtXml -lQtOpenGL -lQtGui -lQtCore -lpthread
 VIEWER_DEFINES = -D_REENTRANT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 
 NARCH=30  #Archi cuda
 CUDA_INCLUDEPATH = -I/usr/local/cuda-5.5/include
 CUDA_LIBPATH = -L/usr/local/cuda-5.5/lib64 
 CUDA_LIBS = -lcuda -lcudart
+
+DISTRIB=$(filter-out Distributor ID:, $(shell lsb_release -i))
+
+#Ubuntu
+ifeq ($(DISTRIB), Ubuntu)
+VIEWER_LIBS+=lQGLViewer
+else #Centos
+VIEWER_LIBS+=lqglviewer
+endif
+
 endif
 
 ####################
 
+POULPY_LINK= -lGLEW -lopencv_core -lopencv_imgproc -lopencv_highgui
+
 #Compilateurs
 LINK= g++
-LINKFLAGS= -W -Wall -Wextra -pedantic -std=c++11
-LDFLAGS= $(VIEWER_LIBS) #(CUDA_LIBS)
+LINKFLAGS= -W -Wall -Wextra -pedantic -std=c++0x
+LDFLAGS= $(VIEWER_LIBS) $(POULPY_LINK) #(CUDA_LIBS)
 INCLUDE = -I$(SRCDIR) $(foreach dir, $(call subdirs, $(SRCDIR)), -I$(dir)) $(VIEWER_INCLUDEPATH) #$(CUDA_INCLUDEPATH)
 LIBS = $(VIEWER_LIBPATH) #$(CUDA_LIBPATH)
 DEFINES= $(VIEWER_DEFINES) $(OPT)
@@ -46,7 +59,7 @@ CC=gcc
 CFLAGS= -W -Wall -Wextra -pedantic -std=c99 -m64
 
 CXX=g++
-CXXFLAGS= -W -Wall -Wextra -pedantic -std=c++11 -m64
+CXXFLAGS= -W -Wall -Wextra -pedantic -std=c++0x -m64
 #-Wshadow -Wstrict-aliasing -Weffc++ -Werror
 
 #preprocesseur QT

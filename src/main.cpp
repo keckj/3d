@@ -18,6 +18,7 @@ int main(int argc, char** argv) {
 
     // Instantiate the viewer.
     Viewer viewer;
+    viewer.setWindowTitle("Sea diver");
 
     // build your scene here
     //viewer.addRenderable(new ObjLoader("obj_files/cube.obj"));
@@ -25,7 +26,7 @@ int main(int argc, char** argv) {
     viewer.addRenderable(new Fog(0.01f, 0.05f, 10.0f)); 
     viewer.addRenderable(new SeaDiver());
 
-    viewer.setWindowTitle("Sea diver");
+
     // Make the viewer window visible on screen.
     viewer.show();
 

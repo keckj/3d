@@ -74,7 +74,7 @@ $(OBJDIR)%.o: $(SRCDIR)%.cu
 
 # "-" pour enlever les messages d'erreurs
 # "@" pour silent
-.PHONY: clean cleanall create_dirs all
+.PHONY: clean cleanall create_dirs all distrib
 
 clean:
 	-@rm -f $(OBJ) 
@@ -84,3 +84,6 @@ cleanall:
 
 create_dirs:
 	@mkdir -p $(subst $(SRCDIR), $(OBJDIR), $(SUBDIRS))
+
+distrib:
+	echo $(DISTRIB)

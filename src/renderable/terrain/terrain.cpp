@@ -2,12 +2,21 @@
 #include "terrain.hpp"
 #include <cassert>
 #include <cstring>
-#include "log.hpp"
+
+#ifndef __APPLE__
+#include <GL/glut.h>
+#else
+#include <GLUT/glut.h>
+#endif
+
+	//#include <GL/glew.h>
+
+
 
 Terrain::Terrain(unsigned char *heightmap, unsigned int width, unsigned int height, bool centered, 
-		unsigned int modelMatrixLocation, unsigned int program)
-: width(width), height(height), centered(centered), 
-	modelMatrixLocation(modelMatrixLocation), program(program), 
+			unsigned int program ) : 
+	width(width), height(height), centered(centered), 
+	program(program), 
 	VAO(0), VBO(0)
 {
 
@@ -53,7 +62,7 @@ void inline Terrain::sendToDevice() {
 
 	unsigned int size = 2*3*nVertex*sizeof(float);
 
-	if (glIsBuffer(VBO)) 
+	if(glIsBuffer(VBO)) 
 		glDeleteBuffers(1, &VBO);
 
 	glGenBuffers(1, &VBO);
@@ -82,10 +91,9 @@ void inline Terrain::sendToDevice() {
 Terrain::~Terrain() {
 }
 
-void Terrain::draw(const float *modelMatrix) const {
-
+void Terrain::draw() const {
 	glUseProgram(program);
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_TRUE, modelMatrix);
+	glUniformMatrix4fv(modelMatrixLocation, 1, GL_TRUE, getRelativeModelMatrix());
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, nVertex);
 	glBindVertexArray(0);
