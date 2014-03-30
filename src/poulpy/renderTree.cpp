@@ -40,7 +40,7 @@ void RenderTree::draw(const float *currentTransformationMatrix) const {
 }
 
 void RenderTree::addChild(std::string key, RenderTree *child) {
-	assert(children.emplace(key, child).second == true);	
+	assert(children.insert(std::pair<std::string,RenderTree*>(key, child)).second == true);	
 }
 
 void RenderTree::removeChild(std::string key) {

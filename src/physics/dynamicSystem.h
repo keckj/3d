@@ -10,7 +10,7 @@ using namespace std;
 
 #include "spring.h"
 #include "particle.h"
-#include "../renderable.h"
+#include "renderable.h"
 
 /*
  * This class represents a dynamic system made of particles

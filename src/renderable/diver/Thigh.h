@@ -1,12 +1,12 @@
-#ifndef ARM_H
-#define ARM_H
+#ifndef THIGH_H
+#define THIGH_H
 
 #include "BodyPart.h"
-#include "../Cylinder.h"
+#include "Cylinder.h"
 
-class Arm : public BodyPart {
+class Thigh : public BodyPart {
     public:
-        Arm (float width, float height);
+        Thigh (float width, float height);
 
         float getWidth () const;
         float getHeight () const;

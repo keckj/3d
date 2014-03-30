@@ -1,7 +1,7 @@
 #ifndef RAGDOLL_H
 #define RAGDOLL_H
 
-#include "../renderable.h"
+#include "renderable.h"
 
 #ifndef __APPLE__
 #include <GL/glut.h>

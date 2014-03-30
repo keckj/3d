@@ -1,7 +1,7 @@
 #ifndef BODYPART_H
 #define BODYPART_H
 
-#include "../renderable.h"
+#include "renderable.h"
 
 #ifndef __APPLE__
 #include <GL/glut.h>

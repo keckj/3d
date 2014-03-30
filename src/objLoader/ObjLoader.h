@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 
-#include "../Node.h"
+#include "Node.h"
 
-#include "../renderable.h"
+#include "renderable.h"
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else

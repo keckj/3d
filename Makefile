@@ -37,7 +37,7 @@ endif
 LINK= g++
 LINKFLAGS= -W -Wall -Wextra -pedantic -std=c++11
 LDFLAGS= $(VIEWER_LIBS) #(CUDA_LIBS)
-INCLUDE = -I$(SRCDIR) $(VIEWER_INCLUDEPATH) #$(CUDA_INCLUDEPATH)
+INCLUDE = -I$(SRCDIR) $(foreach dir, $(call subdirs, $(SRCDIR)), -I$(dir)) $(VIEWER_INCLUDEPATH) #$(CUDA_INCLUDEPATH)
 LIBS = $(VIEWER_LIBPATH) #$(CUDA_LIBPATH)
 DEFINES= $(VIEWER_DEFINES) $(OPT)
 
@@ -70,7 +70,7 @@ TARGET = main
 
 SRCDIR = $(realpath .)/src
 OBJDIR = $(realpath .)/obj
-EXCL= #excluded dirs in src
+EXCL= poulpy #excluded dirs in src
 EXCLUDED_SUBDIRS = $(foreach DIR, $(EXCL), $(call subdirs, $(SRCDIR)/$(DIR)))
 SUBDIRS =  $(filter-out $(EXCLUDED_SUBDIRS), $(call subdirs, $(SRCDIR)))
 

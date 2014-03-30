@@ -154,11 +154,11 @@ int main( int argc, const char* argv[] )
 	// -- textures --
 	//glEnable(GL_TEXTURE_2D);
 
-	cv::Mat text1 = imread("img/forest 13.png", CV_LOAD_IMAGE_COLOR);
-	cv::Mat text2 = imread("img/grass 9.png", CV_LOAD_IMAGE_COLOR);
-	cv::Mat text3 = imread("img/grass 7.png", CV_LOAD_IMAGE_COLOR);
-	cv::Mat text4 = imread("img/dirt 4.png", CV_LOAD_IMAGE_COLOR);
-	cv::Mat text5 = imread("img/snow 1.png", CV_LOAD_IMAGE_COLOR);
+	cv::Mat text1 = imread("../textures/forest 13.png", CV_LOAD_IMAGE_COLOR);
+	cv::Mat text2 = imread("../textures/grass 9.png", CV_LOAD_IMAGE_COLOR);
+	cv::Mat text3 = imread("../textures/grass 7.png", CV_LOAD_IMAGE_COLOR);
+	cv::Mat text4 = imread("../textures/dirt 4.png", CV_LOAD_IMAGE_COLOR);
+	cv::Mat text5 = imread("../textures/snow 1.png", CV_LOAD_IMAGE_COLOR);
 
 	assert(text1.data);
 	assert(text2.data);
