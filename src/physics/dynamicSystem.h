@@ -22,8 +22,7 @@ using namespace std;
  */
 class DynamicSystem : public Renderable
 {
-
-    private:
+    protected:
         // system
         vector<Particle *> particles;
         vector<Spring *> springs;
@@ -32,10 +31,10 @@ class DynamicSystem : public Renderable
         // System parameters (common)
         int numberParticles;
         Vec defaultGravity;
-        Vec gravity;			// gravity used in simulation
+        Vec gravity; // gravity used in simulation
         double defaultMediumViscosity;
-        double mediumViscosity;		// viscosity used in simulation
-        double dt;			// time step
+        double mediumViscosity; // viscosity used in simulation
+        double dt; // time step
         bool handleCollisions;
 
         // Collisions parameters
@@ -60,7 +59,7 @@ class DynamicSystem : public Renderable
 
 
     public:
-        DynamicSystem();	// TODO add general parameters (viscosity...)
+        DynamicSystem(); // TODO add general parameters (viscosity...)
         virtual ~DynamicSystem();
 
         // Position of the firt particle ca be set through mouse movements
@@ -78,7 +77,7 @@ class DynamicSystem : public Renderable
         void keyPressEvent(QKeyEvent*, Viewer&);
         void mouseMoveEvent(QMouseEvent*, Viewer&);
 
-    private:
+    protected:
         // Reset the scene (remove all particles and springs)
         void clear();
 
@@ -97,9 +96,8 @@ class DynamicSystem : public Renderable
         // 			Vec& x2, Vec& v2, double r2, double invm2,
         // 			double rebound );
 
-        void createSystemScene();
-        void createTestCollisions();
-
+        // Create the initial scene
+        virtual void createSystemScene() = 0;
 
         // Renderable methods
     public:
