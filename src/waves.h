@@ -6,7 +6,8 @@
 
 struct Mobile {
     GLfloat x,y,z; // coordinates
-    float vx,vz; // speeds
+    //float vx,vz; // speeds
+    float speed;
     GLfloat nx,ny,nz; // normal
     bool isExciter; // is artificially moved
     float frequency; // only in use if isFree == false

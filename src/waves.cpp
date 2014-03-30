@@ -49,7 +49,7 @@ Waves::Waves(float xPos, float zPos, float xWidth, float zWidth, float meanHeigh
         for (int z = 0; z < N_MOBILES_Z; z++) {
             int idx = x*N_MOBILES_Z + z;
             mobiles[idx].x = xWidth/(N_MOBILES_X-1) * (x - (N_MOBILES_X-1)/2);  
-            mobiles[idx].y = meanHeight + 0; 
+            mobiles[idx].y = meanHeight + 0.05*sin(x*0.1) + 0.02*sin(x*0.5); 
                              //(x==N_MOBILES_X/2&&z==N_MOBILES_Z/2? 0.08f : 0.0f);
                              //(rand()%50==0 && x == 0? 0.05f:0.0f);
                              //(x-10 <= 0 ? 0.07f*sin((float)x/16) : 0.0f) +
@@ -62,8 +62,8 @@ Waves::Waves(float xPos, float zPos, float xWidth, float zWidth, float meanHeigh
             // TODO: find a good formula 
             //if (rand()%1000 == 0) {    
             //if (x == 0 && z == 0) {
-            if (x == 0) { // || x == N_MOBILES_X-1 || z == 0 || z == N_MOBILES_Z-1) {
-            //if (false) { // no exciters, use 'raindrops' to kickstart (see above)
+            //if (x == 0) { // || x == N_MOBILES_X-1 || z == 0 || z == N_MOBILES_Z-1) {
+            if (false) { // no exciters, use 'raindrops' to kickstart (see above)
                 mobiles[idx].isExciter = true;
                 //if (z%16 == 0) {
                     mobiles[idx].frequency = 50.0f;
@@ -78,8 +78,9 @@ Waves::Waves(float xPos, float zPos, float xWidth, float zWidth, float meanHeigh
             } else {
                 mobiles[idx].isExciter = false;
             }
-            mobiles[idx].vx = 0.0f;
-            mobiles[idx].vz = 0.0f;
+            //mobiles[idx].vx = 0.0f;
+            //mobiles[idx].vz = 0.0f;
+            mobiles[idx].speed = 0.0f;
 
             // Construct triangles
             if (x < N_MOBILES_X-1 && z < N_MOBILES_Z-1) { 
@@ -142,16 +143,16 @@ void Waves::animate() {
         for (int z = 0; z < N_MOBILES_Z; z++) {
             int idx = x*N_MOBILES_Z + z;
             if (mobiles[idx].isExciter && time < EXCITERS_TIME_LIMIT) {
-                /*mobiles[idx].nextY = mobiles[idx].amplitude/3 * sin(time * mobiles[idx].frequency) + 
+                mobiles[idx].nextY = mobiles[idx].amplitude/3 * sin(time * mobiles[idx].frequency) + 
                                      mobiles[idx].amplitude/6 * sin(time * mobiles[idx].frequency*2) +
                                      mobiles[idx].amplitude * sin(time * mobiles[idx].frequency/2) +
-                                     meanHeight;*/
+                                     meanHeight;
                 //mobiles[idx].nextY = mobiles[idx].amplitude * sin(time * mobiles[idx].frequency) + meanHeight; 
             } else {
-                // old method
-                /*float xm, xp, zm, zp;
+                // springs method
+                float xm, xp, zm, zp;
                 int cnt = 4;
-                if (x == 0) {
+                /*if (x == 0) {
                     xm = 0.0f;
                     cnt--; 
                 } else {
@@ -174,56 +175,66 @@ void Waves::animate() {
                     cnt--;
                 } else {
                    zp = mobiles[idx+1].y;
-                }
+                }*/
+                xm = (x == 0 ? meanHeight : mobiles[idx-N_MOBILES_Z].y);
+                xp = (x == N_MOBILES_X-1 ? mobiles[idx%N_MOBILES_Z].y : mobiles[idx+N_MOBILES_Z].y);
+                zm = (z == N_MOBILES_Z-1 ? mobiles[idx-N_MOBILES_Z+1].y : mobiles[idx+1].y);
+                zp = (z == 0 ? meanHeight : mobiles[idx-1].y);
                 float deltaY = xm + xp + zm + zp - cnt*mobiles[idx].y;
                 mobiles[idx].speed += deltaY * deltaT / 0.001;
-                mobiles[idx].speed *= WAVE_SPEED_FACTOR;
-                mobiles[idx].nextY = mobiles[idx].y + mobiles[idx].speed * deltaT;*/
-
+                //mobiles[idx].speed *= WAVE_SPEED_FACTOR;
+                mobiles[idx].nextY = mobiles[idx].y + mobiles[idx].speed * deltaT;
+/*
                 // Shallow water (used as an approximation here) without Coriolis effect
                 // dVx/dt = -g*dy/dx - cd*Vx
                 // dVz/dt = -g*dy/dz - cd*Vz
                 // dy/dt  = -H*(dVx/dx + dVz/dz)
                 //
                 // Compute dy/dx and dy/dz
-                //float dydx = (x == N_MOBILES_X-1 ? (xWidth/(N_MOBILES_X-1)*deltaT*mobiles[idx].y + mobiles[idx].y*xWidth/(N_MOBILES_X-1))/(xWidth/(N_MOBILES_X-1) + xWidth/(N_MOBILES_X-1)*deltaT) : mobiles[idx+N_MOBILES_Z].y);
-                float dydx = (x == N_MOBILES_X-1 ? meanHeight : mobiles[idx+N_MOBILES_Z].y);
-                dydx += (x == 0 ? meanHeight : mobiles[idx-N_MOBILES_Z].y);
-                //dydx += (x == 0 ? (xWidth/(N_MOBILES_X-1)*deltaT*mobiles[idx].y + mobiles[idx].y*xWidth/(N_MOBILES_X-1))/(xWidth/(N_MOBILES_X-1) + xWidth/(N_MOBILES_X-1)*deltaT) : mobiles[idx-N_MOBILES_Z].y);
+                float dydx = (x == N_MOBILES_X-1 ? mobiles[idx%N_MOBILES_Z].y : mobiles[idx+N_MOBILES_Z].y);
+                //float dydx = (x == N_MOBILES_X-1 ? meanHeight : mobiles[idx+N_MOBILES_Z].y);
+                //dydx += (x == 0 ? meanHeight : mobiles[idx-N_MOBILES_Z].y);
+                dydx += (x == 0 ? mobiles[idx+(N_MOBILES_X-1)*N_MOBILES_Z].y : mobiles[idx-N_MOBILES_Z].y);
                 dydx -= 2 * mobiles[idx].y;
-                float dydz = (z == N_MOBILES_Z-1 ? meanHeight : mobiles[idx+1].y);
-                dydz += (z == 0 ? meanHeight : mobiles[idx-1].y);
+                float dydz = (z == N_MOBILES_Z-1 ? mobiles[idx-N_MOBILES_Z+1].y : mobiles[idx+1].y);
+                //float dydz = (z == N_MOBILES_Z-1 ? meanHeight : mobiles[idx+1].y);
+                //dydz += (z == 0 ? meanHeight : mobiles[idx-1].y);
+                dydz += (z == 0 ? mobiles[idx+N_MOBILES_Z-1].y : mobiles[idx-1].y);
                 dydz -= 2 * mobiles[idx].y;
                 // Update vx and vz
                 mobiles[idx].vx -= (GRAVITY_ACC * dydx + DRAG_COEF * mobiles[idx].vx) * deltaT;
-                mobiles[idx].vz -= (GRAVITY_ACC * dydz + DRAG_COEF * mobiles[idx].vz) * deltaT;
+                mobiles[idx].vz -= (GRAVITY_ACC * dydz + DRAG_COEF * mobiles[idx].vz) * deltaT;*/
             }
         }
     }
-
+/*
     // Height
     for (int x = 0; x < N_MOBILES_X; x++) {
         for (int z = 0; z < N_MOBILES_Z; z++) {
             int idx = x*N_MOBILES_Z + z;
             if (mobiles[idx].isExciter && time < EXCITERS_TIME_LIMIT) {
-                /*mobiles[idx].nextY = mobiles[idx].amplitude/3 * sin(time * mobiles[idx].frequency) + 
-                                     mobiles[idx].amplitude/3 * sin(time * mobiles[idx].frequency*2 + M_PI/4) +
-                                     mobiles[idx].amplitude/3 * sin(time * mobiles[idx].frequency*3 + M_PI/8) +
-                                     meanHeight;*/
+                //mobiles[idx].nextY = mobiles[idx].amplitude/3 * sin(time * mobiles[idx].frequency) + 
+                //                     mobiles[idx].amplitude/3 * sin(time * mobiles[idx].frequency*2 + M_PI/4) +
+                //                     mobiles[idx].amplitude/3 * sin(time * mobiles[idx].frequency*3 + M_PI/8) +
+                //                     meanHeight;
                 mobiles[idx].nextY = mobiles[idx].amplitude * sin(time * mobiles[idx].frequency) + meanHeight; 
             } else {
                 // Compute dVx/dx and dVz/dz
-                float dvxdx = (x == N_MOBILES_X-1 ? mobiles[idx].vx : mobiles[idx+N_MOBILES_Z].vx);
-                dvxdx += (x == 0 ? mobiles[idx].vx : mobiles[idx-N_MOBILES_Z].vx);
+                //float dvxdx = (x == N_MOBILES_X-1 ? mobiles[idx].vx : mobiles[idx+N_MOBILES_Z].vx);
+                float dvxdx = (x == N_MOBILES_X-1 ? mobiles[idx%N_MOBILES_Z].vx : mobiles[idx+N_MOBILES_Z].vx);
+                //dvxdx += (x == 0 ? mobiles[idx].vx : mobiles[idx-N_MOBILES_Z].vx);
+                dvxdx += (x == 0 ? mobiles[idx+(N_MOBILES_X-1)*N_MOBILES_Z].vx : mobiles[idx-N_MOBILES_Z].vx);
                 dvxdx -= 2 * mobiles[idx].vx;
-                float dvzdz = (z == N_MOBILES_Z-1 ? 0.0f : mobiles[idx+1].vz);
-                dvzdz += (z == 0 ? 0.0f : mobiles[idx-1].vz);
+                //float dvzdz = (z == N_MOBILES_Z-1 ? 0.0f : mobiles[idx+1].vz);
+                float dvzdz = (z == N_MOBILES_Z-1 ? mobiles[idx-N_MOBILES_Z+1].vz : mobiles[idx+1].vz);
+                //dvzdz += (z == 0 ? 0.0f : mobiles[idx-1].vz);
+                dvzdz += (z == 0 ? mobiles[idx+N_MOBILES_Z-1].vz : mobiles[idx-1].vz);
                 dvzdz -= 2 * mobiles[idx].vz;
                 // Compute nextY
                 mobiles[idx].nextY = mobiles[idx].y + meanHeight * (dvxdx + dvzdz) * deltaT + (rand()%nMobiles==0?0.0005f*xWidth:0); // rand <=> wind
             }
         }
-    }
+    }*/
 
     // Update height and normals
     // --------------- NOTE: We might use qglviewer::Vec in the future  ----------
