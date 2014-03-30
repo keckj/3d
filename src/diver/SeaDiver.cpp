@@ -1,11 +1,23 @@
 #include "SeaDiver.h"
 
+#include "Pipe.h"
+
 #include "Arm.h"
 #include "Trunk.h"
 #include "Thigh.h"
 #include "Head.h"
 
 SeaDiver::SeaDiver() : Ragdoll() {
+    // TODO : put this in Dimensions
+    std::vector<Vec> tmp;
+    tmp.push_back(Vec(PIPE_FIXED_PART_X, PIPE_FIXED_PART_Y, PIPE_FIXED_PART_Z));
+    tmp.push_back(Vec(0, 2, 4));
+    tmp.push_back(Vec(0, 1, 1));
+    tmp.push_back(Vec(0, 0, 0));
+
+    pipe = new Pipe(tmp);
+    tmp.clear();
+
     trunk = new Trunk(WIDTH_TRUNK, HEIGHT_TRUNK, DEPTH_TRUNK);
     addPart("trunk", trunk);
 
@@ -25,9 +37,15 @@ SeaDiver::SeaDiver() : Ragdoll() {
     addPart("head", head);
 }
 
+void SeaDiver::init (Viewer &viewer) {
+    pipe->init(viewer);
+}
+
 void SeaDiver::draw () {
     // TODO : do better than that
     glPushMatrix();
+
+    pipe->draw();
 
     getPart("trunk")->draw();
 
@@ -61,7 +79,21 @@ void SeaDiver::draw () {
     glPopMatrix();
 }
 
+void SeaDiver::keyPressEvent(QKeyEvent* e, Viewer& viewer) {
+    pipe->keyPressEvent(e, viewer);
+}
+
+void SeaDiver::mouseMoveEvent(QMouseEvent* e, Viewer& viewer) {
+    pipe->mouseMoveEvent(e, viewer);
+}
+
+void SeaDiver::animate  () {
+    pipe->animate();
+}
+
 SeaDiver::~SeaDiver() {
+    delete pipe;
+
     delete head;
 
     delete leftForearm;
