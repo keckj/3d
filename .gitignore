@@ -1,8 +1,8 @@
 *.o
-
+textures/*.png
 *~
 .*.swp
-
+qglviewer.mk
 .DS_Store
 main
 .qglviewer.xml
