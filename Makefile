@@ -35,9 +35,9 @@ DISTRIB=$(filter-out Distributor ID:, $(shell lsb_release -i))
 
 #Ubuntu
 ifeq ($(DISTRIB), Ubuntu)
-VIEWER_LIBS+=lQGLViewer
+VIEWER_LIBS+=-lQGLViewer
 else #Centos
-VIEWER_LIBS+=lqglviewer
+VIEWER_LIBS+=-lqglviewer
 endif
 
 endif
