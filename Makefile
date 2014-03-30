@@ -5,7 +5,6 @@ ifndef L_QGLVIEWER
 L_QGLVIEWER=-lQGLViewer
 endif
 
-
 ####################
 ### LIB EXTERNES ###
 ####################
