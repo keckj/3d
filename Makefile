@@ -1,15 +1,22 @@
 
-OS=$(shell uname -s)
+include qglviewer.mk
+
+ifndef L_QGLVIEWER
+L_QGLVIEWER=-lQGLViewer
+endif
+
 
 ####################
 ### LIB EXTERNES ###
 ####################
 
+OS=$(shell uname -s)
+
 # Mac
 ifeq ($(OS), Darwin)
 VIEWER_LIBPATH = -F/usr/local/Cellar/qt/4.8.5/lib -L/usr/local/Cellar/qt/4.8.5/lib  -L/opt/X11/lib -L/usr/local/Cellar/qt/4.8.5/lib -F/usr/local/Cellar/qt/4.8.5/lib
 VIEWER_INCLUDEPATH       = -I/usr/local/Cellar/qt/4.8.5/mkspecs/macx-g++ -I. -I/usr/local/Cellar/qt/4.8.5/lib/QtCore.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtCore.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtGui.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtGui.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtOpenGL.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtOpenGL.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtXml.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtXml.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/include -I/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers -I/System/Library/Frameworks/AGL.framework/Headers -I. -F/usr/local/Cellar/qt/4.8.5/lib
-VIEWER_LIBS = -framework Glut -framework QGLViewer -framework OpenGL -framework AGL -framework QtXml -framework QtCore -framework QtOpenGL -framework QtGui 
+VIEWER_LIBS = -framework Glut -framework OpenGL -framework AGL -framework QtXml -framework QtCore -framework QtOpenGL -framework QtGui 
 VIEWER_DEFINES = -D_REENTRANT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 
 NARCH=30  #Archi cuda
@@ -32,12 +39,9 @@ CUDA_LIBPATH = -L/usr/local/cuda-5.5/lib64
 CUDA_LIBS = -lcuda -lcudart
 
 DISTRIB=$(filter-out Distributor ID:, $(shell lsb_release -i))
-
-#Ubuntu
+#Ubuntu 
 ifeq ($(DISTRIB), Ubuntu)
-VIEWER_LIBS+=-lQGLViewer
 else #Centos
-VIEWER_LIBS+=-lqglviewer
 endif
 
 endif
@@ -49,7 +53,7 @@ POULPY_LINK= -lGLEW -lopencv_core -lopencv_imgproc -lopencv_highgui
 #Compilateurs
 LINK= g++
 LINKFLAGS= -W -Wall -Wextra -pedantic -std=c++0x
-LDFLAGS= $(VIEWER_LIBS) $(POULPY_LINK) #(CUDA_LIBS)
+LDFLAGS= $(VIEWER_LIBS) $(L_QGLVIEWER) #$(POULPY_LINK) #(CUDA_LIBS)
 INCLUDE = -I$(SRCDIR) $(foreach dir, $(call subdirs, $(SRCDIR)), -I$(dir)) $(VIEWER_INCLUDEPATH) #$(CUDA_INCLUDEPATH)
 LIBS = $(VIEWER_LIBPATH) #$(CUDA_LIBPATH)
 DEFINES= $(VIEWER_DEFINES) $(OPT)
