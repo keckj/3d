@@ -12,6 +12,7 @@ VIEWER_INCLUDEPATH       = -I/usr/local/Cellar/qt/4.8.5/mkspecs/macx-g++ -I. -I/
 VIEWER_LIBS = -framework Glut -framework QGLViewer -framework OpenGL -framework AGL -framework QtXml -framework QtCore -framework QtOpenGL -framework QtGui 
 VIEWER_DEFINES = -D_REENTRANT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 
+NARCH=30  #Archi cuda
 CUDA_INCLUDEPATH =
 CUDA_LIBPATH =
 CUDA_LIBS = 
@@ -76,7 +77,7 @@ SUBDIRS =  $(filter-out $(EXCLUDED_SUBDIRS), $(call subdirs, $(SRCDIR)))
 SRC_EXTENSIONS = c C cc cpp s S asm cu
 WEXT = $(addprefix *., $(SRC_EXTENSIONS))
 
-MOCSRC = $(shell grep -rlw $(SRCDIR)/ -e 'Q_OBJECT' --include=*.hpp | xargs) #need QT preprocessor
+MOCSRC = $(shell grep -rlw $(SRCDIR)/ -e 'Q_OBJECT' --include=*.h | xargs) #need QT preprocessor
 MOCOUTPUT = $(addsuffix .moc, $(basename $(MOCSRC)))
 SRC = $(foreach DIR, $(SUBDIRS), $(foreach EXT, $(WEXT), $(wildcard $(DIR)/$(EXT))))
 OBJ = $(subst $(SRCDIR), $(OBJDIR), $(addsuffix .o, $(basename $(SRC))))

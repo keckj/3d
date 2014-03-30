@@ -38,7 +38,7 @@ void Viewer::init()
     toogleWireframe = false;  // filled faces
     toogleLight = true;       // light on
     toggleRecord = false;     // recording off
-    help();                   // display help
+    //help();                   // display help
 
     if (toogleLight == true)
         glEnable(GL_LIGHTING);
