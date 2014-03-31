@@ -28,9 +28,6 @@ void Viewer::addRenderable(Renderable *r)
 
 void Viewer::init()
 {
-    // glut initialisation (mandatory) 
-    int dum = 0;
-    glutInit(&dum, NULL);
 
     //=== VIEWING PARAMETERS
     restoreStateFromFile();   // Restore previous viewer state.

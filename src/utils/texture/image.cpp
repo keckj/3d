@@ -1,6 +1,6 @@
 
 
-#include "image.hpp"
+#include "image.h"
 
 #include <stdio.h>
 #include <cassert>

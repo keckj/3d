@@ -6,3 +6,8 @@
 .DS_Store
 main
 .qglviewer.xml
+textures/*.png
+tags
+types_c.taghl
+program.log
+qglviewer.mk

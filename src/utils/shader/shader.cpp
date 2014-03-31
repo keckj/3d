@@ -1,5 +1,5 @@
 
-#include "shader.hpp"
+#include "shader.h"
 
 #include <iostream>
 #include <sstream>
@@ -34,9 +34,9 @@ Shader::Shader(const char* location, GLenum shaderType) {
 	}
 	
 	// Create and compile shader
-	Shader::shaderType = shaderType;
+	this->shaderType = shaderType;
 	
-	Shader::shader = glCreateShader(shaderType);
+	this->shader = glCreateShader(shaderType);
 	
 	const string prog_string = shaderString.str();
 	const GLint prog_length = prog_string.length();
@@ -54,6 +54,7 @@ Shader::Shader(const char* location, GLenum shaderType) {
 	
 	glGetShaderInfoLog(shader, 1000, &length, buffer);
 	clog << "\n" << buffer;
+	
 
 	delete [] buffer;
 }

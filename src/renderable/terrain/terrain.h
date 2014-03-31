@@ -8,10 +8,10 @@ class Terrain : public Renderable {
 
 	public:
 		Terrain(unsigned char *heightmap, unsigned int width, unsigned int height, bool centered, 
-				unsigned int program);
+			unsigned int program, unsigned int modelMatrixLocation);
 		~Terrain();
 		
-		void draw() const;
+		void draw();
 		
 		const float *getRelativeModelMatrix() const;
 
@@ -19,7 +19,7 @@ class Terrain : public Renderable {
 	private:
 		unsigned int width, height;
 		bool centered;
-		unsigned int program;
+		unsigned int program, modelMatrixLocation;
 		unsigned int VAO, VBO;
 		
 		unsigned int nVertex;

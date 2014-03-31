@@ -1,22 +1,14 @@
 
-#include "terrain.hpp"
+#include "terrain.h"
 #include <cassert>
 #include <cstring>
 
-#ifndef __APPLE__
-#include <GL/glut.h>
-#else
-#include <GLUT/glut.h>
-#endif
-
-	//#include <GL/glew.h>
-
-
+#include <GL/glew.h>
 
 Terrain::Terrain(unsigned char *heightmap, unsigned int width, unsigned int height, bool centered, 
-			unsigned int program ) : 
+			unsigned int program, unsigned int modelMatrixLocation) : 
 	width(width), height(height), centered(centered), 
-	program(program), 
+	program(program), modelMatrixLocation(modelMatrixLocation),
 	VAO(0), VBO(0)
 {
 
@@ -32,10 +24,8 @@ Terrain::Terrain(unsigned char *heightmap, unsigned int width, unsigned int heig
 		for (unsigned int x = 0; x < width; x++) {
 			writeVec3f(vertex, idx, x,y,heightmap[y*width+x]);		
 			writeVec3f(vertex, idx, x, y-1,heightmap[(y-1)*width+x]);		
-
 			//writeColor(heightmap[y*width+x], coloridx, colors);
 			//writeColor(heightmap[(y-1)*width+x], coloridx, colors);
-
 			writeVec3f(colors, coloridx, alpha*x,alpha*y,0.0f);		
 			writeVec3f(colors, coloridx, alpha*x,alpha*(y-1),0.0f);		
 		}
@@ -91,7 +81,7 @@ void inline Terrain::sendToDevice() {
 Terrain::~Terrain() {
 }
 
-void Terrain::draw() const {
+void Terrain::draw() {
 	glUseProgram(program);
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_TRUE, getRelativeModelMatrix());
 	glBindVertexArray(VAO);
