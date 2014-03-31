@@ -1,8 +1,6 @@
 *.o
-
 *~
 .*.swp
-
 .DS_Store
 main
 .qglviewer.xml
