@@ -2,6 +2,7 @@
 #include "terrain.h"
 #include <cassert>
 #include <cstring>
+#include "log.h"
 
 #include <GL/glew.h>
 
@@ -82,12 +83,13 @@ Terrain::~Terrain() {
 }
 
 void Terrain::draw() {
-	glUseProgram(program);
+	log_console.infoStream() << "Draw ! " << program << " " << modelMatrixLocation ;
+	//glUseProgram(program);
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_TRUE, getRelativeModelMatrix());
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, nVertex);
 	glBindVertexArray(0);
-	glUseProgram(0);
+	//glUseProgram(0);
 }
 
 void Terrain::writeColor(int height, unsigned int &idx, float *color) {
@@ -105,14 +107,15 @@ void Terrain::writeVec3f(float *array, unsigned int &idx, float x, float y, floa
 }
 
 const float *Terrain::getRelativeModelMatrix() const {
-
+	
+	float a = 0.01f;
 	float alpha = 0.05f;
 	float beta = 0.05f;
 	float gamma = 0.03f;
 	const float scale[] = {
-		alpha, 0.0f, 0.0f, centered ? -alpha*width/2.0f : 0.0f,
-		0.0f, beta, 0.0f, centered ? -beta*height/2.0f : 0.0f,
-		0.0f, 0.0f, gamma, 0.0f,
+		a, 0.0f, 0.0f, centered ? -a*width/2.0f : 0.0f,
+		0.0f, a, 0.0f, centered ? -a*height/2.0f : 0.0f,
+		0.0f, 0.0f, a, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
 
