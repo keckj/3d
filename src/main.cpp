@@ -28,6 +28,7 @@ using namespace log4cpp;
 
 int main(int argc, char** argv) {
 
+	/*
     srand(time(NULL));
 	log4cpp::initLogs();
     
@@ -50,7 +51,7 @@ int main(int argc, char** argv) {
 	int defaultProgramm;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &defaultProgramm);
 	log_console.infoStream() << "Current programm is " << defaultProgramm;
-
+*/
 
 	
 	/*	
@@ -224,7 +225,28 @@ int main(int argc, char** argv) {
 
     // build your scene here
 	//viewer.addRenderable(new Terrain(reversedheightmap.data, reversedheightmap.cols,reversedheightmap.rows, true, shader_program, modelMatrixLocation));
-	viewer.addRenderable(new SeaDiver());	
+	//viewer.addRenderable(new SeaDiver());	
+    //viewer.show();
+
+	//Run main loop.
+    //return application.exec();
+    
+	srand(time(NULL));
+
+    // Read command lines arguments.
+    QApplication application(argc,argv);
+
+    // Instantiate the viewer.
+    Viewer viewer;
+
+    // build your scene here
+    //viewer.addRenderable(new ObjLoader("obj_files/cube.obj"));
+    /* viewer.addRenderable(new Waves(0.0f, 0.0f, 50.0f,50.0f,10.0f, &viewer)); */ 
+    /* viewer.addRenderable(new Fog(0.01f, 0.05f, 10.0f)); */ 
+    viewer.addRenderable(new SeaDiver());
+
+    viewer.setWindowTitle("Sea diver");
+    // Make the viewer window visible on screen.
     viewer.show();
 
     // Run main loop.
