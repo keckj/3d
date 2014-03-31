@@ -30,10 +30,7 @@ void Viewer::init()
 {
 
     //=== VIEWING PARAMETERS
-    restoreStateFromFile();   // Restore previous viewer state.
-
-	int dum = 0;
-	glutInit(&dum, NULL);
+    //restoreStateFromFile();   // Restore previous viewer state.
 
     toogleWireframe = false;  // filled faces
     toogleLight = true;       // light on

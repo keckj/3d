@@ -14,6 +14,7 @@
 #include "shader.h"
 #include "image.h"
 #include "SeaDiver.h"
+#include "Rectangle.h"
 
 #include <ostream>
 #include <opencv2/core/core.hpp>
@@ -28,33 +29,33 @@ using namespace log4cpp;
 
 int main(int argc, char** argv) {
 
-	/*
+	
     srand(time(NULL));
 	log4cpp::initLogs();
     
 
-    // Read command lines arguments.
+	// glut initialisation (mandatory) 
+	glutInit(&argc, argv);
+	log_console.infoStream() << "[Glut Init] ";
+    
+	// Read command lines arguments.
     QApplication application(argc,argv);
 	log_console.infoStream() << "[Qt Init] ";
     
 	// Instantiate the viewer.
     Viewer viewer;
     viewer.setWindowTitle("Sea diver");
+	viewer.show();
 	
-	// glut initialisation (mandatory) 
-	glutInit(&argc, argv);
-	log_console.infoStream() << "[Glut Init] ";
-	
-	// glew initialisation (mandatory)
-	//log_console.infoStream() << "[Glew Init] " << glewGetErrorString(glewInit());
+	//glew initialisation (mandatory)
+	log_console.infoStream() << "[Glew Init] " << glewGetErrorString(glewInit());
 
 	int defaultProgramm;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &defaultProgramm);
 	log_console.infoStream() << "Current programm is " << defaultProgramm;
-*/
+
 
 	
-	/*	
 	// -- shaders --
 	Shader *vs = new Shader("shaders/vertex_shader.glsl", GL_VERTEX_SHADER);
 	Shader *fs = new Shader("shaders/fragment_shader.glsl", GL_FRAGMENT_SHADER);
@@ -221,33 +222,14 @@ int main(int argc, char** argv) {
 	assert(heightmap.data);
 	cv::Mat reversedheightmap = heightmap.clone();
 	Image::reverseImage(heightmap, reversedheightmap);
-	*/
+	
 
     // build your scene here
-	//viewer.addRenderable(new Terrain(reversedheightmap.data, reversedheightmap.cols,reversedheightmap.rows, true, shader_program, modelMatrixLocation));
-	//viewer.addRenderable(new SeaDiver());	
-    //viewer.show();
+	viewer.addRenderable(new Terrain(reversedheightmap.data, reversedheightmap.cols,reversedheightmap.rows, true, shader_program, modelMatrixLocation, projectionMatrixLocation, viewMatrixLocation));
 
-	//Run main loop.
-    //return application.exec();
+	viewer.setSceneRadius(100.0f);
     
-	srand(time(NULL));
-
-    // Read command lines arguments.
-    QApplication application(argc,argv);
-
-    // Instantiate the viewer.
-    Viewer viewer;
-
-    // build your scene here
-    //viewer.addRenderable(new ObjLoader("obj_files/cube.obj"));
-    /* viewer.addRenderable(new Waves(0.0f, 0.0f, 50.0f,50.0f,10.0f, &viewer)); */ 
-    /* viewer.addRenderable(new Fog(0.01f, 0.05f, 10.0f)); */ 
-    viewer.addRenderable(new SeaDiver());
-
-    viewer.setWindowTitle("Sea diver");
-    // Make the viewer window visible on screen.
-    viewer.show();
+	viewer.addRenderable(new SeaDiver());
 
     // Run main loop.
     return application.exec();

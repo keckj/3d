@@ -7,11 +7,17 @@
 #include <GL/glew.h>
 
 Terrain::Terrain(unsigned char *heightmap, unsigned int width, unsigned int height, bool centered, 
-			unsigned int program, unsigned int modelMatrixLocation) : 
+			unsigned int program,
+			unsigned int modelMatrixLocation, unsigned int projectionMatrixLocation, unsigned int viewMatrixLocation) :
 	width(width), height(height), centered(centered), 
-	program(program), modelMatrixLocation(modelMatrixLocation),
+	program(program), 
+	modelMatrixLocation(modelMatrixLocation), projectionMatrixLocation(projectionMatrixLocation), viewMatrixLocation(viewMatrixLocation),
 	VAO(0), VBO(0)
 {
+
+	assert(glIsProgram(program));
+
+	log_console.infoStream() << "Generating a " << width << "x" << height << "terrain with program " << program << " !";
 
 	nVertex = 2*(height-1)*(width+1); 
 	vertex = new float[3*nVertex];
@@ -83,13 +89,20 @@ Terrain::~Terrain() {
 }
 
 void Terrain::draw() {
+	static float *proj = new float[16], *view = new float[16];
+
 	log_console.infoStream() << "Draw ! " << program << " " << modelMatrixLocation ;
-	//glUseProgram(program);
+	glUseProgram(program);
+	glGetFloatv(GL_MODELVIEW_MATRIX, view);
+	glGetFloatv(GL_PROJECTION_MATRIX, proj);
+	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, proj); //true
+	glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, view); //false
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_TRUE, getRelativeModelMatrix());
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, nVertex);
 	glBindVertexArray(0);
-	//glUseProgram(0);
+	glUseProgram(0);
+
 }
 
 void Terrain::writeColor(int height, unsigned int &idx, float *color) {
@@ -108,14 +121,13 @@ void Terrain::writeVec3f(float *array, unsigned int &idx, float x, float y, floa
 
 const float *Terrain::getRelativeModelMatrix() const {
 	
-	float a = 0.01f;
 	float alpha = 0.05f;
 	float beta = 0.05f;
 	float gamma = 0.03f;
 	const float scale[] = {
-		a, 0.0f, 0.0f, centered ? -a*width/2.0f : 0.0f,
-		0.0f, a, 0.0f, centered ? -a*height/2.0f : 0.0f,
-		0.0f, 0.0f, a, 0.0f,
+		alpha, 0.0f, 0.0f, centered ? -alpha*width/2.0f : 0.0f,
+		0.0f, beta, 0.0f, centered ? -beta*height/2.0f : 0.0f,
+		0.0f, 0.0f, gamma, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
 
