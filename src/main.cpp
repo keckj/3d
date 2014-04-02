@@ -12,13 +12,11 @@
 
 #include "terrain.h"
 #include "shader.h"
-#include "image.h"
 #include "SeaDiver.h"
 #include "Rectangle.h"
 #include <QWidget>
 
 #include <ostream>
-#include <opencv2/core/core.hpp>
 #include <cassert>
 
 #include "log.h"
@@ -49,6 +47,11 @@ int main(int argc, char** argv) {
 	
 	//glew initialisation (mandatory)
 	log_console.infoStream() << "[Glew Init] " << glewGetErrorString(glewInit());
+
+        //query GL driver
+        const unsigned char *version = glGetString(GL_VERSION);
+        const unsigned char *glls_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
+	log_console.infoStream() << "Running with OpenGL " << version << " and glsl version " << glls_version << " !";
 
 	int defaultProgramm;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &defaultProgramm);
@@ -87,10 +90,10 @@ int main(int argc, char** argv) {
 	<< glGetAttribLocation(shader_program, "vertex_normal") << "\t"
 	<< glGetFragDataLocation(shader_program, "out_colour");
 	
-	assert(glGetAttribLocation(shader_program, "vertex_position")==0);
-	assert(glGetAttribLocation(shader_program, "vertex_colour")!=-1);
-	assert(glGetAttribLocation(shader_program, "vertex_normal")==-1);
-	assert(glGetFragDataLocation(shader_program, "out_colour")==0);
+	//assert(glGetAttribLocation(shader_program, "vertex_position")==0);
+	//assert(glGetAttribLocation(shader_program, "vertex_colour")!=-1);
+	//assert(glGetAttribLocation(shader_program, "vertex_normal")==-1);
+	//assert(glGetFragDataLocation(shader_program, "out_colour")==0);
 	
 	// -- variables uniformes --
 	int modelMatrixLocation = glGetUniformLocation(shader_program, "modelMatrix");
@@ -105,11 +108,11 @@ int main(int argc, char** argv) {
 	assert(modelMatrixLocation != -1);
 	assert(viewMatrixLocation != -1);
 	assert(projectionMatrixLocation != -1);
-	assert(texture1Location != -1);
-	assert(texture2Location != -1);
-	assert(texture3Location != -1);
-	assert(texture4Location != -1);
-	assert(texture5Location != -1);
+	//assert(texture1Location != -1);
+	//assert(texture2Location != -1);
+	//assert(texture3Location != -1);
+	//assert(texture4Location != -1);
+	//assert(texture5Location != -1);
 
 	log_console.infoStream() << "Uniform locations \t"
 	<< modelMatrixLocation << "\t"
@@ -124,30 +127,20 @@ int main(int argc, char** argv) {
 	// -- textures --
 	//glEnable(GL_TEXTURE_2D);
 
-        QImage text1 = QGLWidget::convertToGLFormat(QImage("textures/forest 13.png"));
-        QImage text2 = QGLWidget::convertToGLFormat(QImage("textures/grass 9.png"));
-        QImage text3 = QGLWidget::convertToGLFormat(QImage("textures/grass 7.png"));
-        QImage text4 = QGLWidget::convertToGLFormat(QImage("textures/dirt 4.png"));
-        QImage text5 = QGLWidget::convertToGLFormat(QImage("textures/snow 1.png"));
+        QImage text1 = QGLWidget::convertToGLFormat(QImage("textures/forest 13.png","png"));
+        QImage text2 = QGLWidget::convertToGLFormat(QImage("textures/grass 9.png","png"));
+        QImage text3 = QGLWidget::convertToGLFormat(QImage("textures/grass 7.png","png"));
+        QImage text4 = QGLWidget::convertToGLFormat(QImage("textures/dirt 4.png","png"));
+        QImage text5 = QGLWidget::convertToGLFormat(QImage("textures/snow 1.png","png"));
 
-	assert(text1.data);
-	assert(text2.data);
-	assert(text3.data);
-	assert(text4.data);
-	assert(text5.data);
-	cv::Mat reversedText1 = text1.clone();
-	cv::Mat reversedText2 = text2.clone();
-	cv::Mat reversedText3 = text3.clone();
-	cv::Mat reversedText4 = text4.clone();
-	cv::Mat reversedText5 = text5.clone();
-	Image::reverseImage(text1, reversedText1);
-	Image::reverseImage(text2, reversedText2);
-	Image::reverseImage(text3, reversedText3);
-	Image::reverseImage(text4, reversedText4);
-	Image::reverseImage(text5, reversedText5);
+	assert(text1.bits());
+	assert(text2.bits());
+	assert(text3.bits());
+	assert(text4.bits());
+	assert(text5.bits());
 
 	unsigned int *textures = new unsigned int[5];
-	glGenTextures(3, textures);
+	glGenTextures(5, textures);
 	
 	// assign texture units
 	glUseProgram(shader_program);
@@ -161,8 +154,8 @@ int main(int argc, char** argv) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 
-			reversedText1.cols, reversedText1.rows, 0,
-			GL_BGR, GL_UNSIGNED_BYTE, reversedText1.data);
+			text1.width(), text1.height(), 0,
+			GL_BGR, GL_UNSIGNED_BYTE, text1.bits());
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -173,8 +166,8 @@ int main(int argc, char** argv) {
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, textures[1]);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 
-			reversedText2.cols, reversedText2.rows, 0,
-			GL_BGR, GL_UNSIGNED_BYTE, reversedText2.data);
+			text2.width(), text2.height(), 0,
+			GL_BGR, GL_UNSIGNED_BYTE, text2.bits());
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -185,8 +178,8 @@ int main(int argc, char** argv) {
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, textures[2]);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 
-			reversedText3.cols, reversedText3.rows, 0,
-			GL_BGR, GL_UNSIGNED_BYTE, reversedText3.data);
+			text3.width(), text3.height(), 0,
+			GL_BGR, GL_UNSIGNED_BYTE, text3.bits());
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -197,8 +190,8 @@ int main(int argc, char** argv) {
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, textures[3]);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 
-			reversedText4.cols, reversedText4.rows, 0,
-			GL_BGR, GL_UNSIGNED_BYTE, reversedText4.data);
+			text4.width(), text4.height(), 0,
+			GL_BGR, GL_UNSIGNED_BYTE, text4.bits());
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -209,8 +202,8 @@ int main(int argc, char** argv) {
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, textures[4]);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 
-			reversedText5.cols, reversedText5.rows, 0,
-			GL_BGR, GL_UNSIGNED_BYTE, reversedText5.data);
+			text5.width(), text5.height(), 0,
+			GL_BGR, GL_UNSIGNED_BYTE, text5.bits());
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -218,18 +211,28 @@ int main(int argc, char** argv) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	
-	cv::Mat heightmap = imread("img/tamriel3.jpg", CV_LOAD_IMAGE_GRAYSCALE);
-	assert(heightmap.data);
-	cv::Mat reversedheightmap = heightmap.clone();
-	Image::reverseImage(heightmap, reversedheightmap);
-	
+        QImage rgb_heightmap = QGLWidget::convertToGLFormat(QImage("img/tamriel3.jpg","jpg"));
+	assert(rgb_heightmap.bits());
+        unsigned char *black_img = new unsigned char[rgb_heightmap.height()*rgb_heightmap.width()];
+
+        for (int i = 0; i < rgb_heightmap.width(); i++) {
+                for (int j = 0; j < rgb_heightmap.height(); j++) {
+                        QRgb color = rgb_heightmap.pixel(i,j);
+                        black_img[j*rgb_heightmap.width() + i] = (unsigned char) ((qRed(color) + qGreen(color) + qBlue(color))/3);
+                }
+        }
 
     // build your scene here
-	viewer.addRenderable(new Terrain(reversedheightmap.data, reversedheightmap.cols,reversedheightmap.rows, true, shader_program, modelMatrixLocation, projectionMatrixLocation, viewMatrixLocation));
+    //
+    //
+        glDisable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_2D);
+
+	viewer.addRenderable(new Terrain(black_img, rgb_heightmap.width(),rgb_heightmap.height(), true, shader_program, modelMatrixLocation, projectionMatrixLocation, viewMatrixLocation));
 
 	viewer.setSceneRadius(100.0f);
     
-	viewer.addRenderable(new SeaDiver());
+        viewer.addRenderable(new SeaDiver());
 
     // Run main loop.
     return application.exec();

@@ -11,20 +11,20 @@ vec4 interp(float thres1, float thres2, sampler2D text1, sampler2D text2);
 
 void main (void)
 {	
-	if (height == 0)
-		out_colour = vec4(0.0f,0.0f,0.0f,1.0f);
-	else if (height < 0.1)
-		out_colour = texture2D(texture_1, text2D);
-	else if(height < 0.3)
-		out_colour = interp(0.1, 0.3, texture_1, texture_2);
-	else if(height < 0.4)
-		out_colour = interp(0.3, 0.4, texture_2, texture_3);
-	else if(height < 0.6)
-		out_colour = interp(0.4, 0.6, texture_3, texture_4);
-	else if(height < 0.75)
-		out_colour = texture2D(texture_4, text2D);
-	else
-		out_colour = interp(0.75, 1.0, texture_4, texture_5);
+        if (height == 0)
+                out_colour = vec4(0.0f,0.0f,0.0f,1.0f);
+        else if (height < 0.1)
+                out_colour = texture2D(texture_1, text2D);
+        else if(height < 0.3)
+                out_colour = interp(0.1, 0.3, texture_1, texture_2);
+        else if(height < 0.4)
+                out_colour = interp(0.3, 0.4, texture_2, texture_3);
+        else if(height < 0.6)
+                out_colour = interp(0.4, 0.6, texture_3, texture_4);
+        else if(height < 0.75)
+                out_colour = texture2D(texture_4, text2D);
+        else
+                out_colour = interp(0.75, 1.0, texture_4, texture_5);
 }
 
 vec4 interp(float thres1, float thres2, sampler2D text1, sampler2D text2) {
