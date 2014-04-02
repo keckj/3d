@@ -57,6 +57,7 @@ int main(int argc, char** argv) {
 	glGetIntegerv(GL_CURRENT_PROGRAM, &defaultProgramm);
 	log_console.infoStream() << "Current programm is " << defaultProgramm;
 
+    glEnable(GL_TEXTURE_2D);
 
 	
 	// -- shaders --
@@ -153,9 +154,9 @@ int main(int argc, char** argv) {
 	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
 			text1.width(), text1.height(), 0,
-			GL_BGR, GL_UNSIGNED_BYTE, text1.bits());
+			GL_RGBA, GL_UNSIGNED_BYTE, text1.bits());
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -165,9 +166,9 @@ int main(int argc, char** argv) {
 	
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, textures[1]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
 			text2.width(), text2.height(), 0,
-			GL_BGR, GL_UNSIGNED_BYTE, text2.bits());
+			GL_RGBA, GL_UNSIGNED_BYTE, text2.bits());
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -177,9 +178,9 @@ int main(int argc, char** argv) {
 
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, textures[2]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
 			text3.width(), text3.height(), 0,
-			GL_BGR, GL_UNSIGNED_BYTE, text3.bits());
+			GL_RGBA, GL_UNSIGNED_BYTE, text3.bits());
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -189,9 +190,9 @@ int main(int argc, char** argv) {
 	
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, textures[3]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
 			text4.width(), text4.height(), 0,
-			GL_BGR, GL_UNSIGNED_BYTE, text4.bits());
+			GL_RGBA, GL_UNSIGNED_BYTE, text4.bits());
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -201,9 +202,9 @@ int main(int argc, char** argv) {
 
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, textures[4]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
 			text5.width(), text5.height(), 0,
-			GL_BGR, GL_UNSIGNED_BYTE, text5.bits());
+			GL_RGBA, GL_UNSIGNED_BYTE, text5.bits());
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -225,8 +226,8 @@ int main(int argc, char** argv) {
     // build your scene here
     //
     //
-        glDisable(GL_LIGHTING);
-        glDisable(GL_TEXTURE_2D);
+        //glDisable(GL_LIGHTING);
+        //glDisable(GL_TEXTURE_2D);
 
 	viewer.addRenderable(new Terrain(black_img, rgb_heightmap.width(),rgb_heightmap.height(), true, shader_program, modelMatrixLocation, projectionMatrixLocation, viewMatrixLocation));
 
