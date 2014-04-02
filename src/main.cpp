@@ -15,6 +15,7 @@
 #include "image.h"
 #include "SeaDiver.h"
 #include "Rectangle.h"
+#include <QWidget>
 
 #include <ostream>
 #include <opencv2/core/core.hpp>
@@ -24,7 +25,6 @@
 
 
 using namespace std;
-using namespace cv;
 using namespace log4cpp;
 
 int main(int argc, char** argv) {
@@ -124,11 +124,11 @@ int main(int argc, char** argv) {
 	// -- textures --
 	//glEnable(GL_TEXTURE_2D);
 
-	cv::Mat text1 = imread("textures/forest 13.png", CV_LOAD_IMAGE_COLOR);
-	cv::Mat text2 = imread("textures/grass 9.png", CV_LOAD_IMAGE_COLOR);
-	cv::Mat text3 = imread("textures/grass 7.png", CV_LOAD_IMAGE_COLOR);
-	cv::Mat text4 = imread("textures/dirt 4.png", CV_LOAD_IMAGE_COLOR);
-	cv::Mat text5 = imread("textures/snow 1.png", CV_LOAD_IMAGE_COLOR);
+        QImage text1 = QGLWidget::convertToGLFormat(QImage("textures/forest 13.png"));
+        QImage text2 = QGLWidget::convertToGLFormat(QImage("textures/grass 9.png"));
+        QImage text3 = QGLWidget::convertToGLFormat(QImage("textures/grass 7.png"));
+        QImage text4 = QGLWidget::convertToGLFormat(QImage("textures/dirt 4.png"));
+        QImage text5 = QGLWidget::convertToGLFormat(QImage("textures/snow 1.png"));
 
 	assert(text1.data);
 	assert(text2.data);
