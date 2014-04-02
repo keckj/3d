@@ -103,9 +103,9 @@ void Terrain::draw() {
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (char*)NULL + 3*nVertex*sizeof(float));
 	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, nVertex);
 	//glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glUseProgram(0);
 
 }
