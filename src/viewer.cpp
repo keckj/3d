@@ -33,12 +33,12 @@ void Viewer::init()
 	glutInit(&dum, NULL);
 
     //=== VIEWING PARAMETERS
-    restoreStateFromFile();   // Restore previous viewer state.
+    //restoreStateFromFile();   // Restore previous viewer state.
 
     toogleWireframe = false;  // filled faces
     toogleLight = true;       // light on
     toggleRecord = false;     // recording off
-    help();                   // display help
+    //help();                   // display help
 
     if (toogleLight == true)
         glEnable(GL_LIGHTING);

@@ -53,9 +53,9 @@ POULPY_LINK= -lGLEW -lopencv_core -lopencv_imgproc -lopencv_highgui
 #Compilateurs
 LINK= g++
 LINKFLAGS= -W -Wall -Wextra -pedantic -std=c++0x
-LDFLAGS= $(VIEWER_LIBS) $(L_QGLVIEWER) $(POULPY_LINK) -llog4cpp #(CUDA_LIBS)
-INCLUDE = -I../local/include/ -I$(SRCDIR) $(foreach dir, $(call subdirs, $(SRCDIR)), -I$(dir)) $(VIEWER_INCLUDEPATH) #$(CUDA_INCLUDEPATH)
-LIBS = -L~../local/lib/ $(VIEWER_LIBPATH) #$(CUDA_LIBPATH)
+LDFLAGS= $(VIEWER_LIBS) $(L_QGLVIEWER) -llog4cpp #(CUDA_LIBS)
+INCLUDE = -Ilocal/include/ -I$(SRCDIR) $(foreach dir, $(call subdirs, $(SRCDIR)), -I$(dir)) $(VIEWER_INCLUDEPATH) #$(CUDA_INCLUDEPATH)
+LIBS = -Llocal/lib/ $(VIEWER_LIBPATH) #$(CUDA_LIBPATH)
 DEFINES= $(VIEWER_DEFINES) $(OPT)
 
 
@@ -87,7 +87,7 @@ TARGET = main
 
 SRCDIR = $(realpath .)/src
 OBJDIR = $(realpath .)/obj
-EXCL=poulpy #excluded dirs in src
+EXCL= #excluded dirs in src
 EXCLUDED_SUBDIRS = $(foreach DIR, $(EXCL), $(call subdirs, $(SRCDIR)/$(DIR)))
 SUBDIRS =  $(filter-out $(EXCLUDED_SUBDIRS), $(call subdirs, $(SRCDIR)))
 
