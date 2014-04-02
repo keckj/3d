@@ -70,18 +70,18 @@ void inline Terrain::sendToDevice() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
-	if (glIsVertexArray(VAO))
-		glDeleteVertexArrays(1, &VAO);	
+	//if (glIsVertexArray(VAO))
+		//glDeleteVertexArrays(1, &VAO);	
 
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (char*)NULL + size/2);
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	//glGenVertexArrays(1, &VAO);
+	//glBindVertexArray(VAO);
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	//glEnableVertexAttribArray(0);
+	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (char*)NULL + size/2);
+	//glEnableVertexAttribArray(1);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glBindVertexArray(0);
 }
 
 
@@ -97,9 +97,15 @@ void Terrain::draw() {
 	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, proj);
 	glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, view);
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_TRUE, getRelativeModelMatrix());
-	glBindVertexArray(VAO);
+	//glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (char*)NULL + 3*nVertex*sizeof(float));
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, nVertex);
-	glBindVertexArray(0);
+	//glBindVertexArray(0);
 	glUseProgram(0);
 
 }
