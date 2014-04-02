@@ -91,12 +91,11 @@ Terrain::~Terrain() {
 void Terrain::draw() {
 	static float *proj = new float[16], *view = new float[16];
 
-	log_console.infoStream() << "Draw ! " << program << " " << modelMatrixLocation ;
 	glUseProgram(program);
 	glGetFloatv(GL_MODELVIEW_MATRIX, view);
 	glGetFloatv(GL_PROJECTION_MATRIX, proj);
-	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, proj); //true
-	glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, view); //false
+	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, proj);
+	glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, view);
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_TRUE, getRelativeModelMatrix());
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, nVertex);

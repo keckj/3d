@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 	glBindAttribLocation(shader_program, 0, "vertex_position");
 	glBindAttribLocation(shader_program, 1, "vertex_colour");
 	glBindAttribLocation(shader_program, 2, "vertex_normal");
-	glBindFragDataLocation(shader_program, 0, "out_colour");
+	//glBindFragDataLocation(shader_program, 0, "out_colour");
 
 	// -- link du programme
 	glLinkProgram(shader_program);
@@ -88,12 +88,12 @@ int main(int argc, char** argv) {
 	log_console.infoStream() << "Updated locations \t"
 	<< glGetAttribLocation(shader_program, "vertex_position") << "\t"
 	<< glGetAttribLocation(shader_program, "vertex_colour") << "\t"
-	<< glGetAttribLocation(shader_program, "vertex_normal") << "\t"
-	<< glGetFragDataLocation(shader_program, "out_colour");
+	<< glGetAttribLocation(shader_program, "vertex_normal") << "\t";
+	//<< glGetFragDataLocation(shader_program, "out_colour");
 	
-	//assert(glGetAttribLocation(shader_program, "vertex_position")==0);
-	//assert(glGetAttribLocation(shader_program, "vertex_colour")!=-1);
-	//assert(glGetAttribLocation(shader_program, "vertex_normal")==-1);
+	assert(glGetAttribLocation(shader_program, "vertex_position")==0);
+	assert(glGetAttribLocation(shader_program, "vertex_colour")!=-1);
+	assert(glGetAttribLocation(shader_program, "vertex_normal")==-1);
 	//assert(glGetFragDataLocation(shader_program, "out_colour")==0);
 	
 	// -- variables uniformes --
@@ -109,11 +109,11 @@ int main(int argc, char** argv) {
 	assert(modelMatrixLocation != -1);
 	assert(viewMatrixLocation != -1);
 	assert(projectionMatrixLocation != -1);
-	//assert(texture1Location != -1);
-	//assert(texture2Location != -1);
-	//assert(texture3Location != -1);
-	//assert(texture4Location != -1);
-	//assert(texture5Location != -1);
+	assert(texture1Location != -1);
+	assert(texture2Location != -1);
+	assert(texture3Location != -1);
+	assert(texture4Location != -1);
+	assert(texture5Location != -1);
 
 	log_console.infoStream() << "Uniform locations \t"
 	<< modelMatrixLocation << "\t"
