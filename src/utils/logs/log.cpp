@@ -25,7 +25,7 @@ namespace log4cpp {
 
 		log4cpp::Appender *appender_console = new log4cpp::OstreamAppender("console", &std::cout);
 		appender_console->setLayout(new log4cpp::BasicLayout());
-		appender_console->setThreshold(Priority::DEBUG);
+		appender_console->setThreshold(Priority::INFO);
 		log_console.addAppender(appender_console);
 
 		log4cpp::Appender *appender_file = new log4cpp::FileAppender("default", "program.log");

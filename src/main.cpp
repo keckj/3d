@@ -20,6 +20,8 @@
 #include <cassert>
 
 #include "log.h"
+#include "program.h"
+#include "globals.h"
 
 
 using namespace std;
@@ -30,8 +32,7 @@ int main(int argc, char** argv) {
 	
     srand(time(NULL));
 	log4cpp::initLogs();
-    
-
+   
 	// glut initialisation (mandatory) 
 	glutInit(&argc, argv);
 	log_console.infoStream() << "[Glut Init] ";
@@ -48,21 +49,39 @@ int main(int argc, char** argv) {
 	//glew initialisation (mandatory)
 	log_console.infoStream() << "[Glew Init] " << glewGetErrorString(glewInit());
 
-        //query GL driver
-        const unsigned char *version = glGetString(GL_VERSION);
-        const unsigned char *glls_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
-	log_console.infoStream() << "Running with OpenGL " << version << " and glsl version " << glls_version << " !";
+	Globals::init();
+	Globals::print(std::cout);
+	Globals::check();
 
-	int defaultProgramm;
-	glGetIntegerv(GL_CURRENT_PROGRAM, &defaultProgramm);
-	log_console.infoStream() << "Current programm is " << defaultProgramm;
-
-    glEnable(GL_TEXTURE_2D);
+	log_console.infoStream() << "Running with OpenGL " << Globals::glVersion << " and glsl version " << Globals::glShadingLanguageVersion << " !";
 
 	
+	 // SIMPLE EXAMPLE FOR NOOBS //
+	Program program("_SwagDePoulpe_");
+
+	program.bindAttribLocation(0, "vertex_position");
+	program.bindAttribLocations("1 10", "vertex_position vertex_colour");
+	program.bindFragDataLocation(0, "out_colour");
+	
+	program.attachShader(Shader("shaders/vertex_shader.glsl", GL_VERTEX_SHADER));
+	program.attachShader(Shader("shaders/fragment_shader.glsl", GL_FRAGMENT_SHADER));
+
+	program.link();
+
+	const std::vector<int> uniforms_vec = program.getUniformLocations("modelMatrix projectionMatrix viewMatrix");
+	const std::map<std::string,int> uniforms_map = program.getUniformLocationsMap("modelMatrix poulpy");
+	//std::vector<int> uniforms_vec = program.getUniformLocationsAndAssert("modelMatrix projectionMatrix viewMatrix");
+	//std::map<std::string,int> uniforms_map = program.getUniformLocationsMapAndAssert("modelMatrix projectionMatrix viewMatrix");
+
+	program.use();
+	///////////////////////////////////////////////
+
+
+
+
 	// -- shaders --
-	Shader *vs = new Shader("shaders/vertex_shader.glsl", GL_VERTEX_SHADER);
-	Shader *fs = new Shader("shaders/fragment_shader.glsl", GL_FRAGMENT_SHADER);
+	Shader *fs = new Shader("shaders/vertex_shader.glsl", GL_VERTEX_SHADER);
+	Shader *vs = new Shader("shaders/fragment_shader.glsl", GL_FRAGMENT_SHADER);
 	
 	// -- programme --
 	unsigned int shader_program = glCreateProgram ();

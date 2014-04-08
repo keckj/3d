@@ -1,5 +1,6 @@
 
 #include "shader.h"
+#include "log.h"
 
 #include <iostream>
 #include <sstream>
@@ -8,7 +9,9 @@
 
 using namespace std;
 
-Shader::Shader(const char* location, GLenum shaderType) {
+Shader::Shader(const char* location, GLenum shaderType) :
+location(location)
+{
 
 	// Load shader file
 	stringstream shaderString;
@@ -25,17 +28,17 @@ Shader::Shader(const char* location, GLenum shaderType) {
 
 		shaderFile.close();
 
-		clog << "\nLoading shader from file " << location;
-		clog << "\n-- SHADER -- \n" << shaderString.str() << "\n-- END --";
+		log_console.debugStream() << "Loading shader from file " << location;
+		log_console.debugStream() << "\n-- SHADER -- \n" << shaderString.str() << "\n-- END --";
 	}
 
 	else {
-		clog << "\nUnable to load shader from file " << location; 
+		log_console.errorStream() << "\nUnable to load shader from file " << location; 
+		exit(1);
 	}
 	
 	// Create and compile shader
 	this->shaderType = shaderType;
-	
 	this->shader = glCreateShader(shaderType);
 	
 	const string prog_string = shaderString.str();
@@ -46,23 +49,43 @@ Shader::Shader(const char* location, GLenum shaderType) {
 	glCompileShader(shader);
 
 	if (GL_COMPILE_STATUS == GL_FALSE) {
-		clog << "\nCompilation failed !";
-	}
-	
-	char* buffer = new char[1000];
-	int length;
-	
-	glGetShaderInfoLog(shader, 1000, &length, buffer);
-	clog << "\n" << buffer;
-	
+		log_console.errorStream() << "\nCompilation failed !";
 
-	delete [] buffer;
+		char* buffer = new char[1000];
+		int length;
+
+		glGetShaderInfoLog(shader, 1000, &length, buffer);
+		log_console.errorStream() << "\n" << buffer;
+
+		delete [] buffer;
+	}
 }
 
-unsigned int Shader::getShader() {
+unsigned int Shader::getShader() const {
 	return shader;
 }
 
-GLenum Shader::getShaderType() {
+GLenum Shader::getShaderType() const {
 	return shaderType;	
+}
+
+const std::string Shader::toStringShaderType() const {
+	switch(shaderType) {
+		case GL_VERTEX_SHADER:
+			return "VERTEX_SHADER";
+		case GL_TESS_CONTROL_SHADER:
+			return "TESSELATION_CONTROL_SHADER";
+		case GL_TESS_EVALUATION_SHADER:
+			return "TESSELATION_EVALUATION_SHADER";
+		case GL_GEOMETRY_SHADER:
+			return "GEOMETRY_SHADER";
+		case GL_FRAGMENT_SHADER:
+			return "FRAGMENT_SHADER";
+		default:
+			return "UNKNOWN_SHADER_TYPE";
+	}
+}
+
+const std::string Shader::getLocation() const {
+	return location;
 }
