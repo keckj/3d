@@ -1,5 +1,5 @@
 
-#include "cudaUtils.hpp"
+#include "cudaUtils.h"
 
 void CudaUtils::printCudaDevices(std::ostream &outputStream) {
 

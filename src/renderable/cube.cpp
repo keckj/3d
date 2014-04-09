@@ -6,7 +6,7 @@
 #include "consts.h"
 #include "shader.h"
 #include "kernel.h"
-#include "cudaUtils.hpp"
+#include "cudaUtils.h"
 
 using namespace std;
 

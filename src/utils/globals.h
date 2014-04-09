@@ -17,6 +17,7 @@ class Globals {
 			
 		static int glMaxVertexAttribs;
 		static int glMaxDrawBuffers;
+		static int glMaxCombinedTextureImageUnits;
 };
 	
 #endif /* end of include guard: GLOBALS_H */

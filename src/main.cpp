@@ -22,7 +22,8 @@
 #include "program.h"
 #include "globals.h"
 #include "cube.h"
-#include "cudaUtils.hpp"
+#include "cudaUtils.h"
+#include "texture.h"
 
 
 using namespace std;
@@ -60,6 +61,8 @@ int main(int argc, char** argv) {
         Globals::init();
         Globals::print(std::cout);
         Globals::check();
+		
+		Texture::init();
 
         log_console.infoStream() << "Running with OpenGL " << Globals::glVersion << " and glsl version " << Globals::glShadingLanguageVersion << " !";
 
@@ -83,6 +86,22 @@ int main(int argc, char** argv) {
 
         //program.use();
         ///////////////////////////////////////////////
+
+		
+		Texture texture("textures/dirt 1.png","png",GL_TEXTURE_2D);
+		texture.addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_REPEAT));
+		texture.addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_REPEAT));
+		texture.addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+		texture.generateMipMap();
+		texture.bindAndApplyParameters(0);
+
+		Texture texture2("textures/dirt 3.png", "png", GL_TEXTURE_2D);
+		texture2.addParameters(texture.getParameters());
+		texture2.addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+		texture2.bindAndApplyParameters(1);
+
+		std::vector<unsigned int> id = Texture::requestTextures(100);
+
 
         /*
 
@@ -184,7 +203,7 @@ int main(int argc, char** argv) {
                         text1.width(), text1.height(), 0,
                         GL_RGBA, GL_UNSIGNED_BYTE, text1.bits());
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
