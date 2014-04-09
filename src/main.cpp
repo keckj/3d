@@ -6,7 +6,6 @@
 
 #include "objLoader/ObjLoader.h"
 
-#include <ctime>
 #include "waves.h"
 #include "fog.h"
 
@@ -248,7 +247,7 @@ int main(int argc, char** argv) {
         //glDisable(GL_LIGHTING);
         //glDisable(GL_TEXTURE_2D);
 
-	viewer.addRenderable(new Terrain(black_img, rgb_heightmap.width(),rgb_heightmap.height(), true, shader_program, modelMatrixLocation, projectionMatrixLocation, viewMatrixLocation));
+	/* viewer.addRenderable(new Terrain(black_img, rgb_heightmap.width(),rgb_heightmap.height(), true, shader_program, modelMatrixLocation, projectionMatrixLocation, viewMatrixLocation)); */
 
 	viewer.setSceneRadius(100.0f);
     

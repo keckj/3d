@@ -24,6 +24,7 @@ Viewer::~Viewer()
 void Viewer::addRenderable(Renderable *r)
 {
     renderableList.push_back(r);
+    r->init(*this);
 }
 
 void Viewer::init()
