@@ -7,8 +7,7 @@ using namespace std;
 #include "viewer.h"
 #include "dynamicSystem.h"
 
-DynamicSystem::DynamicSystem()
-    :
+DynamicSystem::DynamicSystem() :
         defaultGravity(0.0, 0.0, -10.0),
         defaultMediumViscosity(1.0),
         dt(0.1),
@@ -27,6 +26,12 @@ DynamicSystem::~DynamicSystem()
 
 void DynamicSystem::clear()
 {
+    vector<Particle *>::iterator itF;
+    for (itF = fixed.begin(); itF != fixed.end(); ++itF) {
+        delete(*itF);
+    }
+    fixed.clear();
+
     vector<Particle *>::iterator itP;
     for (itP = particles.begin(); itP != particles.end(); ++itP) {
         delete(*itP);
@@ -100,35 +105,8 @@ void DynamicSystem::init(Viewer &viewer)
     viewer.setManipulatedFrame(new qglviewer::ManipulatedFrame());
     viewer.manipulatedFrame()->setPosition(getFixedParticlePosition());
 
-    viewer.setSceneRadius(10.0f);
+    viewer.setSceneRadius(100.0f);
 }
-
-
-void DynamicSystem::createSystemScene()
-{
-    Vec initPos = Vec(0.0, 0.0, 2.0);
-
-    // add fixed particles
-    Particle *begin = new Particle(initPos, Vec(), 0.0, particleRadius, Vec(0.0, 1.0, 0.0));
-    fixed.push_back(begin);
-
-    // .. then create a chain of particles
-    Vec pos = initPos;
-    Particle *cour, *prev = begin;
-    for (int i = 0; i < numberParticles; i++) {
-        cour = new Particle(pos, Vec(), particleMass, particleRadius);
-        particles.push_back(cour);
-        pos += Vec(0.0, distanceBetweenParticles, 0.0);
-        springs.push_back(new Spring(cour, prev, springStiffness, springInitLength, springDamping));
-        prev = cour;
-    }
-
-    // close the chain
-    Particle *end = new Particle(pos, Vec(), 0.0, particleRadius, Vec(0.0, 1.0, 0.0));
-    fixed.push_back(end);
-    springs.push_back(new Spring(cour, end, springStiffness, springInitLength, springDamping));
-}
-
 
 void DynamicSystem::draw()
 {
@@ -153,7 +131,7 @@ void DynamicSystem::draw()
         (*itS)->draw();
     }
 
-    // Ground :
+    // Ground
     glColor3f(0.0, 0.0, 1.0);
     glBegin(GL_QUADS);
     glVertex3f(-10.0f, -10.0f, 0.0f);
@@ -161,6 +139,8 @@ void DynamicSystem::draw()
     glVertex3f( 10.0f, 10.0f,  0.0f);
     glVertex3f( 10.0f, -10.0f, 0.0f);
     glEnd();
+
+    glColor3f(1.0, 1.0, 1.0);
 }
 
 
