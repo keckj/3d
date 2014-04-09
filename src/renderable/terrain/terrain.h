@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "consts.hpp"
+#include "consts.h"
 #include "renderable.h"
 
 class Terrain : public Renderable {
