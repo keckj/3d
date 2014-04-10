@@ -13,10 +13,10 @@
 bool Texture::_init = false;
 std::vector<int> Texture::textureLocations;
 std::map<unsigned int, long> Texture::locationsHitMap;
-std::map<long, unsigned int> Texture::reverseOrderedLocationsHitMap;
+std::vector<std::pair<long, unsigned int> > Texture::reversedHitMap; 
 
 Texture::Texture(std::string const &src, std::string const &type, GLenum target) : 
-	textureId(0), src(src), type(type), textureType(target), mipmap(false) 
+	textureId(0), lastKnownLocation(-1), src(src), type(type), textureType(target), mipmap(false) 
 {
 	if(!_init) {
 		log_console.errorStream() << "[TEXTURE MANAGER] Texture manager has not been initialized !";
@@ -97,7 +97,6 @@ void Texture::bindAndApplyParameters(unsigned int location) {
 		exit(1);
 	}
 
-
 	glActiveTexture(GL_TEXTURE0 + location);
 	glBindTexture(textureType, textureId);
        
@@ -124,15 +123,12 @@ void Texture::bindAndApplyParameters(unsigned int location) {
 		glGenerateMipmap(textureType);
 		log_console.infoStream() << logTextureHead << "Generating mipmap !";
 	}
-
+	
+	lastKnownLocation = location;
 }
 
 unsigned int Texture::getTextureId() const {
 	return textureId;
-}
-
-int Texture::getTextureLocation() const {
-	return Texture::textureLocations[textureId];
 }
 
 void Texture::generateMipMap() {
@@ -159,7 +155,7 @@ void Texture::init() {
 
 std::vector<unsigned int> Texture::requestTextures(unsigned int nbRequested) {
 	
-	if(nbRequested >= (unsigned int) Globals::glMaxCombinedTextureImageUnits) {
+	if(nbRequested > (unsigned int) Globals::glMaxCombinedTextureImageUnits) {
 		log_console.errorStream() << "[TEXTURE MANAGER]  Received invalid texture request : " << nbRequested  << " (MAX = " << Globals::glMaxCombinedTextureImageUnits << ") ! Your hardware simply can't handle it ! Go fix your shaders or just buy a tri-SLI of Titan-Z !";
 		exit(1);
 	}
@@ -168,24 +164,21 @@ std::vector<unsigned int> Texture::requestTextures(unsigned int nbRequested) {
 
 	for (unsigned int i = 0; i < textureLocations.size() && nbRequested != 0u; i++) {
 		if(textureLocations[i] == -1) {
-			textureLocations[i] = 1;
 			locations.push_back(i);			
 			locationsHitMap[i]++;
 			nbRequested--;
 		}
 	}
 	
-	std::map<long, unsigned int>::reverse_iterator it = reverseOrderedLocationsHitMap.rbegin();
+	std::vector<std::pair<long, unsigned int> >::reverse_iterator it = reversedHitMap.rbegin();
 	while(nbRequested != 0) {
 		
-		if(it == reverseOrderedLocationsHitMap.rend()) {
-			//log_console.fatalStream() << "[TEXTURE MANAGER] Fatal Error !" << nbRequested;
-			//exit(1);
-			return locations;
+		if(it == reversedHitMap.rend()) {
+			log_console.fatalStream() << "[TEXTURE MANAGER] Fatal Error !" << nbRequested;
+			exit(1);
 		}
 	
 		if(std::find(locations.begin(), locations.end(), it->second) == locations.end()) {
-			textureLocations[it->second] = 1;
 			locationsHitMap[it->second]++;
 			locations.push_back(it->second);
 			nbRequested--;
@@ -202,13 +195,33 @@ std::vector<unsigned int> Texture::requestTextures(unsigned int nbRequested) {
 
 		
 void Texture::sortHitMap() {
-	log_console.infoStream() << "[TEXTURE MANAGER]  Sorting texture hitmap !";
-	Texture::reverseOrderedLocationsHitMap = Utils::flip_map(Texture::locationsHitMap);
+	log_console.debugStream() << "[TEXTURE MANAGER]  Sorting texture hitmap !";
+	Texture::reversedHitMap = Utils::mapToReversePairVector(Texture::locationsHitMap);
+	std::sort(reversedHitMap.begin(), reversedHitMap.end());
 
-	std::map<long, unsigned int>::reverse_iterator it = reverseOrderedLocationsHitMap.rbegin();
-	for(;it!=reverseOrderedLocationsHitMap.rend();++it) {
-		std::cout << "\tkey="<<it->first<<"\tval="<<it->second<<std::endl;
+	reportHitMap();
+}
+
+void Texture::reportHitMap() {
+
+	log_console.infoStream() << "[TEXTURE MANAGER]  Texture units filling report :";
+	
+	std::cout << "== HIT MAP ==" << std::endl;
+	std::map<unsigned int, long>::iterator it = locationsHitMap.begin();
+	while(it != locationsHitMap.end()) {
+		std::cout << it->first << "=>" << it->second << " "; 
+		++it;
 	}
+	std::cout << std::endl;
+	std::cout << "== Statistics ==" << std::endl;
+	std::cout  << "Min hits : "<< reversedHitMap[0].first << std::endl <<
+		"Max hits : " << reversedHitMap[reversedHitMap.size()-1].first << std::endl;
+}
 
-	//TODO OK CA BUG LA ZOMG
+int Texture::getLastKnownLocation() const {
+	return lastKnownLocation;
+}
+
+bool Texture::isBinded() const {
+	return (lastKnownLocation != -1) && (textureId == (unsigned int)textureLocations[lastKnownLocation]);
 }

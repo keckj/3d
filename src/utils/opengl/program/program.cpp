@@ -33,7 +33,7 @@ void Program::attachShader(Shader const &shader) {
 
 void Program::bindAttribLocation(unsigned int location, std::string const &attribVarName) {
 	log_console.infoStream() << logProgramHead << "Binding attribute '" << attribVarName << "' to location " << location << ".";
-	
+
 	if(location > (unsigned int)Globals::glMaxVertexAttribs) {
 		log_console.warnStream() << "Location " << location 
 			<< " is superior to GL_MAX_VERTEX_ATTRIBS = " << Globals::glMaxVertexAttribs
@@ -97,9 +97,9 @@ void Program::bindFragDataLocations(std::string locations, std::string const &fr
 //can be called multiple times Program::(transform feedback)
 void Program::link() {
 	glLinkProgram(programId);
-	
+
 	int status;
-  	glGetProgramiv(programId, GL_LINK_STATUS, &status);
+	glGetProgramiv(programId, GL_LINK_STATUS, &status);
 	if(status) {
 		log_console.infoStream() << logProgramHead << "Linking program ... Success !";
 	}
@@ -109,7 +109,7 @@ void Program::link() {
 		GLchar errorLog[1024] = {0};
 		glGetProgramInfoLog(programId, 1024, NULL, errorLog);
 		log_console.errorStream() << logProgramHead << "Shader compilation log :\n";
-	
+
 		std::cout << std::flush;
 		exit(0);
 	}
@@ -118,7 +118,7 @@ void Program::link() {
 	std::map<std::string,unsigned int>::const_iterator it = attribLocations.begin();
 	for(; it != attribLocations.end(); it++) {
 		int id = glGetAttribLocation(programId, it->first.c_str());
-		
+
 		if(id != (int)it->second)
 			log_console.warnStream() << logProgramHead <<"Attrib data '" << it->first << "' was not set to location " << it->second << " (id=-1)."; 
 	}
@@ -142,10 +142,10 @@ unsigned int Program::getProgramId() const {
 	return this->programId;
 }
 
-const std::vector<int> Program::getUniformLocations(std::string const &varNames) {
+const std::vector<int> Program::getUniformLocations(std::string const &varNames, bool assert) {
 	std::vector<int> ids;
 	std::string var;
-	
+
 	if(!linked) {
 		log_console.errorStream() << logProgramHead << "Trying to get uniform locations in a program that has not been linked !";
 		std::cout << std::flush;
@@ -158,11 +158,18 @@ const std::vector<int> Program::getUniformLocations(std::string const &varNames)
 	while(ss.good()) {
 		ss >> var;	
 		int id = glGetUniformLocation(programId, var.c_str());
-		
+
 		if(id == -1) {
-			log_console.warnStream() << logProgramHead << "Uniform variable location of '" << var <<"' is -1 !";		
+			if(assert) {
+				log_console.errorStream() << logProgramHead << "Uniform variable location of '" << var <<"' is -1 !";		
+				std::cout << std::flush;
+				exit(1);
+			}
+			else {
+				log_console.warnStream() << logProgramHead << "Uniform variable location of '" << var <<"' is -1 !";		
+			}
 		}
-		
+
 		ids.push_back(id);
 	}
 	glUseProgram(0);
@@ -170,42 +177,12 @@ const std::vector<int> Program::getUniformLocations(std::string const &varNames)
 	return ids;
 } 
 
-const std::vector<int> Program::getUniformLocationsAndAssert(std::string const &varNames) {
-	std::vector<int> ids;
-
-	std::stringstream ss(varNames);
-	std::string var;
-	
-	if(!linked) {
-		log_console.errorStream() << logProgramHead << "Trying to get uniform locations in a program that has not been linked !";
-		std::cout << std::flush;
-		exit(0);
-	}
-
-	glUseProgram(programId);
-	while(ss.good()) {
-		ss >> var;	
-		int id = glGetUniformLocation(programId, var.c_str());
-		
-		if(id == -1) {
-			log_console.errorStream() << logProgramHead << "Uniform variable location of '" << var <<"' is -1 !";		
-			std::cout << std::flush;
-			exit(1);
-		}
-
-		ids.push_back(id);
-	}
-	glUseProgram(0);
-
-	return ids;
-}
-		
-const std::map<std::string,int> Program::getUniformLocationsMap(std::string const &varNames) { //separated by space
+const std::map<std::string,int> Program::getUniformLocationsMap(std::string const &varNames, bool assert) { //separated by space
 	std::map<std::string,int> map;
-	
+
 	std::stringstream ss(varNames);
 	std::string var;
-	
+
 	if(!linked) {
 		log_console.errorStream() << logProgramHead << "Trying to get uniform locations in a program that has not been linked !";
 		std::cout << std::flush;
@@ -213,49 +190,39 @@ const std::map<std::string,int> Program::getUniformLocationsMap(std::string cons
 	}
 
 	glUseProgram(programId);
+
 	while(ss.good()) {
 		ss >> var;	
 		int id = glGetUniformLocation(programId, var.c_str());
-		
-		if(id == -1) {
-			log_console.warnStream() << logProgramHead << "Uniform variable location of '" << var <<"' is -1 !";		
-		}
 
+		if(id == -1) {
+			if(assert) {
+				log_console.errorStream() << logProgramHead << "Uniform variable location of '" << var <<"' is -1 !";		
+				std::cout << std::flush;
+				exit(1);
+			} 
+			else {
+				log_console.warnStream() << logProgramHead << "Uniform variable location of '" << var <<"' is -1 !";		
+			}
+		}
+	
 		map.insert(std::pair<std::string,unsigned int>(var, id));
 	}
+
 	glUseProgram(0);
-	
+
 	return map;
 }
 
-const std::map<std::string,int> Program::getUniformLocationsMapAndAssert(std::string const &varNames) {
-	std::map<std::string,int> map;
-	
-	std::stringstream ss(varNames);
-	std::string var;
-	
-	if(!linked) {
-		log_console.errorStream() << logProgramHead << "Trying to get uniform locations in a program that has not been linked !";
-		std::cout << std::flush;
-		exit(0);
-	}
+void Program::bindTextures(Texture **textures, std::string uniformNames, bool assert) {
 
-	glUseProgram(programId);
-	while(ss.good()) {
-		ss >> var;	
-		int id = glGetUniformLocation(programId, var.c_str());
-		
-		if(id == -1) {
-			log_console.errorStream() << logProgramHead << "Uniform variable location of '" << var <<"' is -1 !";		
-			std::cout << std::flush;
-			exit(1);
-		}
+	std::vector<int> locations = getUniformLocations(uniformNames, assert);
 
-		map.insert(std::pair<std::string,unsigned int>(var, id));
+	std::vector<int>::iterator it = locations.begin();
+	int i = 0;
+	for (; it != locations.end(); ++it) {
+		linkedTextures.push_back(std::pair<int, Texture*>(*it, textures[i++]));
 	}
-	glUseProgram(0);
-	
-	return map;
 }
 
 void Program::resetDefaultGlProgramState() {
@@ -288,7 +255,7 @@ void Program::resetDefaultGlProgramState() {
 	glDisable(GL_LIGHT5);
 	glDisable(GL_LIGHT6);
 	glDisable(GL_LIGHT7);
-	
+
 	glDisable(GL_AUTO_NORMAL);
 	glDisable(GL_NORMALIZE);
 	glDisable(GL_DITHER);

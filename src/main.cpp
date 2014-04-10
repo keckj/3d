@@ -68,6 +68,8 @@ int main(int argc, char** argv) {
 
 
         // SIMPLE EXAMPLE FOR NOOBS //
+
+
         Program program("_SwagDePoulpe_");
 
         program.bindAttribLocation(0, "vertex_position");
@@ -78,30 +80,26 @@ int main(int argc, char** argv) {
         program.attachShader(Shader("shaders/common/fs.glsl", GL_FRAGMENT_SHADER));
 
         program.link();
+		
+		Texture *texture = new Texture("textures/dirt 1.png","png",GL_TEXTURE_2D);
+		texture->addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_REPEAT));
+		texture->addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_REPEAT));
+		texture->addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+		texture->generateMipMap();
+		texture->bindAndApplyParameters(0);
+
+		Texture *texture2 = new Texture("textures/dirt 3.png", "png", GL_TEXTURE_2D);
+		texture2->addParameters(texture->getParameters());
+		texture2->addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+		texture2->bindAndApplyParameters(1);
 
         const std::vector<int> uniforms_vec = program.getUniformLocations("modelMatrix projectionMatrix viewMatrix");
         const std::map<std::string,int> uniforms_map = program.getUniformLocationsMap("modelMatrix poulpy");
-        //std::vector<int> uniforms_vec = program.getUniformLocationsAndAssert("modelMatrix projectionMatrix viewMatrix");
-        //std::map<std::string,int> uniforms_map = program.getUniformLocationsMapAndAssert("modelMatrix projectionMatrix viewMatrix");
+
+
 
         //program.use();
         ///////////////////////////////////////////////
-
-		
-		Texture texture("textures/dirt 1.png","png",GL_TEXTURE_2D);
-		texture.addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_REPEAT));
-		texture.addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_REPEAT));
-		texture.addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-		texture.generateMipMap();
-		texture.bindAndApplyParameters(0);
-
-		Texture texture2("textures/dirt 3.png", "png", GL_TEXTURE_2D);
-		texture2.addParameters(texture.getParameters());
-		texture2.addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-		texture2.bindAndApplyParameters(1);
-
-		std::vector<unsigned int> id = Texture::requestTextures(100);
-
 
         /*
 

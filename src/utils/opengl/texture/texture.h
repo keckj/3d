@@ -23,16 +23,20 @@ class Texture {
 		void bindAndApplyParameters(unsigned int location);
 		
 		unsigned int getTextureId() const;
-		int getTextureLocation() const;
+		int getLastKnownLocation() const;
+
+		bool isBinded() const; //check wether the texture is still linked to its last known location or not
 
 		void generateMipMap();
 	
 		static void init();
 		static std::vector<unsigned int> requestTextures(unsigned int nbRequested);
 		static void sortHitMap();
+		static void reportHitMap();
 
 	private:
 		unsigned int textureId;
+		int lastKnownLocation;
 
 		const std::string src;
 		const std::string type;
@@ -51,7 +55,7 @@ class Texture {
 		static bool _init;
 		static std::vector<int> textureLocations;
 		static std::map<unsigned int, long> locationsHitMap;
-		static std::map<long, unsigned int> reverseOrderedLocationsHitMap;
+		static std::vector<std::pair<long, unsigned int> > reversedHitMap; 
 };
 
 #endif /* end of include guard: TEXTURE_H */
