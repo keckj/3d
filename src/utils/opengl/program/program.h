@@ -22,17 +22,18 @@ class Program {
 		void bindAttribLocations(std::string locations, std::string const &attribVarNames);
 		void bindFragDataLocations(std::string locations, std::string const &fragVarNames);
 
-		void link(); //can be called multiple times (transform feedback)
-		void use() const; 
+		void link(); //can be called multiple times (ex : transform feedback)
+		void use() const; //use program, request linked textures, update linked texture uniforms
 		
 		unsigned int getProgramId() const;
 
+		//assert check if the uniform really exists
 		const std::vector<int> getUniformLocations(std::string const &varNames, bool assert = false); //uniform var names separated by space
 		const std::map<std::string,int> getUniformLocationsMap(std::string const &varNames, bool assert = false); //separated by space
 
 		void bindTextures(Texture **textures, std::string uniformNames, bool assert = false);
 		
-		static void resetDefaultGlProgramState(); //TODO
+		static void resetDefaultGlProgramState(); // for debugging purpose only
 
 	private:
 		std::string programName;

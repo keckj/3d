@@ -56,6 +56,8 @@ class Texture {
 		static std::vector<int> textureLocations;
 		static std::map<unsigned int, long> locationsHitMap;
 		static std::vector<std::pair<long, unsigned int> > reversedHitMap; 
+
+		static bool compareFunc(std::pair<long, unsigned int> a, std::pair<long, unsigned int> b);
 };
 
 #endif /* end of include guard: TEXTURE_H */

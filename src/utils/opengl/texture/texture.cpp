@@ -15,6 +15,9 @@ std::vector<int> Texture::textureLocations;
 std::map<unsigned int, long> Texture::locationsHitMap;
 std::vector<std::pair<long, unsigned int> > Texture::reversedHitMap; 
 
+
+
+
 Texture::Texture(std::string const &src, std::string const &type, GLenum target) : 
 	textureId(0), lastKnownLocation(-1), src(src), type(type), textureType(target), mipmap(false) 
 {
@@ -118,13 +121,16 @@ void Texture::bindAndApplyParameters(unsigned int location) {
 	log_console.infoStream() << logTextureHead << "Applying " << params.size() << " parameters !";
 	applyParameters();
 
-
 	if(mipmap) {
 		glGenerateMipmap(textureType);
 		log_console.infoStream() << logTextureHead << "Generating mipmap !";
 	}
-	
+
+	glBindTexture(textureType, 0);
+
 	lastKnownLocation = location;
+	textureLocations[location] = textureId;
+	locationsHitMap[location]++;
 }
 
 unsigned int Texture::getTextureId() const {
@@ -165,7 +171,6 @@ std::vector<unsigned int> Texture::requestTextures(unsigned int nbRequested) {
 	for (unsigned int i = 0; i < textureLocations.size() && nbRequested != 0u; i++) {
 		if(textureLocations[i] == -1) {
 			locations.push_back(i);			
-			locationsHitMap[i]++;
 			nbRequested--;
 		}
 	}
@@ -179,7 +184,6 @@ std::vector<unsigned int> Texture::requestTextures(unsigned int nbRequested) {
 		}
 	
 		if(std::find(locations.begin(), locations.end(), it->second) == locations.end()) {
-			locationsHitMap[it->second]++;
 			locations.push_back(it->second);
 			nbRequested--;
 		}
@@ -197,9 +201,7 @@ std::vector<unsigned int> Texture::requestTextures(unsigned int nbRequested) {
 void Texture::sortHitMap() {
 	log_console.debugStream() << "[TEXTURE MANAGER]  Sorting texture hitmap !";
 	Texture::reversedHitMap = Utils::mapToReversePairVector(Texture::locationsHitMap);
-	std::sort(reversedHitMap.begin(), reversedHitMap.end());
-
-	reportHitMap();
+	std::sort(reversedHitMap.begin(), reversedHitMap.end(), compareFunc);
 }
 
 void Texture::reportHitMap() {
@@ -224,4 +226,16 @@ int Texture::getLastKnownLocation() const {
 
 bool Texture::isBinded() const {
 	return (lastKnownLocation != -1) && (textureId == (unsigned int)textureLocations[lastKnownLocation]);
+}
+
+bool Texture::compareFunc(std::pair<long, unsigned int> a, std::pair<long, unsigned int> b) {
+	if(a.first < b.first) {
+		return true;
+	}
+	else if(a.first == b.first) {
+		return (a.second > b.second);
+	}
+	else {
+		return false;
+	}
 }

@@ -126,7 +126,7 @@ void Program::link() {
 	linked = true;
 }
 
-//bind program and textures TODO
+//bind program and textures
 void Program::use() const {
 
 	if(!linked) {
@@ -136,6 +136,24 @@ void Program::use() const {
 	}
 
 	glUseProgram(programId);
+
+	std::vector<unsigned int> availableTextureLocations = Texture::requestTextures(linkedTextures.size());
+	std::vector<unsigned int>::iterator av_loc_it = availableTextureLocations.begin();
+
+	std::vector<std::pair<int, Texture*> >::const_iterator tex_it = linkedTextures.begin();
+
+	for (; tex_it != linkedTextures.end(); ++tex_it) {
+		
+		if(tex_it->second->isBinded()) {
+			glUniform1i(tex_it->first, tex_it->second->getLastKnownLocation());
+			continue;
+		}
+
+		tex_it->second->bindAndApplyParameters(*av_loc_it);
+		glUniform1i(tex_it->first, *av_loc_it);
+		av_loc_it++;
+	}
+
 }
 
 unsigned int Program::getProgramId() const {
@@ -205,7 +223,7 @@ const std::map<std::string,int> Program::getUniformLocationsMap(std::string cons
 				log_console.warnStream() << logProgramHead << "Uniform variable location of '" << var <<"' is -1 !";		
 			}
 		}
-	
+
 		map.insert(std::pair<std::string,unsigned int>(var, id));
 	}
 
@@ -221,6 +239,9 @@ void Program::bindTextures(Texture **textures, std::string uniformNames, bool as
 	std::vector<int>::iterator it = locations.begin();
 	int i = 0;
 	for (; it != locations.end(); ++it) {
+		if(*it == -1)
+			continue;
+
 		linkedTextures.push_back(std::pair<int, Texture*>(*it, textures[i++]));
 	}
 }

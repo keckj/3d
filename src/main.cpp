@@ -68,37 +68,46 @@ int main(int argc, char** argv) {
 
 
         // SIMPLE EXAMPLE FOR NOOBS //
-
-
-        Program program("_SwagDePoulpe_");
-
-        program.bindAttribLocation(0, "vertex_position");
-        program.bindAttribLocations("1 10", "vertex_position vertex_colour");
-        program.bindFragDataLocation(0, "out_colour");
-
-        program.attachShader(Shader("shaders/common/vs.glsl", GL_VERTEX_SHADER));
-        program.attachShader(Shader("shaders/common/fs.glsl", GL_FRAGMENT_SHADER));
-
-        program.link();
 		
 		Texture *texture = new Texture("textures/dirt 1.png","png",GL_TEXTURE_2D);
 		texture->addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_REPEAT));
 		texture->addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_REPEAT));
 		texture->addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 		texture->generateMipMap();
-		texture->bindAndApplyParameters(0);
 
 		Texture *texture2 = new Texture("textures/dirt 3.png", "png", GL_TEXTURE_2D);
 		texture2->addParameters(texture->getParameters());
 		texture2->addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-		texture2->bindAndApplyParameters(1);
-
-        const std::vector<int> uniforms_vec = program.getUniformLocations("modelMatrix projectionMatrix viewMatrix");
-        const std::map<std::string,int> uniforms_map = program.getUniformLocationsMap("modelMatrix poulpy");
+		
+		Texture *textures[5] = {texture, texture2, texture, texture2, texture};
 
 
+        Program program("_SwagDePoulpe_");
 
-        //program.use();
+        program.bindAttribLocations("0 1", "vertex_position vertex_colour");
+        program.bindFragDataLocation(0, "out_colour");
+
+        program.attachShader(Shader("shaders/terrain/vs.glsl", GL_VERTEX_SHADER));
+        program.attachShader(Shader("shaders/terrain/fs.glsl", GL_FRAGMENT_SHADER));
+
+        program.link();
+		
+        const std::map<std::string,int> uniforms_map = program.getUniformLocationsMap("modelMatrix projectionMatrix viewMatrix", true);
+	
+		program.bindTextures(textures, "texture_1 texture_2 texture_3 texture_4 texture_5", true);
+
+		program.use();
+
+		Texture::reportHitMap();
+
+		log_console.infoStream() << "Spam junk textures";
+		for (int i = 0; i < Globals::glMaxCombinedTextureImageUnits; i++) {
+			texture->bindAndApplyParameters(i);
+		}
+		log_console.infoStream() << "End junk textures";
+
+		program.use();
+
         ///////////////////////////////////////////////
 
         /*
