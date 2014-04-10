@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
 
 
         // SIMPLE EXAMPLE FOR NOOBS //
-        Program program("_SwagDePoulpe_");
+        /*Program program("_SwagDePoulpe_");
 
         program.bindAttribLocation(0, "vertex_position");
         program.bindAttribLocations("1 10", "vertex_position vertex_colour");
@@ -84,11 +84,11 @@ int main(int argc, char** argv) {
         //std::vector<int> uniforms_vec = program.getUniformLocationsAndAssert("modelMatrix projectionMatrix viewMatrix");
         //std::map<std::string,int> uniforms_map = program.getUniformLocationsMapAndAssert("modelMatrix projectionMatrix viewMatrix");
 
-        //program.use();
+        //program.use();*/
         ///////////////////////////////////////////////
 
 		
-		Texture texture("textures/dirt 1.png","png",GL_TEXTURE_2D);
+		/*Texture texture("textures/dirt 1.png","png",GL_TEXTURE_2D);
 		texture.addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_REPEAT));
 		texture.addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_REPEAT));
 		texture.addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
 		texture2.bindAndApplyParameters(1);
 
 		std::vector<unsigned int> id = Texture::requestTextures(100);
-
+        */
 
         /*
 
@@ -277,9 +277,9 @@ int main(int argc, char** argv) {
 
 
         viewer.setSceneRadius(100.0f);
-	/* viewer.addRenderable(new Terrain(black_img, rgb_heightmap.width(),rgb_heightmap.height(), true, shader_program, modelMatrixLocation, projectionMatrixLocation, viewMatrixLocation)); */
 
-        viewer.addRenderable(new Cube());
+        //viewer.addRenderable(new Cube());
+        viewer.addRenderable(new Waves(0.0,0.0,10.0,10.0,1.0));
 
         // Run main loop.
         return application.exec();
