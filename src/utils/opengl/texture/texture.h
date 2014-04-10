@@ -16,9 +16,9 @@ class Texture {
 		~Texture();
 
 		void addParameter(Parameter param);
-		void addParameters(const std::list<Parameter> &params);
+		void addParameters(const std::list<Parameter> &paramList);
 
-		std::list<Parameter> getParameters() const;
+		const std::list<Parameter> getParameters() const;
 
 		void bindAndApplyParameters(unsigned int location);
 		

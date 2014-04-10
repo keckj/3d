@@ -108,10 +108,9 @@ void Program::link() {
 
 		GLchar errorLog[1024] = {0};
 		glGetProgramInfoLog(programId, 1024, NULL, errorLog);
-		log_console.errorStream() << logProgramHead << "Shader compilation log :\n";
-
-		std::cout << std::flush;
-		exit(0);
+		
+		log_console.errorStream() << logProgramHead << "Shader compilation log :\n" << errorLog;
+		exit(1);
 	}
 
 	//check post compilation attrib locations
@@ -146,11 +145,13 @@ void Program::use() const {
 		
 		if(tex_it->second->isBinded()) {
 			glUniform1i(tex_it->first, tex_it->second->getLastKnownLocation());
+			log_console.debugStream() << logProgramHead << "Update uniform location " << tex_it->first << " with value " << tex_it->second->getLastKnownLocation() << ".";
 			continue;
 		}
 
 		tex_it->second->bindAndApplyParameters(*av_loc_it);
 		glUniform1i(tex_it->first, *av_loc_it);
+			log_console.debugStream() << logProgramHead << "Update uniform location " << tex_it->first << " with value " << *av_loc_it << ".";
 		av_loc_it++;
 	}
 
@@ -236,6 +237,10 @@ void Program::bindTextures(Texture **textures, std::string uniformNames, bool as
 
 	std::vector<int> locations = getUniformLocations(uniformNames, assert);
 
+	for (unsigned int i = 0; i < locations.size(); i++) {
+		log_console.infoStream() << locations[i];
+	}
+
 	std::vector<int>::iterator it = locations.begin();
 	int i = 0;
 	for (; it != locations.end(); ++it) {
@@ -250,6 +255,7 @@ void Program::resetDefaultGlProgramState() {
 	glUseProgram(0);
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D,0);
 
 	//ENABLE
 	glEnable(GL_DEPTH_TEST);

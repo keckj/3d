@@ -19,12 +19,14 @@ std::vector<std::pair<long, unsigned int> > Texture::reversedHitMap;
 
 
 Texture::Texture(std::string const &src, std::string const &type, GLenum target) : 
-	textureId(0), lastKnownLocation(-1), src(src), type(type), textureType(target), mipmap(false) 
+	textureId(0), lastKnownLocation(-1), src(src), type(type), textureType(target), mipmap(false)
 {
 	if(!_init) {
 		log_console.errorStream() << "[TEXTURE MANAGER] Texture manager has not been initialized !";
 		exit(1);
 	}
+
+	params.clear();
 
 	glGenTextures(1, &textureId);
 
@@ -38,7 +40,6 @@ Texture::Texture(std::string const &src, std::string const &type, GLenum target)
 		log_console.errorStream() << logTextureHead << "Error while loading image '" << src << "' !";
 		exit(1);
 	}
-
 	
 	switch(target) {
 		case GL_TEXTURE_2D:
@@ -54,17 +55,17 @@ Texture::~Texture() {
 	glDeleteTextures(1, &textureId);
 }
 
-void Texture::addParameter(Parameter param) {
+void Texture::addParameter(const Parameter param) {
 	params.push_back(param);
 }
 
-void Texture::addParameters(const std::list<Parameter> &params) {
-	for(std::list<Parameter>::const_iterator it = params.begin(); it != params.end(); ++it) {
+void Texture::addParameters(const std::list<Parameter> &paramList) {
+	for(std::list<Parameter>::const_iterator it = paramList.begin(); it != paramList.end(); ++it) {
 		addParameter(*it);
 	}
 }
 
-std::list<Parameter> Texture::getParameters() const {
+const std::list<Parameter> Texture::getParameters() const {
 	return params;
 }
 
@@ -125,8 +126,6 @@ void Texture::bindAndApplyParameters(unsigned int location) {
 		glGenerateMipmap(textureType);
 		log_console.infoStream() << logTextureHead << "Generating mipmap !";
 	}
-
-	glBindTexture(textureType, 0);
 
 	lastKnownLocation = location;
 	textureLocations[location] = textureId;
