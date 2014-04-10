@@ -10,7 +10,7 @@
 using namespace std;
 
 Shader::Shader(const char* location, GLenum shaderType) :
-location(location)
+shader(0), location(location)
 {
 
 	// Load shader file

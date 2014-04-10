@@ -108,10 +108,10 @@ void Program::link() {
 
 		GLchar errorLog[1024] = {0};
 		glGetProgramInfoLog(programId, 1024, NULL, errorLog);
-		log_console.errorStream() << logProgramHead << "Shader compilation log :\n";
+		log_console.errorStream() << logProgramHead << "Shader compilation log :\n" << errorLog;
 	
 		std::cout << std::flush;
-		exit(0);
+		exit(1);
 	}
 
 	//check post compilation attrib locations
