@@ -2,9 +2,9 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include <list>
 #include <string>
 #include <map>
+#include <list>
 #include <QImage>
 
 #include "parameter.h"
@@ -12,39 +12,36 @@
 class Texture {
 	
 	public:
-		Texture(std::string const &src, std::string const &type, GLenum target); //TEXT1D & TEXT2D
-		~Texture();
 
 		void addParameter(Parameter param);
 		void addParameters(const std::list<Parameter> &paramList);
+		void generateMipMap();
 
 		const std::list<Parameter> getParameters() const;
 
-		void bindAndApplyParameters(unsigned int location);
-		
 		unsigned int getTextureId() const;
 		int getLastKnownLocation() const;
 
 		bool isBinded() const; //check wether the texture is still linked to its last known location or not
-
-		void generateMipMap();
+		
+		virtual void bindAndApplyParameters(unsigned int location) = 0;
 	
 		static void init();
 		static std::vector<unsigned int> requestTextures(unsigned int nbRequested);
 		static void sortHitMap();
 		static void reportHitMap();
 
-	private:
+	protected:
+		Texture(GLenum textureType);
+		~Texture();
+
+		GLenum textureType;
+
 		unsigned int textureId;
 		int lastKnownLocation;
 
-		const std::string src;
-		const std::string type;
-
-		GLenum textureType;
 		std::list<Parameter> params;
 				
-		QImage image;
 		std::string logTextureHead;
 
 		bool mipmap;

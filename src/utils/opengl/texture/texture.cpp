@@ -16,17 +16,13 @@ std::map<unsigned int, long> Texture::locationsHitMap;
 std::vector<std::pair<long, unsigned int> > Texture::reversedHitMap; 
 
 
-
-
-Texture::Texture(std::string const &src, std::string const &type, GLenum target) : 
-	textureId(0), lastKnownLocation(-1), src(src), type(type), textureType(target), mipmap(false)
+Texture::Texture(GLenum textureType) :
+	textureType(textureType), textureId(0), lastKnownLocation(-1),  mipmap(false)
 {
 	if(!_init) {
 		log_console.errorStream() << "[TEXTURE MANAGER] Texture manager has not been initialized !";
 		exit(1);
 	}
-
-	params.clear();
 
 	glGenTextures(1, &textureId);
 
@@ -34,21 +30,6 @@ Texture::Texture(std::string const &src, std::string const &type, GLenum target)
 	ss << "[Texture][id=" << textureId << "]  ";
 	logTextureHead = ss.str();
 	
-    image = QGLWidget::convertToGLFormat(QImage(src.c_str(),type.c_str()));
-
-	if(!image.bits()) {
-		log_console.errorStream() << logTextureHead << "Error while loading image '" << src << "' !";
-		exit(1);
-	}
-	
-	switch(target) {
-		case GL_TEXTURE_2D:
-			log_console.infoStream() << logTextureHead << "Created 2D TEXTURE from '" << src << "' with type '" << type << "'.";
-			break;
-		default:
-			log_console.errorStream() << logTextureHead << "The texture type requested by '" << src << "' is not implemented yet !";
-			exit(1);
-	}
 } 
 
 Texture::~Texture() {
@@ -92,44 +73,6 @@ void Texture::applyParameters() const {
 				exit(1);
 		}
 	}
-}
-
-void Texture::bindAndApplyParameters(unsigned int location) {
-
-	if(location >= (unsigned int)Globals::glMaxCombinedTextureImageUnits) {
-		log_console.errorStream() << logTextureHead << "Trying to bind invalid texture location " << location << " (MAX = " << Globals::glMaxCombinedTextureImageUnits << ") !";
-		exit(1);
-	}
-
-	glActiveTexture(GL_TEXTURE0 + location);
-	glBindTexture(textureType, textureId);
-       
-	switch(textureType) {
-		case GL_TEXTURE_2D:
-			log_console.infoStream() << logTextureHead << "Bind 2D TEXTURE [id=" 
-				<< textureId << "] to texture location " << location << ".";
-
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0,
-                        GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
-			break;
-
-
-		default:
-			log_console.errorStream() << logTextureHead << "The texture bind requested by '" << src << "' is not implemented yet !";
-			exit(1);
-	}
-
-	log_console.infoStream() << logTextureHead << "Applying " << params.size() << " parameters !";
-	applyParameters();
-
-	if(mipmap) {
-		glGenerateMipmap(textureType);
-		log_console.infoStream() << logTextureHead << "Generating mipmap !";
-	}
-
-	lastKnownLocation = location;
-	textureLocations[location] = textureId;
-	locationsHitMap[location]++;
 }
 
 unsigned int Texture::getTextureId() const {
