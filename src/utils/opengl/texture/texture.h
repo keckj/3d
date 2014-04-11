@@ -12,6 +12,7 @@
 class Texture {
 	
 	public:
+		virtual ~Texture();
 
 		void addParameter(Parameter param);
 		void addParameters(const std::list<Parameter> &paramList);
@@ -33,7 +34,6 @@ class Texture {
 
 	protected:
 		Texture(GLenum textureType);
-		~Texture();
 
 		GLenum textureType;
 

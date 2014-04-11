@@ -24,6 +24,7 @@
 #include "cube.h"
 #include "cudaUtils.h"
 #include "texture.h"
+#include "renderRoot.h"
 
 
 using namespace std;
@@ -31,9 +32,7 @@ using namespace log4cpp;
 
 int main(int argc, char** argv) {
 
-
         srand(time(NULL));
-
 
         log4cpp::initLogs();
 
@@ -80,9 +79,19 @@ int main(int argc, char** argv) {
                 }
         }
 		
-		glEnable(GL_TEXTURE_2D);
-		viewer.addRenderable(new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true));
-		viewer.addRenderable(new Waves(0.0,0.0,10.0,10.0,1.0));
+		
+		
+		Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true);
+		terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2));
+
+		Waves *waves = new Waves(0.0,0.0,10.0,10.0,1.0);
+		waves->scale(10);
+
+		RenderRoot *root = new RenderRoot();
+		root->addChild("terrain", terrain);
+		root->addChild("vagues", waves);
+
+		viewer.addRenderable(root);
 
         // Run main loop.
         return application.exec();

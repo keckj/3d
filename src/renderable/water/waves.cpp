@@ -4,11 +4,13 @@
 #include <cstdio>
 #include <ctime>
 #include <cassert>
+
 #include "program.h"
 #include "globals.h"
 #include "shader.h"
 #include "viewer.h"
 #include "waves.h"
+#include "consts.h"
 
 
 static const int N_MOBILES_X = 256;
@@ -38,6 +40,7 @@ program("Waves") {
 
     this->stopAnimating = false;
 
+	initializeRelativeModelMatrix();
 
     // Indices used for drawing
     nIndices = 6*(N_MOBILES_X-1)*(N_MOBILES_Z-1);
@@ -95,14 +98,14 @@ program("Waves") {
 }
 
 
-void Waves::draw() {
+void Waves::drawDownwards(const float *currentTransformationMatrix) {
         
     static float *proj = new float[16], *view = new float[16];
 
 	program.use();
 	glGetFloatv(GL_MODELVIEW_MATRIX, view);
 	glGetFloatv(GL_PROJECTION_MATRIX, proj);
-	glUniformMatrix4fv(uniforms_vec[0], 1, GL_TRUE, getModelMatrix());
+	glUniformMatrix4fv(uniforms_vec[0], 1, GL_TRUE, currentTransformationMatrix);
 	glUniformMatrix4fv(uniforms_vec[1], 1, GL_FALSE, view);
 	glUniformMatrix4fv(uniforms_vec[2], 1, GL_FALSE, proj);
     glUniform1f(uniforms_vec[3], time);
@@ -134,7 +137,7 @@ void Waves::draw() {
 }
 
 
-void Waves::animate() {
+void Waves::animateDownwards() {
 
     // Check if we were told to stop animating
     if (stopAnimating) return;
@@ -146,7 +149,7 @@ void Waves::animate() {
 }
 
 
-float *Waves::getModelMatrix() const {
+void Waves::initializeRelativeModelMatrix() {
 
 	const float m[] = {
 		xWidth, 0.0f, 0.0f, xPos,
@@ -155,16 +158,12 @@ float *Waves::getModelMatrix() const {
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
 	
-    float *mCpy = new float[16];
-	memcpy(mCpy, m, 16*sizeof(float));
-
-	return mCpy;
+	setRelativeModelMatrix(m);
 }
 
 
-void Waves::keyPressEvent(QKeyEvent *e, Viewer &v) {
+void Waves::keyPressEvent(QKeyEvent *e) {
     if (e->key() == Qt::Key_P && e->modifiers() == Qt::NoButton) {
         stopAnimating = !stopAnimating;
     }
-    (void)v; // suppress warning
 }

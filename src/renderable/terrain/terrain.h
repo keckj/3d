@@ -2,21 +2,19 @@
 #ifndef TERRAIN_H
 #define TERRAIN_H
 
+#include <map>
+
 #include "consts.h"
 #include "program.h"
-#include "renderable.h"
-#include "texture.h"
+#include "renderTree.h"
+#include "texture2D.h"
 
-class Terrain : public Renderable {
+class Terrain : public RenderTree {
 
 	public:
 		Terrain(unsigned char *heightmap, unsigned int width, unsigned int height, bool centered);
 		~Terrain();
 		
-		void draw();
-		
-		const float *getRelativeModelMatrix() const;
-	
 	private:
 		Program *program;
 		Texture **textures;
@@ -34,6 +32,9 @@ class Terrain : public Renderable {
 	
 		void inline makeProgram();
 		void inline sendToDevice();
+		
+		void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
+		void initializeRelativeModelMatrix();
 };
 
 #endif /* end of include guard: TERRAIN_H */

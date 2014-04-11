@@ -1,6 +1,7 @@
 #ifndef _RENDERABLE_
 #define _RENDERABLE_
 #include <QKeyEvent>
+#include "consts.h"
 
 class Viewer;
 
@@ -28,6 +29,7 @@ class Renderable
 		 */
 		virtual void draw() = 0;
 
+
 		/** 
 		 * Animate an object. This method is invoked before each call of draw().
 		 * Default behavior: nothing is done.
@@ -45,10 +47,6 @@ class Renderable
 		 * Default behavior: nothing is done.
 		 */
 		virtual void mouseMoveEvent(QMouseEvent*, Viewer&) {};
-
-        virtual float* getModelMatrix () const;
-
-        static float Identity[];
 };
 
 #endif

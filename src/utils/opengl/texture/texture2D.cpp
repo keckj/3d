@@ -1,9 +1,11 @@
 
+#include <GL/glew.h>
 #include <QGLWidget>
 
 #include "texture2D.h"
 #include "log.h"
 #include "globals.h"
+
 
 Texture2D::Texture2D(std::string const &src, std::string const &type) :
 	Texture(GL_TEXTURE_2D), src(src), type(type)

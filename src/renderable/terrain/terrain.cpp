@@ -11,6 +11,8 @@ Terrain::Terrain(unsigned char *heightmap, unsigned int width, unsigned int heig
 	program(0), textures(0), VAO(0), VBO(0),
 	width(width), height(height), centered(centered)
 {
+	initializeRelativeModelMatrix();
+
 	makeProgram();
 
 	log_console.infoStream() << "Generating a " << width << "x" << height << " terrain with program " << program->getProgramId() << " !";
@@ -39,6 +41,7 @@ Terrain::Terrain(unsigned char *heightmap, unsigned int width, unsigned int heig
 
 	
 	sendToDevice();
+
 
 	delete [] vertex;
 	delete [] colors;
@@ -86,7 +89,7 @@ void inline Terrain::sendToDevice() {
 }
 
 
-void Terrain::draw() {
+void Terrain::drawDownwards(const float *currentTransformationMatrix) {
 	static float *proj = new float[16], *view = new float[16];
 
 	program->use();
@@ -95,7 +98,7 @@ void Terrain::draw() {
 	glGetFloatv(GL_PROJECTION_MATRIX, proj);
 	glUniformMatrix4fv(uniformLocs["projectionMatrix"], 1, GL_FALSE, proj);
 	glUniformMatrix4fv(uniformLocs["viewMatrix"], 1, GL_FALSE, view);
-	glUniformMatrix4fv(uniformLocs["modelMatrix"], 1, GL_TRUE, getRelativeModelMatrix());
+	glUniformMatrix4fv(uniformLocs["modelMatrix"], 1, GL_TRUE, currentTransformationMatrix);
 	
 	glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, nVertex);
@@ -120,7 +123,7 @@ void Terrain::writeVec3f(float *array, unsigned int &idx, float x, float y, floa
 	array[idx++] = z;
 }
 
-const float *Terrain::getRelativeModelMatrix() const {
+void Terrain::initializeRelativeModelMatrix() {
 	
 	float alpha = 0.05f;
 	float beta = 0.05f;
@@ -132,36 +135,33 @@ const float *Terrain::getRelativeModelMatrix() const {
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
 
-	float *scaleCpy = new float[16];
-	memcpy(scaleCpy, scale, 16*sizeof(float));
-
-	return scaleCpy;
+	setRelativeModelMatrix(scale);
 }
 
 void Terrain::makeProgram() {
 
 		textures = new Texture*[5];
         
-		textures[0] = new Texture("textures/forest 13.png","png",GL_TEXTURE_2D);
+		textures[0] = new Texture2D("textures/forest 13.png","png");
 		textures[0]->addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_REPEAT));
 		textures[0]->addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_REPEAT));
 		textures[0]->addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 		textures[0]->addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 		textures[0]->generateMipMap();
 
-		textures[1] = new Texture("textures/grass 9.png", "png", GL_TEXTURE_2D);
+		textures[1] = new Texture2D("textures/grass 9.png", "png");
 		textures[1]->addParameters(textures[0]->getParameters());
 		textures[1]->generateMipMap();
 		
-		textures[2] = new Texture("textures/grass 7.png", "png", GL_TEXTURE_2D);
+		textures[2] = new Texture2D("textures/grass 7.png", "png");
 		textures[2]->addParameters(textures[0]->getParameters());
 		textures[2]->generateMipMap();
 
-		textures[3] = new Texture("textures/dirt 4.png", "png", GL_TEXTURE_2D);
+		textures[3] = new Texture2D("textures/dirt 4.png", "png");
 		textures[3]->addParameters(textures[0]->getParameters());
 		textures[3]->generateMipMap();
 		
-		textures[4] = new Texture("textures/snow 1.png", "png", GL_TEXTURE_2D);
+		textures[4] = new Texture2D("textures/snow 1.png", "png");
 		textures[4]->addParameters(textures[0]->getParameters());
 		textures[4]->generateMipMap();
 
