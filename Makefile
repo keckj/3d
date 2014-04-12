@@ -40,7 +40,7 @@ CUDA_LIBS = -lcuda -lcudart
 
 OPENAL_INCLUDEPATH =
 OPENAL_LIBPATH =
-OPENAL_LIBS = -lopenal
+OPENAL_LIBS = -lopenal -lalut
 
 DISTRIB=$(filter-out Distributor ID:, $(shell lsb_release -i))
 #Ubuntu 

@@ -24,6 +24,8 @@ class Cube : public Renderable
 
 		unsigned int size;
 		unsigned int subsize;
+
+		unsigned int source;
 };
 
 #endif

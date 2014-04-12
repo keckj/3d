@@ -9,6 +9,8 @@ int Globals::glMaxCombinedTextureImageUnits = 0;
 
 const unsigned char *Globals::glVersion = 0;
 const unsigned char *Globals::glShadingLanguageVersion = 0;
+		
+Viewer *Globals::viewer = 0;
 
 void Globals::init() {
 

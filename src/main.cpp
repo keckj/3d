@@ -1,5 +1,5 @@
 
-#include <GL/glew.h>
+#include "headers.h"
 
 #include <qapplication.h>
 #include "viewer.h"
@@ -13,7 +13,6 @@
 #include "shader.h"
 #include "SeaDiver.h"
 #include "Rectangle.h"
-#include <QWidget>
 
 #include <ostream>
 #include <cassert>
@@ -49,10 +48,14 @@ int main(int argc, char** argv) {
         QApplication application(argc,argv);
         log_console.infoStream() << "[Qt Init] ";
 
+		alutInit(&argc, argv);
+        log_console.infoStream() << "[Alut Init] ";
+
         // Instantiate the viewer (mandatory)
-        Viewer viewer;
-        viewer.setWindowTitle("Sea diver");
-        viewer.show();
+        Viewer *viewer = new Viewer();
+        viewer->setWindowTitle("Sea diver");
+        viewer->show();
+		Globals::viewer = viewer;
 
         //glew initialisation (mandatory)
         log_console.infoStream() << "[Glew Init] " << glewGetErrorString(glewInit());
@@ -65,9 +68,9 @@ int main(int argc, char** argv) {
 
         log_console.infoStream() << "Running with OpenGL " << Globals::glVersion << " and glsl version " << Globals::glShadingLanguageVersion << " !";
 
-        viewer.setSceneRadius(100.0f);
+        viewer->setSceneRadius(100.0f);
 		
-		viewer.addRenderable(new Cube());
+		viewer->addRenderable(new Cube());
 
         // Run main loop.
         return application.exec();

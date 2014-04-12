@@ -2,11 +2,10 @@
 #ifndef RENDERTREE_H
 #define RENDERTREE_H
 
-#include <QGLViewer/vec.h>
-#include <QGLViewer/quaternion.h>
-
+#include "headers.h"
 #include "renderable.h"
 #include "consts.h"
+
 #include <string>
 #include <map>
 
