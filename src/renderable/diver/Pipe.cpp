@@ -5,8 +5,6 @@ Pipe::Pipe (std::vector<Vec> points) : DynamicSystem(), points(points), cs(point
 }
 
 void Pipe::createSystemScene () {
-    std::cout << "pipe create" << std::endl;
-
     // beginning is fixed
     Particle *begin = new Particle(points[0], Vec(), 0.0, particleRadius, Vec(0.0, 1.0, 0.0));
     fixed.push_back(begin);

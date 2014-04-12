@@ -2,10 +2,14 @@
 #define _CUBE_
 
 #include "renderable.h"
+#ifndef __APPLE__
 #include <GL/glut.h>
+#else
+#include <GLUT/glut.h>
+#endif
 
-#include "cuda.h"
-#include "cuda_runtime.h"
+#include <cuda.h>
+#include <cuda_runtime.h>
 #include <cuda_gl_interop.h>
 
 

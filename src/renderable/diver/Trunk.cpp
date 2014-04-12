@@ -2,12 +2,12 @@
 
 #include <iostream>
 
-Trunk::Trunk (float width, float height, float depth) : BodyPart(true), rect(width, height, depth) {
+Trunk::Trunk (float width, float height, float depth) : RenderTree(), rect(width, height, depth) {
 }
-
-void Trunk::draw () {
+void Trunk::drawDownwards(const float *currentTransformationMatrix) {
     glPushMatrix();
 
+    glMultTransposeMatrixf(relativeModelMatrix);
     rect.draw();
 
     glPopMatrix();

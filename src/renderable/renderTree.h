@@ -21,7 +21,7 @@ class RenderTree : public Renderable {
 	
 	public:
 		virtual ~RenderTree();
-	
+
 		//draw the whole tree with initial modelMatrix set to 4x4 Identity
 		//(renderable draw wrapper)
 		void draw(const float *currentTransformationMatrix = consts::identity4);

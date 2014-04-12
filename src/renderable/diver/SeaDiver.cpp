@@ -7,102 +7,46 @@
 #include "Thigh.h"
 #include "Head.h"
 
-SeaDiver::SeaDiver() : Ragdoll() {
-    // TODO : put this in Dimensions
-    std::vector<Vec> tmp;
-    tmp.push_back(Vec(PIPE_FIXED_PART_X, PIPE_FIXED_PART_Y, PIPE_FIXED_PART_Z));
-    tmp.push_back(Vec(0, 2, 4));
-    tmp.push_back(Vec(0, 1, 1));
-    tmp.push_back(Vec(0, 0, 0));
+SeaDiver::SeaDiver() : RenderTree() {
+    Trunk *trunk = new Trunk(WIDTH_TRUNK, HEIGHT_TRUNK, DEPTH_TRUNK);
+    addChild("trunk", trunk);
 
-    pipe = new Pipe(tmp);
-    tmp.clear();
+    Thigh *leftThigh = new Thigh(WIDTH_THIGH, HEIGHT_THIGH);
+    addChild("leftThigh", leftThigh);
+    translateChild("leftThigh", 0, (trunk->getWidth() - leftThigh->getWidth()) / 2, -1.5 * trunk->getHeight());
 
-    trunk = new Trunk(WIDTH_TRUNK, HEIGHT_TRUNK, DEPTH_TRUNK);
-    addPart("trunk", trunk);
+    Thigh *rightThigh = new Thigh(WIDTH_THIGH, HEIGHT_THIGH);
+    addChild("rightThigh", rightThigh);
+    translateChild("rightThigh", 0, (-trunk->getWidth() + leftThigh->getWidth()) / 2, -1.5 * trunk->getHeight());
 
-    leftThigh = new Thigh(WIDTH_THIGH, HEIGHT_THIGH);
-    addPart("leftThigh", leftThigh);
+    Arm *leftForearm = new Arm(WIDTH_FOREARM, HEIGHT_FOREARM);
+    addChild("leftForearm", leftForearm);
+    rotateChild("leftForearm", qglviewer::Quaternion(Vec(1, 0, 0), M_PI / 2));
+    translateChild("leftForearm", 0, trunk->getWidth() / 2, 0);
 
-    rightThigh = new Thigh(WIDTH_THIGH, HEIGHT_THIGH);
-    addPart("rightThigh", rightThigh);
+    Arm *rightForearm = new Arm(WIDTH_FOREARM, HEIGHT_FOREARM);
+    addChild("rightForearm", rightForearm);
+    rotateChild("rightForearm", qglviewer::Quaternion(Vec(1, 0, 0), -M_PI / 2));
+    translateChild("rightForearm", 0, -trunk->getWidth() / 2, 0);
 
-    leftForearm = new Arm(WIDTH_FOREARM, HEIGHT_FOREARM);
-    addPart("leftForearm", leftForearm);
-
-    rightForearm = new Arm(WIDTH_FOREARM, HEIGHT_FOREARM);
-    addPart("rightForearm", rightForearm);
-
-    head = new Head(RADIUS_HEAD);
-    addPart("head", head);
+    Head *head = new Head(RADIUS_HEAD);
+    addChild("head", head);
+    translateChild("head", 0, 0, HEIGHT_NECK + trunk->getHeight() / 2);
 }
 
-void SeaDiver::init (Viewer &viewer) {
-    std::cout << "init seadiver" << std::endl;
-    pipe->init(viewer);
+void SeaDiver::drawDownwards(const float *currentTransformationMatrix) {
 }
 
-void SeaDiver::draw () {
-    // TODO : do better than that
-    glPushMatrix();
-
-    pipe->draw();
-
-    getPart("trunk")->draw();
-
-    glPushMatrix();
-    glTranslatef(0, 0, HEIGHT_NECK + trunk->getHeight() / 2);
-    getPart("head")->draw();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0, -trunk->getWidth() / 2, 0);
-    glRotatef(90, 1, 0, 0);
-    getPart("leftForearm")->draw();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0, trunk->getWidth() / 2, 0);
-    glRotatef(-90, 1, 0, 0);
-    getPart("rightForearm")->draw();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0, (trunk->getWidth() - leftThigh->getWidth()) / 2, -1.5 * trunk->getHeight());
-    getPart("leftThigh")->draw();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0, (-trunk->getWidth() + leftThigh->getWidth()) / 2, -1.5 * trunk->getHeight());
-    getPart("rightThigh")->draw();
-    glPopMatrix();
-
-    glPopMatrix();
+void SeaDiver::animate () {
+    // TODO
 }
 
-void SeaDiver::keyPressEvent(QKeyEvent* e, Viewer& viewer) {
-    pipe->keyPressEvent(e, viewer);
+// Events
+void SeaDiver::keyPressEvent(QKeyEvent* e) {
+    // TODO
 }
 
-void SeaDiver::mouseMoveEvent(QMouseEvent* e, Viewer& viewer) {
-    pipe->mouseMoveEvent(e, viewer);
-}
-
-void SeaDiver::animate  () {
-    pipe->animate();
-}
-
-SeaDiver::~SeaDiver() {
-    delete pipe;
-
-    delete head;
-
-    delete leftForearm;
-    delete rightForearm;
-
-    delete trunk;
-
-    delete leftThigh;
-    delete rightThigh;
+void SeaDiver::mouseMoveEvent(QMouseEvent* e) {
+    // TODO
 }
 

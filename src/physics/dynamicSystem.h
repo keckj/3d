@@ -59,7 +59,7 @@ class DynamicSystem : public Renderable
 
 
     public:
-        DynamicSystem(); // TODO add general parameters (viscosity...)
+        DynamicSystem();
         virtual ~DynamicSystem();
 
         // Position of the firt particle ca be set through mouse movements

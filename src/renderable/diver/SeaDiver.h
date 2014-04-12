@@ -2,32 +2,22 @@
 #define SEADIVER_H
 
 #include "Dimensions.h"
+#include "RenderTree.h"
 
-#include "Ragdoll.h"
-#include "BodyPart.h"
-#include "Pipe.h"
-
-class SeaDiver : public Ragdoll {
+class SeaDiver : public RenderTree {
     public:
         SeaDiver ();
 
-        void init(Viewer &viewer);
-        void draw ();
         void animate ();
 
         // Events
-        void keyPressEvent(QKeyEvent* e, Viewer& viewer);
-        void mouseMoveEvent(QMouseEvent* e, Viewer& viewer);
+        void keyPressEvent(QKeyEvent* e);
+        void mouseMoveEvent(QMouseEvent* e);
 
-        ~SeaDiver();
+    protected:
+        void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
 
     private:
-        Pipe *pipe;
-
-        BodyPart *head;
-        BodyPart *leftForearm, *rightForearm;
-        BodyPart *trunk;
-        BodyPart *leftThigh, *rightThigh;
 };
 
 #endif

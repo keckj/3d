@@ -53,8 +53,6 @@ void RenderTree::activateChild(std::string childName) {
 	it->second->active = false;
 }
 
-
-
 // RENDERABLE WRAPPER //
 void RenderTree::draw() {
 	draw(consts::identity4);

@@ -12,6 +12,8 @@
 #include "terrain.h"
 #include "shader.h"
 #include "SeaDiver.h"
+#include "Pipe.h"
+#include <vector>
 #include "Rectangle.h"
 #include <QWidget>
 
@@ -80,18 +82,33 @@ int main(int argc, char** argv) {
         }
 		
 		
-		
-		Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true);
-		terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2));
+		/* Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); */
+		/* terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2)); */
 
-		Waves *waves = new Waves(0.0,0.0,10.0,10.0,1.0);
-		waves->scale(10);
+		/* Waves *waves = new Waves(0.0,0.0,10.0,10.0,1.0); */
+		/* waves->scale(10); */
 
+        // Diver
 		RenderRoot *root = new RenderRoot();
-		root->addChild("terrain", terrain);
-		root->addChild("vagues", waves);
-
+        SeaDiver *diver = new SeaDiver();
+        root->addChild("diver", diver);
 		viewer.addRenderable(root);
+
+        // Pipe
+        // TODO : put this in Dimensions
+        std::vector<Vec> tmp;
+        tmp.push_back(Vec(PIPE_FIXED_PART_X, PIPE_FIXED_PART_Y, PIPE_FIXED_PART_Z));
+        tmp.push_back(Vec(0, 2, 4));
+        tmp.push_back(Vec(0, 1, 1));
+        tmp.push_back(Vec(0, 0, 0));
+
+        Pipe *pipe = new Pipe(tmp);
+        tmp.clear();
+        viewer.addRenderable(pipe);
+
+        /* root->addChild("terrain", terrain); */
+        /* root->addChild("vagues", waves); */
+
 
         // Run main loop.
         return application.exec();

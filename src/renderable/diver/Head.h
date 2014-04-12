@@ -1,15 +1,22 @@
 #ifndef HEAD_H
 #define HEAD_H
 
-#include "BodyPart.h"
+#include "renderable.h"
+#ifndef __APPLE__
+#include <GL/glut.h>
+#else
+#include <GLUT/glut.h>
+#endif
 
-class Head : public BodyPart {
+#include "RenderTree.h"
+
+class Head : public RenderTree {
     public:
         Head (float radius);
         float getRadius () const;
 
-        void draw ();
-
+    protected:
+        void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
     private:
         float radius;
 };

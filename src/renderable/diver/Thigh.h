@@ -1,17 +1,18 @@
 #ifndef THIGH_H
 #define THIGH_H
 
-#include "BodyPart.h"
+#include "RenderTree.h"
 #include "Cylinder.h"
 
-class Thigh : public BodyPart {
+class Thigh : public RenderTree {
     public:
         Thigh (float width, float height);
 
         float getWidth () const;
         float getHeight () const;
 
-        void draw ();
+    protected:
+        void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
 
     private:
         Cylinder cyl;

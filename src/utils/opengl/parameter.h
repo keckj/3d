@@ -1,7 +1,11 @@
 #ifndef PARAMETER_H
 #define PARAMETER_H
 
+#ifndef __APPLE__
 #include <GL/glut.h>
+#else
+#include <GLUT/glut.h>
+#endif
 
 enum ParamType {F,I,IV,FV};
 
