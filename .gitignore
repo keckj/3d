@@ -4,6 +4,7 @@
 .DS_Store
 main
 .qglviewer.xml
+.exrc
 textures/*.png
 tags
 types_c.taghl
