@@ -16,6 +16,7 @@
 // Father node draw can be done before and/or after all its children
 // The same possibilities are available for animate()
 // Note : Your class should inherit RenderTree instead of Renderable
+// Warning : Renderable init func is deprecated
 
 class RenderTree : public Renderable {
 	

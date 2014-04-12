@@ -38,6 +38,10 @@ CUDA_INCLUDEPATH = -I/usr/local/cuda-5.5/include
 CUDA_LIBPATH = -L/usr/local/cuda-5.5/lib64 
 CUDA_LIBS = -lcuda -lcudart
 
+OPENAL_INCLUDEPATH =
+OPENAL_LIBPATH =
+OPENAL_LIBS = -lopenal
+
 DISTRIB=$(filter-out Distributor ID:, $(shell lsb_release -i))
 #Ubuntu 
 ifeq ($(DISTRIB), Ubuntu)
@@ -53,9 +57,9 @@ POULPY_LINK= -lGLEW -lopencv_core -lopencv_imgproc -lopencv_highgui
 #Compilateurs
 LINK= g++
 LINKFLAGS= -W -Wall -Wextra -pedantic -std=c++0x
-LDFLAGS= $(VIEWER_LIBS) $(L_QGLVIEWER) -llog4cpp $(CUDA_LIBS)
-INCLUDE = -Ilocal/include/ -I$(SRCDIR) $(foreach dir, $(call subdirs, $(SRCDIR)), -I$(dir)) $(VIEWER_INCLUDEPATH) $(CUDA_INCLUDEPATH)
-LIBS = -Llocal/lib/ $(VIEWER_LIBPATH) $(CUDA_LIBPATH)
+LDFLAGS= $(VIEWER_LIBS) $(L_QGLVIEWER) -llog4cpp $(CUDA_LIBS) $(OPENAL_LIBS)
+INCLUDE = -Ilocal/include/ -I$(SRCDIR) $(foreach dir, $(call subdirs, $(SRCDIR)), -I$(dir)) $(VIEWER_INCLUDEPATH) $(CUDA_INCLUDEPATH) $(OPENAL_INCLUDEPATH)
+LIBS = -Llocal/lib/ $(VIEWER_LIBPATH) $(CUDA_LIBPATH) $(OPENAL_LIBPATH)
 DEFINES= $(VIEWER_DEFINES) $(OPT)
 
 

@@ -8,6 +8,9 @@
 #include "kernel.h"
 #include "cudaUtils.h"
 
+#include <AL/al.h>
+#include <AL/alc.h>
+
 using namespace std;
 
 static GLfloat allVertices[] = { 
@@ -93,6 +96,24 @@ Cube::Cube() {
 	assert(viewMatrixLocation != -1);
 	assert(projectionMatrixLocation != -1);
 	glUseProgram(0);
+
+
+	log_console.infoStream() << "Testing openal";
+
+	const ALCchar *device = alcGetString(NULL, ALC_DEVICE_SPECIFIER);
+	const ALCchar *next = device + 1;
+	size_t len = 0;
+
+	printf("Devices list:\n");
+	printf("----------\n");
+	while (device && *device != '\0' && next && *next != '\0') {
+		printf("%s\n", device);
+		len = strlen(device);
+		device += (len + 1);
+		next += (len + 2);
+	}
+	printf("----------\n");
+
 }
 
 Cube::~Cube() {
@@ -104,7 +125,7 @@ Cube::~Cube() {
 
 void Cube::draw() {
 	static float *proj = new float[16], *view = new float[16];
-	
+
 	//switch program
 	glUseProgram(program);
 
@@ -130,7 +151,7 @@ void Cube::animate() {
 
 	if(counter % 50 == 0)
 		dx*=-1;
-	
+
 	//give cuda exclusive access to the vbo
 	cudaGraphicsMapResources(1, &cudaVbo, 0);
 
@@ -142,8 +163,8 @@ void Cube::animate() {
 	//compute some random kernel
 	moveVertexKernel(vertex, subsize/3, dx);
 	cudaDeviceSynchronize();
-        checkKernelExecution();
-	
+	checkKernelExecution();
+
 	//give back access to openGL
 	cudaGraphicsUnmapResources(1, &cudaVbo, 0);
 
