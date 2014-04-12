@@ -142,7 +142,7 @@ void Cube::animate() {
 	//compute some random kernel
 	moveVertexKernel(vertex, subsize/3, dx);
 	cudaDeviceSynchronize();
-        checkKernelExecution();
+    checkKernelExecution();
 	
 	//give back access to openGL
 	cudaGraphicsUnmapResources(1, &cudaVbo, 0);
