@@ -5,6 +5,7 @@
 
 #include "log.h"
 #include "terrain.h"
+#include "matrix.h"
 #include <GL/glew.h>
 
 Terrain::Terrain(unsigned char *heightmap, unsigned int width, unsigned int height, bool centered) :
@@ -107,6 +108,10 @@ void Terrain::drawDownwards(const float *currentTransformationMatrix) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glUseProgram(0);
 
+}
+
+void Terrain::animateDownwards() {
+	this->rotate(qglviewer::Quaternion(qglviewer::Vec(0.0f,1.0f,0.0f), 3.14/1024));
 }
 
 void Terrain::writeColor(int height, unsigned int &idx, float *color) {

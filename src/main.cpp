@@ -80,7 +80,6 @@ int main(int argc, char** argv) {
         }
 		
 		
-		
 		Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true);
 		terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2));
 

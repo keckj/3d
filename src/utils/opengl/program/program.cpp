@@ -237,10 +237,6 @@ void Program::bindTextures(Texture **textures, std::string uniformNames, bool as
 
 	std::vector<int> locations = getUniformLocations(uniformNames, assert);
 
-	for (unsigned int i = 0; i < locations.size(); i++) {
-		log_console.infoStream() << locations[i];
-	}
-
 	std::vector<int>::iterator it = locations.begin();
 	int i = 0;
 	for (; it != locations.end(); ++it) {
