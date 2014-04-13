@@ -13,8 +13,10 @@
 #include "consts.h"
 
 
-static const int N_MOBILES_X = 256;
-static const int N_MOBILES_Z = 256;
+//static const int N_MOBILES_X = 256;
+//static const int N_MOBILES_Z = 256;
+#define N_MOBILES_X 512
+#define N_MOBILES_Z 512
 
 Waves::~Waves() {
     delete[] mobiles;

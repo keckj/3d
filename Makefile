@@ -33,7 +33,7 @@ VIEWER_INCLUDEPATH = -I/usr/include/Qt -I/usr/include/QtCore -I/usr/include/QtGu
 VIEWER_LIBS = -lGLU -lglut -lGL -lQtXml -lQtOpenGL -lQtGui -lQtCore -lpthread -lGLEW
 VIEWER_DEFINES = -D_REENTRANT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 
-NARCH=11  #Archi cuda
+NARCH=30  #Archi cuda
 CUDA_INCLUDEPATH = -I/usr/local/cuda-5.5/include
 CUDA_LIBPATH = -L/usr/local/cuda-5.5/lib64 
 CUDA_LIBS = -lcuda -lcudart

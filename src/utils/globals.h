@@ -18,6 +18,10 @@ class Globals {
 		static int glMaxVertexAttribs;
 		static int glMaxDrawBuffers;
 		static int glMaxCombinedTextureImageUnits;
+
+		static float *glPointSizeRange;
+		static float glPointSizeGranularity;
+		static float glPointSize;
 };
 	
 #endif /* end of include guard: GLOBALS_H */

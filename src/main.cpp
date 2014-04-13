@@ -25,6 +25,8 @@
 #include "cudaUtils.h"
 #include "texture.h"
 #include "renderRoot.h"
+#include "particleGroup.h"
+#include "rand.h"
 
 
 using namespace std;
@@ -86,9 +88,24 @@ int main(int argc, char** argv) {
 		Waves *waves = new Waves(0.0,0.0,10.0,10.0,1.0);
 		waves->scale(10);
 
+		ParticleGroup *pg = new ParticleGroup(1000);
+
+		for (int i = 0; i < 1000; i++) {
+			qglviewer::Vec pos = Vec(Random::randf(), Random::randf(), Random::randf());
+			qglviewer::Vec  vel = Vec(0, 0, 0);
+			float r = Random::randf(0.2,1.0);
+			float rho = 1.2; //kg/m^3
+			float m = rho*4/3.0*3.14*r*r*r;
+			pg->addParticle(new Particule(pos, vel, m, r));	
+		}
+
+		pg->scale(10);
+		pg->releaseParticles();
+
 		RenderRoot *root = new RenderRoot();
-		root->addChild("terrain", terrain);
-		root->addChild("vagues", waves);
+		root->addChild("particules", pg);
+		//root->addChild("terrain", terrain);
+		//root->addChild("vagues", waves);
 
 		viewer.addRenderable(root);
 
