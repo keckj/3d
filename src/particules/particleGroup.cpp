@@ -2,7 +2,7 @@
 #include "headers.h"
 #include "particleGroup.h"
 #include "globals.h"
-#include "kernel.h"
+#include "kernelHeaders.h"
 
 Program *ParticleGroup::_debugProgram = 0;
 std::map<std::string, int> ParticleGroup::_uniformLocs;
@@ -15,7 +15,10 @@ ParticleGroup::ParticleGroup(unsigned int maxParticles) :
 
 	x_d(0), y_d(0), z_d(0), 
 	vx_d(0), vy_d(0), vz_d(0), 
-	m_d(0), im_d(0), r_d(0), kill_d(0)
+	fx_d(0), fy_d(0), fz_d(0), 
+	m_d(0), im_d(0), r_d(0), kill_d(0),
+
+	_mapped(false)
 {
 	
 	//generate gl buffers
@@ -41,8 +44,13 @@ ParticleGroup::ParticleGroup(unsigned int maxParticles) :
 	CHECK_CUDA_ERRORS(cudaMalloc((void**) &vx_d, maxParticles*sizeof(float)));
 	CHECK_CUDA_ERRORS(cudaMalloc((void**) &vy_d, maxParticles*sizeof(float)));
 	CHECK_CUDA_ERRORS(cudaMalloc((void**) &vz_d, maxParticles*sizeof(float)));
+	CHECK_CUDA_ERRORS(cudaMalloc((void**) &fx_d, maxParticles*sizeof(float)));
+	CHECK_CUDA_ERRORS(cudaMalloc((void**) &fy_d, maxParticles*sizeof(float)));
+	CHECK_CUDA_ERRORS(cudaMalloc((void**) &fz_d, maxParticles*sizeof(float)));
 	CHECK_CUDA_ERRORS(cudaMalloc((void**) &m_d, maxParticles*sizeof(float)));
 	CHECK_CUDA_ERRORS(cudaMalloc((void**) &im_d, maxParticles*sizeof(float)));
+
+
 	
 	//share data between contexts
 	ressources = new cudaGraphicsResource*[nBuffers];
@@ -75,6 +83,9 @@ ParticleGroup::~ParticleGroup() {
 	CHECK_CUDA_ERRORS(cudaFree(vx_d));
 	CHECK_CUDA_ERRORS(cudaFree(vy_d));
 	CHECK_CUDA_ERRORS(cudaFree(vz_d));
+	CHECK_CUDA_ERRORS(cudaFree(fx_d));
+	CHECK_CUDA_ERRORS(cudaFree(fy_d));
+	CHECK_CUDA_ERRORS(cudaFree(fz_d));
 	CHECK_CUDA_ERRORS(cudaFree(m_d));
 	CHECK_CUDA_ERRORS(cudaFree(im_d));
 	CHECK_CUDA_ERRORS(cudaFree(r_d));
@@ -150,9 +161,11 @@ void ParticleGroup::drawDownwards(const float *modelMatrix) {
 
 void ParticleGroup::animateDownwards() {
 	mapRessources();
-	
-	const struct mappedParticlePointers pt = {x_d, y_d, z_d, vx_d, vy_d, vz_d, m_d, im_d, r_d, kill_d};
-	moveKernel(&pt, nParticles);
+
+	std::list<ParticleGroupKernel *>::iterator it = kernels.begin();
+	for (; it != kernels.end(); ++it) {
+		(**it)(this);
+	}
 
 	unmapRessources();
 }
@@ -251,7 +264,10 @@ void ParticleGroup::toDevice() {
 			CHECK_CUDA_ERRORS(cudaMemcpy(data_d[i], data_h[i], nParticles*sizeof(float), cudaMemcpyHostToDevice));
 		}
 
-		//CHECK_CUDA_ERRORS(cudaMemset(kill_d, 0, nParticles*sizeof(bool)));
+		CHECK_CUDA_ERRORS(cudaMemset(kill_d, 0, nParticles*sizeof(bool)));
+		CHECK_CUDA_ERRORS(cudaMemset(fx_d, 0, nParticles*sizeof(float)));
+		CHECK_CUDA_ERRORS(cudaMemset(fy_d, 0, nParticles*sizeof(float)));
+		CHECK_CUDA_ERRORS(cudaMemset(fz_d, 0, nParticles*sizeof(float)));
 	}
 	unmapRessources();
 		
@@ -269,6 +285,8 @@ void ParticleGroup::mapRessources() {
 	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &z_d, &size, z_r));	
 	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &r_d, &size, r_r));	
 	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &kill_d, &size, kill_r));	
+
+	_mapped = true;
 }
 
 void ParticleGroup::unmapRessources() {
@@ -279,6 +297,8 @@ void ParticleGroup::unmapRessources() {
 	z_d = 0;
 	r_d = 0;
 	kill_d = 0;
+	
+	_mapped = false;
 }
 
 
@@ -299,4 +319,27 @@ void ParticleGroup::makeDebugProgram() {
 void ParticleGroup::releaseParticles() {
 	fromDevice();
 	toDevice();
+}
+		
+struct mappedParticlePointers *ParticleGroup::getMappedRessources() const {
+	if(!_mapped) {
+		log_console.errorStream() << "Trying to get ressources that have not been mapped !";	
+		exit(1);
+	}
+	struct mappedParticlePointers *pt = new struct mappedParticlePointers;
+	*pt = {x_d, y_d, z_d, vx_d, vy_d, vz_d, fx_d, fy_d, fz_d, m_d, im_d, r_d, kill_d};
+
+	return pt;
+}
+		
+unsigned int ParticleGroup::getParticleCount() const {
+	return nParticles;
+}
+		
+unsigned int ParticleGroup::getMaxParticles() const {
+	return maxParticles;
+}
+		
+void ParticleGroup::addKernel(ParticleGroupKernel *kernel) {
+	kernels.push_back(kernel);
 }

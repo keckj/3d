@@ -17,6 +17,7 @@
 
 #include <ostream>
 #include <cassert>
+#include <sstream>
 
 #include "log.h"
 #include "program.h"
@@ -27,6 +28,8 @@
 #include "renderRoot.h"
 #include "particleGroup.h"
 #include "rand.h"
+#include "pousseeArchimede.h"
+#include "dynamicScheme.h"
 
 
 using namespace std;
@@ -88,24 +91,45 @@ int main(int argc, char** argv) {
 		Waves *waves = new Waves(0.0,0.0,10.0,10.0,1.0);
 		waves->scale(10);
 
-		ParticleGroup *pg = new ParticleGroup(1000);
+		RenderRoot *root = new RenderRoot();
 
-		for (int i = 0; i < 1000; i++) {
-			qglviewer::Vec pos = Vec(Random::randf(), Random::randf(), Random::randf());
-			qglviewer::Vec  vel = Vec(0, 0, 0);
-			float r = Random::randf(0.2,1.0);
-			float rho = 1.2; //kg/m^3
-			float m = rho*4/3.0*3.14*r*r*r;
-			pg->addParticle(new Particule(pos, vel, m, r));	
+		unsigned int nParticles = 10000;
+		unsigned int nParticleGroups = 20;
+		ParticleGroup **pg = new ParticleGroup*[nParticleGroups];
+	
+		qglviewer::Vec g = 0.01*Vec(0,-9.81,0);
+		ParticleGroupKernel *archimede = new PousseeArchimede(g, 1000);
+		ParticleGroupKernel *dynamicScheme = new DynamicScheme();
+
+		stringstream name;
+	
+		for (unsigned int j = 0; j < nParticleGroups; j++) {
+			pg[j] = new ParticleGroup(nParticles);
+			for (unsigned int i = 0; i < nParticles; i++) {
+				qglviewer::Vec pos = Vec(Random::randf(), Random::randf(), Random::randf());
+				qglviewer::Vec  vel = Vec(0, 0, 0);
+				float r = Random::randf(0.2,1.0);
+				float rho = 1.2;//kg/m^3
+				float m = rho*4/3.0*3.14*r*r*r;
+				pg[j]->addParticle(new Particule(pos, vel, m, r));	
+			}
+
+			pg[j]->addKernel(archimede);
+			pg[j]->addKernel(dynamicScheme);
+			pg[j]->scale(10);
+			if(j>=10)
+				pg[j]->translate((j-10)*10,0,0);
+			else
+				pg[j]->translate(0,0,j*10);
+			pg[j]->releaseParticles();
+	
+			name.clear();
+			name << "particules" << j;
+			root->addChild(name.str(), pg[j]);
 		}
 
-		pg->scale(10);
-		pg->releaseParticles();
-
-		RenderRoot *root = new RenderRoot();
-		root->addChild("particules", pg);
 		//root->addChild("terrain", terrain);
-		//root->addChild("vagues", waves);
+		//root->addChild("vagues",[id] waves);
 
 		viewer.addRenderable(root);
 

@@ -5,7 +5,7 @@
 #include "cube.h"
 #include "consts.h"
 #include "shader.h"
-#include "kernel.h"
+#include "kernelHeaders.h"
 #include "cudaUtils.h"
 
 using namespace std;

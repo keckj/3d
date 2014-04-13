@@ -1,4 +1,4 @@
-#version 330 core 
+#version 330
 
 in float x;
 in float y;
@@ -15,11 +15,11 @@ uniform mat4 modelMatrix;
 void main(void) {
 	
 	
-	vec3 vertex_position = vec3(x,y,z);
-	mat4 transformationMatrix = projectionMatrix * viewMatrix * modelMatrix;
+	vec4 cameraPos = viewMatrix*modelMatrix*vec4(x,y,z,1);
 
-	gl_PointSize = 20.0*r;
-	gl_Position = transformationMatrix * vec4(vertex_position, 1.0f);
+	float d = -cameraPos.z;
+	gl_PointSize = 1000.0*r/d;
+	gl_Position = projectionMatrix * cameraPos;
+
 	r2=r;
 }
-

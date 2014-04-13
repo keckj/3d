@@ -7,82 +7,212 @@
 #include <iostream>
 
 struct mappedParticlePointers {
-	float *x, *y, *z, *vx, *vy, *vz, *m, *im, *r, *kill;
+	float *x, *y, *z, *vx, *vy, *vz, *fx, *fy, *fz, *m, *im, *r, *kill;
 };
 
 extern void checkKernelExecution();
 
-__global__ void move(float *x, float *y, float *z, 
-		float *vx, float *vy, float *vz,
-		float *r, float *m, float *im, 
-		int nParticles) {
+
+__global__ void forceConstante(
+		float *fx, float *fy, float *fz,
+		const int nParticles, 
+		const float Fx, const float Fy, const float Fz) {
+
 
 	int id = blockIdx.x*blockDim.x + threadIdx.x;
 
-	if(id > nParticles)
+	if(id >= nParticles)
 		return;
-	/*if(id == 0)*/
-		/*printf("%f %f %f\n%f %f %f\n%f %f %f\n %i\n\n",x[id],y[id],z[id],vx[id],vy[id],vz[id],r[id],m[id],im[id],nParticles);*/
+
+	fx[id] += Fx;
+	fy[id] += Fy;
+	fz[id] += Fz;
+}
+
+
+__global__ void pousseeArchimede(float *x, float *y, float *z, 
+		float *fx, float *fy, float *fz,
+		float *r,  
+		const int nParticles, 
+		const float nx, const float ny, const float nz,
+		const float rho, const float g) {
+
+
+	int id = blockIdx.x*blockDim.x + threadIdx.x;
+
+	if(id >= nParticles)
+		return;
 
 	float _r = r[id];
-	float _m = m[id];
-	float _im = im[id];
+	float V = 4/3.0*3.14*_r*_r*_r; 
 
-	float fx = 0.0f, fy = 0.0f, fz = 0.0f;
-	float dt = 0.01f;
+	fx[id] += -nx*rho*V*g;
+	fy[id] += -ny*rho*V*g;
+	fz[id] += -nz*rho*V*g;
+}
+
+__global__ void frottementFluide(
+		float *x, float *y, float *z, 
+		float *vx, float *vy, float *vz,
+		float *fx, float *fy, float *fz,
+		const int nParticles, 
+		const float k1, const float k2) {
 	
-	float S = 4*3.14*_r*_r; 
-	float V = 4.0/3.0*3.14*_r*_r*_r;
+	int id = blockIdx.x*blockDim.x + threadIdx.x;
+
+	if(id >= nParticles)
+		return;
+
+	float _vx = vx[id], _vy = vy[id], _vz = vy[id];
+
+	fx[id] -= k1*_vx + k2*_vx*_vx;
+	fy[id] -= k1*_vy + k2*_vy*_vy;
+	fz[id] -= k1*_vz + k2*_vz*_vz;
+}
+
+__global__ void frottementFluideAvance(
+		float *x, float *y, float *z, 
+		float *vx, float *vy, float *vz,
+		float *fx, float *fy, float *fz,
+		float *r,
+		const int nParticles, 
+		const float rho, 
+		const float cx, const float cy, const float cz) {
 	
-	float rhoEau = 1000;
-	float g = -9.81;
+	int id = blockIdx.x*blockDim.x + threadIdx.x;
+
+	if(id >= nParticles)
+		return;
+
+	float _r = r[id];
+	float _vx = vx[id], _vy = vy[id], _vz = vy[id];
+	float _v = _vx*_vx + _vy*_vy + _vz*_vz;
+	float _v2 = _v*_v;
+
+	float S = 4*3.14*_r*_r;
+
+	//F = cx * 1/2 rho v^2 S
+	fx[id] += 1.0f/2.0f * cx * rho * _v2 * S;
+	fy[id] += 1.0f/2.0f * cy * rho * _v2 * S;
+	fz[id] += 1.0f/2.0f * cz * rho * _v2 * S;
+
+}
 	
-	fy+= 5*sqrt(r[id]);
-	fy-= vy[id]*S;
+__global__ void dynamicScheme(
+		float *x, float *y, float *z,
+		float *vx, float *vy, float *vz,
+		float *fx, float *fy, float *fz,
+		float *im,
+		float dt,
+		unsigned int nParticles) {
 
-	/*fy -= rhoEau*g*V + _m*g;*/
-
-	//float dx, dy, dz, d, d2, n;
-	/*for(int i = 0; i < nParticles; i++) {*/
-		/*if(i==id)*/
-			/*continue;*/
-
-		/*dx = x[i] - x[id];*/
-		/*dy = y[i] - y[id];*/
-		/*dz = z[i] - z[id];*/
-		/*d2 = dx*dx + dy*dy + dz*dz;*/
-		/*d = sqrt(d2);*/
-
-		/*n = G*m[i]*m[id]/d2;*/
-		/*fx -= n*dx/d;*/
-		/*fy -= n*dy/d;*/
-		/*fz -= n*dz/d;*/
-	/*}*/
-
-	/*fx-= nu*vx[id]*S;	*/
-	/*fy-= nu*vy[id]*S;	*/
-	/*fz-= nu*vz[id]*S;	*/
-
+	int id = blockIdx.x*blockDim.x + threadIdx.x;
 	
-	vx[id] += dt*fx*_im;
-	vy[id] += dt*fy*_im;
-	vz[id] += dt*fz*_im;
+	if(id >= nParticles)
+		return;
 
+	float inverseMass = im[id];
+	
+	vx[id] += dt*fx[id]*inverseMass;
+	vy[id] += dt*fy[id]*inverseMass;
+	vz[id] += dt*fz[id]*inverseMass;
+	
 	x[id] += vx[id]*dt;
 	y[id] += vy[id]*dt;
 	z[id] += vz[id]*dt;
 	
+	fx[id] = 0;
+	fy[id] = 0;	
+	fz[id] = 0;
 }
 
-void moveKernel(const struct mappedParticlePointers *pt, unsigned int nParticles) {
+void forceConstanteKernel(
+		const struct mappedParticlePointers *pt, const unsigned int nParticles, 
+		const float Fx, const float Fy, const float Fz) {
 	
 	dim3 blockDim(512,1,1);
 	dim3 gridDim(ceil((float)nParticles/512),1,1);
 
-	move<<<gridDim,blockDim,0,0>>>(pt->x, pt->y, pt->z, 
+	forceConstante<<<gridDim,blockDim,0,0>>>(
+		pt->fx, pt->fy, pt->fz,
+		nParticles,
+		Fx, Fy, Fz);
+
+	cudaDeviceSynchronize();
+	checkKernelExecution();
+}
+
+void pousseeArchimedeKernel(
+		const struct mappedParticlePointers *pt, const unsigned int nParticles, 
+		const float nx, const float ny, const float nz, 
+		const float rho, const float g) {
+	
+	dim3 blockDim(512,1,1);
+	dim3 gridDim(ceil((float)nParticles/512),1,1);
+
+	pousseeArchimede<<<gridDim,blockDim,0,0>>>(
+		pt->x, pt->y, pt->z, 
+		pt->fx, pt->fy, pt->fz,
+		pt->r,  
+		nParticles,
+		nx, ny, nz,
+		rho, g);
+
+	cudaDeviceSynchronize();
+	checkKernelExecution();
+}
+
+void frottementFluideKernel(
+		const struct mappedParticlePointers *pt, const unsigned int nParticles, 
+		const float k1, const float k2) {
+
+	dim3 blockDim(512,1,1);
+	dim3 gridDim(ceil((float)nParticles/512),1,1);
+
+	frottementFluide<<<gridDim,blockDim,0,0>>>(
+		pt->x, pt->y, pt->z, 
 		pt->vx, pt->vy, pt->vz,
-		pt->r, pt->m, pt->im, 
-		nParticles);
+		pt->fx, pt->fy, pt->fz,
+		nParticles, 
+		k1, k2);
+	
+	cudaDeviceSynchronize();
+	checkKernelExecution();
+}
+
+void frottementFluideAvanceKernel(
+		const struct mappedParticlePointers *pt, const unsigned int nParticles, 
+		const float rho, 
+		const float cx, const float cy, const float cz) {
+
+	dim3 blockDim(512,1,1);
+	dim3 gridDim(ceil((float)nParticles/512),1,1);
+
+	frottementFluideAvance<<<gridDim,blockDim,0,0>>>(
+		pt->x, pt->y, pt->z, 
+		pt->vx, pt->vy, pt->vz,
+		pt->fx, pt->fy, pt->fz,
+		pt->r,
+		nParticles, 
+		rho,
+		cx, cy, cz);
+	
+	cudaDeviceSynchronize();
+	checkKernelExecution();
+}
+
+void dynamicSchemeKernel(const struct mappedParticlePointers *pt, unsigned int nParticles) { 
+	dim3 blockDim(512,1,1);
+	dim3 gridDim(ceil((float)nParticles/512),1,1);
+
+	float dt = 0.01;
+
+	dynamicScheme<<<gridDim,blockDim,0,0>>>(
+		pt->x, pt->y, pt->z, 
+		pt->vx, pt->vy, pt->vz,
+		pt->fx, pt->fy, pt->fz,
+		pt->im, dt, nParticles);
+
 	cudaDeviceSynchronize();
 	checkKernelExecution();
 }
