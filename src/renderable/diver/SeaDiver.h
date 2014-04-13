@@ -8,8 +8,6 @@ class SeaDiver : public RenderTree {
     public:
         SeaDiver ();
 
-        void animate ();
-
         // Events
         void keyPressEvent(QKeyEvent* e);
         void mouseMoveEvent(QMouseEvent* e);

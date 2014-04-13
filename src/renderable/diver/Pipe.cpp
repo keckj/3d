@@ -1,11 +1,16 @@
 #include "Pipe.h"
+#include "Dimensions.h"
+
 #include <iostream>
 
-Pipe::Pipe (std::vector<Vec> points) : DynamicSystem(), points(points), cs(points), pas(1) {
+Pipe::Pipe (std::vector<Vec> points) : DynamicSystem(), points(points), cs(points), pas(0.5) {
+    groundPosition = Vec(0.0, 0.0, -(HEIGHT_TRUNK + HEIGHT_THIGH));
+    springStiffness = 50.0;
+    createSystemScene();
 }
 
 void Pipe::createSystemScene () {
-    // beginning is fixed
+    // beginning particle is fixed
     Particle *begin = new Particle(points[0], Vec(), 0.0, particleRadius, Vec(0.0, 1.0, 0.0));
     fixed.push_back(begin);
 

@@ -1,12 +1,12 @@
-#ifndef THIGH_H
-#define THIGH_H
+#ifndef LEG_H
+#define LEG_H
 
 #include "RenderTree.h"
 #include "Cylinder.h"
 
-class Thigh : public RenderTree {
+class Leg : public RenderTree {
     public:
-        Thigh (float width, float height);
+        Leg (float width, float height);
 
         float getWidth () const;
         float getHeight () const;

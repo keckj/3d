@@ -96,19 +96,18 @@ int main(int argc, char** argv) {
 
         // Pipe
         // TODO : put this in Dimensions
-        std::vector<Vec> tmp;
-        tmp.push_back(Vec(PIPE_FIXED_PART_X, PIPE_FIXED_PART_Y, PIPE_FIXED_PART_Z));
-        tmp.push_back(Vec(0, 2, 4));
-        tmp.push_back(Vec(0, 1, 1));
-        tmp.push_back(Vec(0, 0, 0));
+        /* std::vector<Vec> tmp; */
+        /* tmp.push_back(Vec(PIPE_FIXED_PART_X, PIPE_FIXED_PART_Y, PIPE_FIXED_PART_Z)); */
+        /* tmp.push_back(Vec(0, 2, 4)); */
+        /* tmp.push_back(Vec(0, 1, 1)); */
+        /* tmp.push_back(Vec(0, 0, 0)); */
 
-        Pipe *pipe = new Pipe(tmp);
-        tmp.clear();
-        viewer.addRenderable(pipe);
+        /* Pipe *pipe = new Pipe(tmp); */
+        /* tmp.clear(); */
+        /* viewer.addRenderable(pipe); */
 
         /* root->addChild("terrain", terrain); */
         /* root->addChild("vagues", waves); */
-
 
         // Run main loop.
         return application.exec();
