@@ -2,7 +2,6 @@
 #ifndef ARCHIMEDE_H
 #define ARCHIMEDE_H
 
-#include "headers.h"
 #include "particleGroupKernel.h"
 
 class PousseeArchimede : public ParticleGroupKernel {

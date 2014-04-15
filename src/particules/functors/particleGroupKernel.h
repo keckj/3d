@@ -10,6 +10,7 @@ class ParticleGroupKernel {
 	public:
 		virtual ~ParticleGroupKernel() {};
 		virtual void operator()(const ParticleGroup *particleGroup) = 0;
+		virtual void animate() {};
 		
 	protected:
 		ParticleGroupKernel() {};

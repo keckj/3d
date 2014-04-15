@@ -29,7 +29,13 @@
 #include "particleGroup.h"
 #include "rand.h"
 #include "pousseeArchimede.h"
+#include "constantForce.h"
+#include "constantMassForce.h"
+#include "frottementFluide.h"
+#include "frottementFluideAvance.h"
 #include "dynamicScheme.h"
+#include "seaFlow.h"
+#include "attractor.h"
 
 
 using namespace std;
@@ -89,38 +95,47 @@ int main(int argc, char** argv) {
 		terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2));
 
 		Waves *waves = new Waves(0.0,0.0,10.0,10.0,1.0);
-		waves->scale(10);
+		waves->scale(100);
 
 		RenderRoot *root = new RenderRoot();
 
 		unsigned int nParticles = 10000;
-		unsigned int nParticleGroups = 20;
+		unsigned int nParticleGroups = 1;
 		ParticleGroup **pg = new ParticleGroup*[nParticleGroups];
 	
 		qglviewer::Vec g = 0.01*Vec(0,-9.81,0);
-		ParticleGroupKernel *archimede = new PousseeArchimede(g, 1000);
+		ParticleGroupKernel *archimede = new ConstantForce(-g);
+		ParticleGroupKernel *seaFlow = new SeaFlow(0.2*qglviewer::Vec(1,0,1));
+		ParticleGroupKernel *frottement = new FrottementFluideAvance(0.47, 0.47, 0.47, 1000);
+		ParticleGroupKernel *attractor = new Attractor(0.2, 100, 0.001);
+		ParticleGroupKernel *repulsor = new Attractor(0.1, 0.2, -0.00);
 		ParticleGroupKernel *dynamicScheme = new DynamicScheme();
 
 		stringstream name;
 	
 		for (unsigned int j = 0; j < nParticleGroups; j++) {
-			pg[j] = new ParticleGroup(nParticles);
+			pg[j] = new ParticleGroup(nParticles+1);
 			for (unsigned int i = 0; i < nParticles; i++) {
 				qglviewer::Vec pos = Vec(Random::randf(), Random::randf(), Random::randf());
 				qglviewer::Vec  vel = Vec(0, 0, 0);
-				float r = Random::randf(0.2,1.0);
+				float r = Random::randf(0.2,0.8);
 				float rho = 1.2;//kg/m^3
 				float m = rho*4/3.0*3.14*r*r*r;
 				pg[j]->addParticle(new Particule(pos, vel, m, r));	
 			}
-
+		
+			//pg[j]->addKernel(attractor);
+			//pg[j]->addKernel(repulsor);
+			//pg[j]->addKernel(seaFlow);
 			pg[j]->addKernel(archimede);
+			pg[j]->addKernel(frottement);
 			pg[j]->addKernel(dynamicScheme);
 			pg[j]->scale(10);
 			if(j>=10)
 				pg[j]->translate((j-10)*10,0,0);
 			else
 				pg[j]->translate(0,0,j*10);
+
 			pg[j]->releaseParticles();
 	
 			name.clear();

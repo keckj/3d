@@ -164,6 +164,7 @@ void ParticleGroup::animateDownwards() {
 
 	std::list<ParticleGroupKernel *>::iterator it = kernels.begin();
 	for (; it != kernels.end(); ++it) {
+		(*it)->animate();
 		(**it)(this);
 	}
 
