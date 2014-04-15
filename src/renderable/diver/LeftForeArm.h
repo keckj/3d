@@ -7,7 +7,11 @@ class LeftForeArm : public Arm {
     public:
         LeftForeArm (float width, float height);
 
+        void animateDownwards();
+
     private:
+        bool down;
+        float theta;
 };
 
 #endif
