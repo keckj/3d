@@ -114,7 +114,7 @@ int main(int argc, char** argv) {
 		stringstream name;
 	
 		for (unsigned int j = 0; j < nParticleGroups; j++) {
-			pg[j] = new ParticleGroup(nParticles+1);
+			pg[j] = new ParticleGroup(nParticles, 100);
 			for (unsigned int i = 0; i < nParticles; i++) {
 				qglviewer::Vec pos = Vec(Random::randf(), Random::randf(), Random::randf());
 				qglviewer::Vec  vel = Vec(0, 0, 0);
@@ -131,17 +131,13 @@ int main(int argc, char** argv) {
 			pg[j]->addKernel(frottement);
 			pg[j]->addKernel(dynamicScheme);
 			pg[j]->scale(10);
-			if(j>=10)
-				pg[j]->translate((j-10)*10,0,0);
-			else
-				pg[j]->translate(0,0,j*10);
-
 			pg[j]->releaseParticles();
 	
 			name.clear();
 			name << "particules" << j;
 			root->addChild(name.str(), pg[j]);
 		}
+
 
 		//root->addChild("terrain", terrain);
 		//root->addChild("vagues",[id] waves);

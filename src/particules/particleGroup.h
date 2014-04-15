@@ -5,13 +5,20 @@
 #include "consts.h"
 #include "particule.h"
 #include "program.h"
+#include "ressort.h"
 #include "renderTree.h"
 #include "particleGroupKernel.h"
 #include <list>
 #include <map>
 
 struct mappedParticlePointers {
-	float *x, *y, *z, *vx, *vy, *vz, *fx, *fy, *fz, *m, *im, *r, *kill;
+	//particules
+	float *x, *y, *z, *vx, *vy, *vz, *fx, *fy, *fz, *m, *im, *r;
+	bool *kill;
+	//ressorts
+	float *k, *Lo, *d, *Fmax;
+	unsigned int *id1, *id2;
+	bool *killSpring;
 };
 
 class ParticleGroupKernel;
@@ -19,14 +26,21 @@ class ParticleGroupKernel;
 class ParticleGroup : public RenderTree {
 
 	public:
-		ParticleGroup(unsigned int maxParticles);
+		ParticleGroup(unsigned int maxParticles, unsigned int maxSprings);
 		virtual ~ParticleGroup();
 
 		unsigned int getParticleCount() const;
+		unsigned int getParticleWaitingCount() const;
 		unsigned int getMaxParticles() const;
 		
+		unsigned int getSpringCount() const;
+		unsigned int getSpringWaitingCount() const;
+		unsigned int getMaxSprings() const;
+		
 		void addParticle(Particule *p);
+		void addSpring(unsigned int particleId_1, unsigned int particleId_2, float k, float Lo, float d, float Fmax=-1.0f);
 		void addKernel(ParticleGroupKernel *kernel);
+	
 		void releaseParticles();
 
 		virtual void drawDownwards(const float *modelMatrix = consts::identity4);
@@ -35,25 +49,39 @@ class ParticleGroup : public RenderTree {
 		struct mappedParticlePointers *getMappedRessources() const;
 
 	private:
-		unsigned int maxParticles;
-		unsigned int nParticles;
-		unsigned int nWaitingParticles;
-		std::list<Particule *> particlesWaitList;
+		unsigned int maxParticles, nParticles, nWaitingParticles;
+		unsigned int maxSprings, nSprings, nWaitingSprings;
 		
-		int nBuffers;
-		unsigned int *buffers; //VBOs
-		unsigned int x_b, y_b, z_b, 
-					 r_b, kill_b; //VBOs
+		std::list<Particule *> particlesWaitList;
+		std::list<Ressort *> springsWaitList;
+
+		std::list<ParticleGroupKernel *> kernels;
+		
+		//VBOs 
+		unsigned int *buffers;
+		unsigned int x_b, y_b, z_b,
+					 r_b, kill_b, 
+					 springs_lines_b, springs_intensity_b, springs_kill_b; //GL_LINES, FOR COLOR/THIKNESS, KILL 
+		
+		//graphic ressources to share context
 		cudaGraphicsResource_t *ressources;
 		cudaGraphicsResource_t x_r, y_r, z_r, 
-							   r_r, kill_r;
+							   r_r, kill_r, 
+							   springs_lines_r, springs_intensity_r, springs_kill_r;
+	
+		//device pointers
 		float *x_d, *y_d, *z_d, 
 			  *vx_d, *vy_d, *vz_d, 
 			  *fx_d, *fy_d, *fz_d,
-			  *m_d, *im_d, *r_d, *kill_d; //device pointers
+			  *m_d, *im_d, *r_d,
+			  *springs_k_d, *springs_Lo_d, *springs_d_d, *springs_Fmax_d, 
+			  *springs_lines_d, *springs_intensity_d;
 
+		unsigned int *springs_id1_d, *springs_id2_d;
+		bool *kill_d, *springs_kill_d;
+		
+		//funcs
 		bool _mapped;
-		std::list<ParticleGroupKernel *> kernels;
 
 		void fromDevice();
 		void toDevice();

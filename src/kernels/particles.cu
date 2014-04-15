@@ -6,11 +6,17 @@
 
 #include <iostream>
 
-struct mappedParticlePointers {
-	float *x, *y, *z, *vx, *vy, *vz, *fx, *fy, *fz, *m, *im, *r, *kill;
-};
-
 extern void checkKernelExecution();
+
+struct mappedParticlePointers {
+	//particules
+	float *x, *y, *z, *vx, *vy, *vz, *fx, *fy, *fz, *m, *im, *r;
+	bool *kill;
+	//ressorts
+	float *k, *Lo, *d, *Fmax;
+	unsigned int *id1, *id2;
+	bool *killSpring;
+};
 
 
 __global__ void forceConstante(
