@@ -6,8 +6,10 @@
 
 #define N_BUFFERS 8
 
-Program *ParticleGroup::_debugProgram = 0;
-std::map<std::string, int> ParticleGroup::_uniformLocs;
+Program *ParticleGroup::_particlesDebugProgram = 0;
+Program *ParticleGroup::_springsDebugProgram = 0;
+std::map<std::string, int> ParticleGroup::_particleUniformLocs;
+std::map<std::string, int> ParticleGroup::_springsUniformLocs;
 
 ParticleGroup::ParticleGroup(unsigned int maxParticles, unsigned int maxSprings) :
 	maxParticles(maxParticles), nParticles(0), nWaitingParticles(0),
@@ -191,24 +193,25 @@ void ParticleGroup::addSpring(unsigned int particleId1, unsigned int particleId2
 void ParticleGroup::addKernel(ParticleGroupKernel *kernel) {
 	kernels.push_back(kernel);
 }
-		
+	
+//TODO VAO
 void ParticleGroup::drawDownwards(const float *modelMatrix) {
 
 	static float *proj = new float[16], *view = new float[16];
 
-	if(_debugProgram == 0)
-		makeDebugProgram();
+	if(_particlesDebugProgram == 0)
+		makeDebugPrograms();
 	
-	_debugProgram->use();
+	_particlesDebugProgram->use();
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_POINT_SMOOTH);
 
 	glGetFloatv(GL_MODELVIEW_MATRIX, view);
 	glGetFloatv(GL_PROJECTION_MATRIX, proj);
-	glUniformMatrix4fv(_uniformLocs["projectionMatrix"], 1, GL_FALSE, proj);
-	glUniformMatrix4fv(_uniformLocs["viewMatrix"], 1, GL_FALSE, view);
-	glUniformMatrix4fv(_uniformLocs["modelMatrix"], 1, GL_TRUE, modelMatrix);
+	glUniformMatrix4fv(_particleUniformLocs["projectionMatrix"], 1, GL_FALSE, proj);
+	glUniformMatrix4fv(_particleUniformLocs["viewMatrix"], 1, GL_FALSE, view);
+	glUniformMatrix4fv(_particleUniformLocs["modelMatrix"], 1, GL_TRUE, modelMatrix);
 
 	glBindBuffer(GL_ARRAY_BUFFER, x_b);
 	glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 0, 0);
@@ -239,6 +242,29 @@ void ParticleGroup::drawDownwards(const float *modelMatrix) {
 	
 	glDisable(GL_PROGRAM_POINT_SIZE);
 	glDisable(GL_POINT_SMOOTH);
+
+
+	_springsDebugProgram->use();
+	glUniformMatrix4fv(_springsUniformLocs["projectionMatrix"], 1, GL_FALSE, proj);
+	glUniformMatrix4fv(_springsUniformLocs["viewMatrix"], 1, GL_FALSE, view);
+	glUniformMatrix4fv(_springsUniformLocs["modelMatrix"], 1, GL_TRUE, modelMatrix);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, springs_lines_b);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribDivisor(0, 1);
+	glEnableVertexAttribArray(0);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, springs_intensity_b);
+	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribDivisor(1, 2);
+	glEnableVertexAttribArray(1);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, springs_kill_b);
+	glVertexAttribPointer(2, 1, GL_BYTE, GL_FALSE, 0, 0);
+	glVertexAttribDivisor(2, 2);
+	glEnableVertexAttribArray(2);
+	
+	glDrawArraysInstanced(GL_LINES, 0, 1, nSprings);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glUseProgram(0);
@@ -471,18 +497,27 @@ void ParticleGroup::unmapRessources() {
 }
 
 
-void ParticleGroup::makeDebugProgram() {
-	_debugProgram = new Program("ParticleGroup Debug Program");
+void ParticleGroup::makeDebugPrograms() {
 
-	_debugProgram->bindAttribLocations("0 1 2 3 4", "x y z r alive");
-	_debugProgram->bindFragDataLocation(0, "out_colour");
+	_particlesDebugProgram = new Program("Particle");
+	_particlesDebugProgram->bindAttribLocations("0 1 2 3 4", "x y z r alive");
+	_particlesDebugProgram->bindFragDataLocation(0, "out_colour");
 
-	_debugProgram->attachShader(Shader("shaders/particle/vs.glsl", GL_VERTEX_SHADER));
-	_debugProgram->attachShader(Shader("shaders/particle/fs.glsl", GL_FRAGMENT_SHADER));
+	_particlesDebugProgram->attachShader(Shader("shaders/particle/particle_vs.glsl", GL_VERTEX_SHADER));
+	_particlesDebugProgram->attachShader(Shader("shaders/particle/particle_fs.glsl", GL_FRAGMENT_SHADER));
 
-	_debugProgram->link();
+	_particlesDebugProgram->link();
+	_particleUniformLocs = _particlesDebugProgram->getUniformLocationsMap("modelMatrix projectionMatrix viewMatrix", true);
+	
+	_springsDebugProgram = new Program("Spring");
+	_springsDebugProgram->bindAttribLocations("0 1 2", "pos intensity alive");
+	_springsDebugProgram->bindFragDataLocation(0, "out_colour");
 
-	_uniformLocs = _debugProgram->getUniformLocationsMap("modelMatrix projectionMatrix viewMatrix", true);
+	_springsDebugProgram->attachShader(Shader("shaders/particle/spring_vs.glsl", GL_VERTEX_SHADER));
+	_springsDebugProgram->attachShader(Shader("shaders/particle/spring_fs.glsl", GL_FRAGMENT_SHADER));
+
+	_springsDebugProgram->link();
+
 }
 
 void ParticleGroup::releaseParticles() {
@@ -497,23 +532,24 @@ struct mappedParticlePointers *ParticleGroup::getMappedRessources() const {
 	}
 
 	struct mappedParticlePointers *pt = new struct mappedParticlePointers;
-	*pt = {x_d, y_d, z_d, vx_d, vy_d, vz_d, fx_d, fy_d, fz_d, m_d, im_d, r_d,
+	*pt = {
+		x_d, y_d, z_d, vx_d, vy_d, vz_d, fx_d, fy_d, fz_d, m_d, im_d, r_d,
 		kill_d,
-		springs_k_d, springs_Lo_d, springs_d_d, springs_Fmax_d,
+		springs_k_d, springs_Lo_d, springs_d_d, springs_Fmax_d, springs_lines_d, springs_intensity_d,
 		springs_id1_d, springs_id2_d, 
-		springs_kill_d};
+		springs_kill_d
+	};
 
 	return pt;
 }
 
+
 unsigned int ParticleGroup::getParticleCount() const {
 	return nParticles;
 }
-
 unsigned int ParticleGroup::getMaxParticles() const {
 	return maxParticles;
 }
-
 unsigned int ParticleGroup::getParticleWaitingCount() const {
 	return nWaitingParticles;
 }

@@ -36,6 +36,7 @@
 #include "dynamicScheme.h"
 #include "seaFlow.h"
 #include "attractor.h"
+#include "springsSystem.h"
 
 
 using namespace std;
@@ -110,6 +111,7 @@ int main(int argc, char** argv) {
 		ParticleGroupKernel *attractor = new Attractor(0.2, 100, 0.001);
 		ParticleGroupKernel *repulsor = new Attractor(0.1, 0.2, -0.00);
 		ParticleGroupKernel *dynamicScheme = new DynamicScheme();
+		ParticleGroupKernel *springsSystem = new SpringsSystem(false);
 
 		stringstream name;
 	
@@ -127,6 +129,7 @@ int main(int argc, char** argv) {
 			//pg[j]->addKernel(attractor);
 			//pg[j]->addKernel(repulsor);
 			//pg[j]->addKernel(seaFlow);
+			//pg[j]->addKernel(springsSystem);
 			pg[j]->addKernel(archimede);
 			pg[j]->addKernel(frottement);
 			pg[j]->addKernel(dynamicScheme);

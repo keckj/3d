@@ -16,7 +16,7 @@ struct mappedParticlePointers {
 	float *x, *y, *z, *vx, *vy, *vz, *fx, *fy, *fz, *m, *im, *r;
 	bool *kill;
 	//ressorts
-	float *k, *Lo, *d, *Fmax;
+	float *k, *Lo, *d, *Fmax, *lines, *intensity;
 	unsigned int *id1, *id2;
 	bool *killSpring;
 };
@@ -89,9 +89,9 @@ class ParticleGroup : public RenderTree {
 		void mapRessources();
 		void unmapRessources();
 
-		static Program *_debugProgram;
-		static std::map<std::string, int> _uniformLocs;
-		static void makeDebugProgram();
+		static Program *_particlesDebugProgram, *_springsDebugProgram;
+		static std::map<std::string, int> _particleUniformLocs, _springsUniformLocs;
+		static void makeDebugPrograms();
 };
 
 #endif /* end of include guard: PARTICLEGROUP_H */

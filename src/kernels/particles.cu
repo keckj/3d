@@ -13,11 +13,10 @@ struct mappedParticlePointers {
 	float *x, *y, *z, *vx, *vy, *vz, *fx, *fy, *fz, *m, *im, *r;
 	bool *kill;
 	//ressorts
-	float *k, *Lo, *d, *Fmax;
+	float *k, *Lo, *d, *Fmax, *lines, *intensity;
 	unsigned int *id1, *id2;
 	bool *killSpring;
 };
-
 
 __global__ void forceConstante(
 		float *fx, float *fy, float *fz,
@@ -167,6 +166,95 @@ __global__ void attractors(
 	fy[id] += _fy;
 	fz[id] += _fz;
 }
+
+	__global__ void
+	__launch_bounds__(512)
+	computeSprings(
+				unsigned int *id1, unsigned int *id2,
+				float *x, float *y, float *z,
+				float *vx, float *vy, float *vz,
+				float *fx, float *fy, float *fz,
+				float *k, float *Lo, float *d, float *Fmax,
+				bool *kill, float *outputLines,
+				const bool handleDumping, 
+				const unsigned int nSprings) {
+
+	int id = blockIdx.x*blockDim.x + threadIdx.x;
+	
+	if(id > nSprings)
+		return;
+		
+	if(kill[id])
+		return;
+
+	unsigned int _id1 = id1[id];
+	unsigned int _id2 = id2[id];
+
+	float _x1 = x[_id1], _y1 = y[_id1], _z1 = z[_id1];
+	float _x2 = x[_id2], _y2 = y[_id2], _z2 = z[_id2];
+	
+	float dx = _x2 - _x1; 
+	float dy = _y2 - _y1; 
+	float dz = _z2 - _z1;
+	
+	float N = sqrt(dx*dx + dy*dy + dz*dz);
+	
+	if(N<1.0e-6)
+		return; //null force
+
+	float _k = k[id];
+	float _Lo = Lo[id];
+	float _d = d[id];
+	float _Fmax = Fmax[id];
+
+	float dF, dFs, dFd, dfx, dfy, dfz;
+
+	//stiffness
+	dFs = - _k*(N - _Lo);
+
+	//damping
+	dFd = 0;
+	if(handleDumping && _d>1.0e-6) {
+		float _vx1 = vx[_id1], _vy1 = vy[_id1], _vz1 = vz[_id1];
+		float _vx2 = vx[_id2], _vy2 = vy[_id2], _vz2 = vz[_id2];
+		
+		float dvx = _vx2 - _vx1; 
+		float dvy = _vy2 - _vy1; 
+		float dvz = _vz2 - _vz1;
+
+		dFd = _d*(dvx*dx + dvy*dy + dvz*dz)/N;
+	}
+	
+	//total force
+	dF = dFs + dFd;
+	if(dF > _Fmax)
+		kill[id] = true;
+
+	dF /= N;
+	dfx = dF*dx;
+	dfy = dF*dy;
+	dfz = dF*dz;
+
+	//update force on particles
+	fx[_id1] += dfx;
+	fy[_id1] += dfy;
+	fz[_id1] += dfz;
+	
+	fx[_id2] -= dfx;
+	fy[_id2] -= dfy;
+	fz[_id2] -= dfz;
+
+	//update vbos
+	outputLines[6*id+0] = _x1;
+	outputLines[6*id+1] = _y1;
+	outputLines[6*id+2] = _z1;
+	
+	outputLines[6*id+3] = _x2;
+	outputLines[6*id+4] = _y2;
+	outputLines[6*id+5] = _z2;
+}
+
+				
 	
 __global__ void dynamicScheme(
 		float *x, float *y, float *z,
@@ -318,6 +406,27 @@ void attractorKernel(const struct mappedParticlePointers *pt,
 		nParticles,
 		dMin, dMax, C);
 
+	cudaDeviceSynchronize();
+	checkKernelExecution();
+}
+
+void springKernel(const struct mappedParticlePointers *pt,
+		const unsigned int nSprings,
+		const bool handleDumping) {
+	
+	dim3 blockDim(512,1,1);
+	dim3 gridDim(ceil((float)nSprings/512),1,1);
+
+	computeSprings<<<gridDim,blockDim,0,0>>>(
+				pt->id1, pt->id2,
+				pt->x, pt->y, pt->z,
+				pt->vx, pt->vy, pt->vz,
+				pt->fx, pt->fy, pt->fz,
+				pt->k, pt->Lo, pt->d, pt->Fmax,
+				pt->killSpring, pt->lines,
+				handleDumping, 
+				nSprings);
+	
 	cudaDeviceSynchronize();
 	checkKernelExecution();
 }
