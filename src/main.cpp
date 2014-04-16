@@ -86,10 +86,13 @@ int main(int argc, char** argv) {
 		/* Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); */
 		/* terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2)); */
 
-		/* Waves *waves = new Waves(0.0,0.0,10.0,10.0,1.0); */
-		/* waves->scale(10); */
+		Waves *waves = new Waves(0.0,0.0,100.0,100.0,10.0);
+		//waves->scale(10);
 
         // Diver
+		RenderRoot *root = new RenderRoot();
+        //SeaDiver *diver = new SeaDiver();
+        //root->addChild("diver", diver);
 		/* RenderRoot *root = new RenderRoot(); */
         /* SeaDiver *diver = new SeaDiver(); */
         /* root->addChild("diver", diver); */
@@ -110,8 +113,9 @@ int main(int argc, char** argv) {
         /* tmp.clear(); */
         /* viewer.addRenderable(pipe); */
 
-        /* root->addChild("terrain", terrain); */
-        /* root->addChild("vagues", waves); */
+        //root->addChild("terrain", terrain);
+        root->addChild("vagues", waves);
+		viewer.addRenderable(root);
 
         // Run main loop.
         return application.exec();
