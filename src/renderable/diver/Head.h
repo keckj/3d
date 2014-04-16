@@ -17,6 +17,8 @@ class Head : public RenderTree {
 
     protected:
         void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
+        void drawUpwards(const float *currentTransformationMatrix = consts::identity4);
+
     private:
         float radius;
 };

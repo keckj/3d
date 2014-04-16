@@ -16,7 +16,9 @@ void Leg::drawDownwards(const float *currentTransformationMatrix) {
 
     glMultTransposeMatrixf(relativeModelMatrix);
     cyl.draw();
+}
 
+void Leg::drawUpwards (const float *currentTransformationMatrix) {
     glPopMatrix();
 }
 

@@ -41,7 +41,9 @@ void Trunk::drawDownwards(const float *currentTransformationMatrix) {
 
     glMultTransposeMatrixf(relativeModelMatrix);
     rect.draw();
+}
 
+void Trunk::drawUpwards (const float *currentTransformationMatrix) {
     glPopMatrix();
 }
 

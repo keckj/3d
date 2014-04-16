@@ -12,7 +12,8 @@ void Head::drawDownwards(const float *currentTransformationMatrix) {
 
     glMultTransposeMatrixf(relativeModelMatrix);
     glutSolidSphere(radius, 20, 20);
-
-    glPopMatrix();
 }
 
+void Head::drawUpwards (const float *currentTransformationMatrix) {
+    glPopMatrix();
+}
