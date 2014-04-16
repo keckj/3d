@@ -34,8 +34,8 @@ VIEWER_LIBS = -lGLU -lglut -lGL -lQtXml -lQtOpenGL -lQtGui -lQtCore -lpthread -l
 VIEWER_DEFINES = -D_REENTRANT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 
 NARCH=12  #Archi cuda
-CUDA_INCLUDEPATH = -I/usr/local/cuda-5.5/include
-CUDA_LIBPATH = -L/usr/local/cuda-5.5/lib64 
+CUDA_INCLUDEPATH = -I/usr/local/cuda-5.5/include -I/usr/local/cuda-6.0/include
+CUDA_LIBPATH = -L/usr/local/cuda-5.5/lib64 -L/usr/local/cuda-6.0/lib64 -L/usr/lib/nvidia-331
 CUDA_LIBS = -lcuda -lcudart
 
 DISTRIB=$(filter-out Distributor ID:, $(shell lsb_release -i))
