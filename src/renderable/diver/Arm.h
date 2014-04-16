@@ -1,7 +1,7 @@
 #ifndef ARM_H
 #define ARM_H
 
-#include "RenderTree.h"
+#include "renderTree.h"
 #include "Cylinder.h"
 
 class Arm : public RenderTree {

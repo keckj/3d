@@ -1,7 +1,7 @@
 #ifndef LEG_H
 #define LEG_H
 
-#include "RenderTree.h"
+#include "renderTree.h"
 #include "Cylinder.h"
 
 class Leg : public RenderTree {

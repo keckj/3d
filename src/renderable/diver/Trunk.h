@@ -1,7 +1,7 @@
 #ifndef TRUNK_H
 #define TRUNK_H
 
-#include "RenderTree.h"
+#include "renderTree.h"
 #include "Rectangle.h"
 
 class Trunk : public RenderTree {

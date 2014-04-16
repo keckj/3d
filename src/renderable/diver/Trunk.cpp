@@ -8,7 +8,7 @@
 #include "RightThigh.h"
 
 #include <iostream>
-#include <qglviewer/vec.h>
+#include <QGLViewer/vec.h>
 using namespace qglviewer;
 
 Trunk::Trunk (float width, float height, float depth) : RenderTree(), rect(width, height, depth) {

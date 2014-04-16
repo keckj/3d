@@ -1,7 +1,7 @@
 #include "LeftForeArm.h"
 
 #include <cmath>
-#include <qglviewer/vec.h>
+#include <QGLViewer/vec.h>
 using namespace qglviewer;
 
 LeftForeArm::LeftForeArm (float width, float height) : Arm(width, height) {

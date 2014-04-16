@@ -8,7 +8,7 @@
 #include <GLUT/glut.h>
 #endif
 
-#include "RenderTree.h"
+#include "renderTree.h"
 
 class Head : public RenderTree {
     public:

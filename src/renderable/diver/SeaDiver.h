@@ -2,7 +2,7 @@
 #define SEADIVER_H
 
 #include "Dimensions.h"
-#include "RenderTree.h"
+#include "renderTree.h"
 
 class SeaDiver : public RenderTree {
     public:
