@@ -1,6 +1,5 @@
-#version 130
+#version 150
 
-precision highp float;
 in vec3 position;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -8,9 +7,23 @@ uniform mat4 projectionMatrix;
 uniform float time;
 uniform float deltaX;
 uniform float deltaZ;
+
+uniform	float fogDensity = 0.02;
+uniform	float underWaterFogEnd = 30.0;
+//uniform vec3 cameraPos;
+uniform float waterHeight = 10.0;
+uniform vec3 sunDir = vec3(150.0,20.0,0.0);
+
 out vec3 fPosition;
 out vec3 fNormal;
 
+out vec3 fogColor;
+out float fogFactor;
+
+
+vec3 underWaterFogColor = vec3(57.0/256.0,88.0/256.0,121.0/256.0);
+vec3 cameraPos;
+float waveHeight = 0.1;
 
 /*
 // noise functions from: https://github.com/ashima/webgl-noise/
@@ -176,13 +189,48 @@ float snoise2(vec2 v) {
     return 130.0 * dot(m, g);
 }
 
+void computeFogColor(in vec4 position) {
 
+    vec3 rayDir = normalize(cameraPos - position.xyz);
+    float distance = length(cameraPos - position.xyz);
+    float hc = cameraPos.y - position.y;//waterHeight * (1.-waveHeight);
+    float hp = position.y - position.y;//waterHeight * (1.-waveHeight);
+    
+    // On évite les if imbriqués pour des raisons de performances
+    if (hc >= 0 && hp >= 0) {
+        // Brouillard exponentiel au dessus de l'eau (soleil de la skybox pris en compte)
+        fogFactor = exp( -distance*fogDensity );
+        float sunFactor = max( dot( rayDir, normalize(sunDir) ), 0.0 );
+        fogColor = mix( /*vec3(0.5,0.6,0.7)*/ vec3(0.8,0.8,0.8), // bluish
+                        vec3(1.0,0.9,0.7), // yellowish
+                        pow(sunFactor,8.0) );
+        //fogColor = vec3(0.8,0.8,0.8);
+    } else if (hc < 0 && hp < 0) {
+        // Brouillard linéaire sous l'eau (début immédiatement devant la caméra)
+        fogFactor = clamp((underWaterFogEnd - distance) / underWaterFogEnd, 0.0, 1.0); 
+        fogColor = underWaterFogColor; 
+    } else if (hc >= 0 && hp < 0) {
+        // Brouillard linéaire proportionnel à la longueur traversée sous l'eau
+        float d = distance * hp / (hp +  hc);
+        fogFactor = clamp((underWaterFogEnd - d) / underWaterFogEnd, 0.0, 1.0); 
+        fogColor = underWaterFogColor; 
+    } else if (hc < 0 && hp >= 0) {
+        // Brouillard linéaire proportionnel à la longueur traversée sous l'eau
+        float d = distance * hc / (hp +  hc);
+        fogFactor = clamp((underWaterFogEnd - d) / underWaterFogEnd, 0.0, 1.0); 
+        fogColor = underWaterFogColor; 
+    }
+}
+
+float applyNoise(vec2 pos) {
+    return waveHeight * snoise2(vec2(pos.x+3.14,pos.y+7.89)*(time+5.52)/20.0);
+}
 
 vec3 calcNormals(in vec3 pos) {
     vec2 xOffsetPos = pos.xz + vec2(deltaX, 0.0);
     vec2 zOffsetPos = pos.xz + vec2(0.0, deltaZ);
-    float xOffsetHeight = 0.05*snoise2((xOffsetPos+pos.xz)*time/2.0);
-    float zOffsetHeight = 0.05*snoise2((zOffsetPos+pos.xz)*time/2.0);
+    float xOffsetHeight = applyNoise(xOffsetPos);
+    float zOffsetHeight = applyNoise(zOffsetPos);
     vec3 modelXOffset = vec3(xOffsetPos.x, xOffsetHeight, xOffsetPos.y);
     vec3 modelZOffset = vec3(zOffsetPos.x, zOffsetHeight, zOffsetPos.y);
 
@@ -191,12 +239,18 @@ vec3 calcNormals(in vec3 pos) {
     return normalize(cross(modelXGrad, modelZGrad));
 }
 
+
 void main()
 {
+    mat4 invView = inverse(viewMatrix);
+    // Dernière colonne
+    cameraPos = vec3(invView[3][0],invView[3][1],invView[3][2]);
+
     vec4 worldPos = modelMatrix * vec4(position, 1.0);
-    worldPos.g += 0.05*snoise2(vec2(worldPos.x+3.14,worldPos.z+7.89)*(time+5.52)/2.0);
+    worldPos.g += applyNoise(vec2(worldPos.x, worldPos.z));
     fPosition = worldPos.xyz;
-    fNormal = calcNormals(worldPos.xyz);
+    fNormal = calcNormals(fPosition);
+    computeFogColor(worldPos);
     vec4 viewPos = viewMatrix * worldPos;
     gl_Position = projectionMatrix * viewPos;
 }

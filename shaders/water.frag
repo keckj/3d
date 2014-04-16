@@ -1,9 +1,12 @@
 #version 130
 
-precision highp float;
 uniform float time;
 in vec3 fPosition;
 in vec3 fNormal;
+
+in vec3 fogColor;
+in float fogFactor;
+
 out vec4 out_color;
 
 
@@ -103,10 +106,15 @@ float snoise3(vec3 v) {
   }
 
 
+vec4 applyFog(in vec4 fragColor) {
+    return mix( vec4(fogColor,1.0), fragColor, fogFactor );
+}
 
 void main()
 {
   float level = .2;
-  out_color = vec4(vec3(57.0/256.0,88.0/256.0,121.0/256*(snoise3(fNormal*level)+1.0)), 0.5);
+  //out_color = vec4(vec3(57.0/256.0,88.0/256.0,121.0/256*(snoise3(fNormal*level)+1.0)), 0.5);
+  out_color = vec4(57.0/256.0,88.0/256.0,121.0/256, 0.5);
+  out_color = applyFog(out_color);
   //out_color = vec4(57.0/256.0,88.0/256.0,121.0/256.0,0.5);
 }
