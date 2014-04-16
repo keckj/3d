@@ -10,8 +10,8 @@
 
 class Skybox : public Renderable {
     public:
-        Skybox () {}
-        ~Skybox () {}
+        Skybox ();
+        ~Skybox ();
 
         bool Initialize ();
         void Render (float camera_yaw, float camera_pitch);

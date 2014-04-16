@@ -28,6 +28,7 @@
 #include "texture.h"
 #include "renderRoot.h"
 
+#include "skybox.h"
 
 using namespace std;
 using namespace log4cpp;
@@ -92,6 +93,13 @@ int main(int argc, char** argv) {
 		RenderRoot *root = new RenderRoot();
         //SeaDiver *diver = new SeaDiver();
         //root->addChild("diver", diver);
+		/* RenderRoot *root = new RenderRoot(); */
+        /* SeaDiver *diver = new SeaDiver(); */
+        /* root->addChild("diver", diver); */
+		/* viewer.addRenderable(root); */
+
+        Skybox *skybox = new Skybox();
+        viewer.addRenderable(skybox);
 
         // Pipe
         // TODO : put this in Dimensions
