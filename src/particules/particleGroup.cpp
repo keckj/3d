@@ -258,45 +258,49 @@ void ParticleGroup::animateDownwards() {
 
 void ParticleGroup::fromDevice() {
 	
-	float *x_h=0, *y_h=0, *z_h=0, *vx_h=0, *vy_h=0, *vz_h=0, *m_h=0, *r_h=0;
-	float *springs_k_h=0, *springs_Lo_h=0, *springs_d_h=0, *springs_Fmax_h=0;
-	unsigned int *springs_id1_h, *springs_id2_h;
-	bool *kill_h=0, *springs_kill_h=0;
+	float *x_h=0, *y_h=0, *z_h=0, *vx_h=0, *vy_h=0, *vz_h=0, *m_h=0, *r_h=0; //8
+	float *springs_k_h=0, *springs_Lo_h=0, *springs_d_h=0, *springs_Fmax_h=0; //4
+	unsigned int *springs_id1_h, *springs_id2_h; //2
+	bool *kill_h=0, *springs_kill_h=0; //2
 
-	//particles
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&x_h), nParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&y_h), nParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&z_h), nParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&vx_h), nParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&vy_h), nParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&vz_h), nParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&m_h), nParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&r_h), nParticles*sizeof(float)));
+	unsigned int nRessources = 16;
+	void **data_p_h[16] = {
+						(void**)&x_h, (void**)&y_h, (void**)&z_h, 
+						(void**)&vx_h, (void**)&vy_h, (void**)&vz_h, (void**)&m_h, (void**)&r_h, //particles float
+						(void**)&kill_h, //particles bool
+						(void**)&springs_k_h, (void**)&springs_Lo_h, (void**)&springs_d_h, (void**)&springs_Fmax_h, //springs float
+						(void**)&springs_id1_h, (void**)&springs_id2_h, //springs unsigned int
+						(void**)&springs_kill_h //springs bool
+						};
 	
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&kill_h), nParticles*sizeof(bool)));
+	size_t fs = sizeof(float), bs = sizeof(bool), is = sizeof(unsigned int);
+	size_t ps = nParticles, ss = nSprings;
+	size_t dataSize[16] = {
+						ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs,
+						ps*bs,
+						ss*fs, ss*fs, ss*fs, ss*fs,
+						ss*is, ss*is, 
+						ss*bs
+						};
 
-	//springs
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&springs_k_d), nSprings*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&springs_Lo_d), nSprings*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&springs_d_d), nSprings*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&springs_Fmax_d), nSprings*sizeof(float)));
-
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&springs_id1_d), nSprings*sizeof(unsigned int)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&springs_id2_d), nSprings*sizeof(unsigned int)));
-	
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&springs_kill_d), nSprings*sizeof(bool)));
-	
-	float *data_h[] = {x_h, y_h, z_h, vx_h, vy_h, vz_h, m_h, r_h};
-	int nData = 8;
+	for (unsigned int i = 0; i < nRessources; i++) {
+		CHECK_CUDA_ERRORS(cudaMallocHost(data_p_h[i], dataSize[i]));
+	}
 	
 	mapRessources();
 	{
-		float *data_d[] = {x_d, y_d, z_d, vx_d, vy_d, vz_d, m_d, r_d};
+		void *data_d[16] = {
+						x_d, y_d, z_d, 
+						vx_d, vy_d, vz_d, m_d, r_d, //particles float
+						kill_d, //particles bool
+						springs_k_d, springs_Lo_d, springs_d_d, springs_Fmax_d, //springs float
+						springs_id1_d, springs_id2_d, //springs unsigned int
+						springs_kill_d //springs bool
+						};
 
-		for (int i = 0; i < nData - 1; i++) {
-			CHECK_CUDA_ERRORS(cudaMemcpy(data_h[i], data_d[i], nParticles*sizeof(float), cudaMemcpyDeviceToHost));
+		for (unsigned int i = 0; i < nRessources - 1; i++) {
+			CHECK_CUDA_ERRORS(cudaMemcpy(data_p_h[i][0], data_d[i], dataSize[i], cudaMemcpyDeviceToHost));
 		}
-		CHECK_CUDA_ERRORS(cudaMemcpy(kill_h, kill_d, nParticles*sizeof(bool), cudaMemcpyDeviceToHost));
 	}
 	unmapRessources();
 
@@ -307,72 +311,129 @@ void ParticleGroup::fromDevice() {
 		}
 	}
 
-	for (int i = 0; i < nData; i++) {
-		CHECK_CUDA_ERRORS(cudaFreeHost(data_h[i]));
+	//TODO
+	//for (unsigned int i = 0; i < nParticles; i++) {
+		//if(!springs_kill_h[i]) {
+			//springsWaitList.push_back(new Ressort());
+			//nWaitingParticles++;
+		//}
+	//}
+
+	for (unsigned int i = 0; i < nRessources; i++) {
+		CHECK_CUDA_ERRORS(cudaFreeHost(data_p_h[i][0]));
 	}
-	CHECK_CUDA_ERRORS(cudaFreeHost(kill_h));
+	
 	nParticles = 0;
+	nSprings = 0;
 }
 
 void ParticleGroup::toDevice() {
-	float *x_h=0, *y_h=0, *z_h=0, *vx_h=0, *vy_h=0, *vz_h=0, *m_h=0, *im_h=0, *r_h=0;
+	
 
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&x_h), nWaitingParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&y_h), nWaitingParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&z_h), nWaitingParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&vx_h), nWaitingParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&vy_h), nWaitingParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&vz_h), nWaitingParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&m_h), nWaitingParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&im_h), nWaitingParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMallocHost((void**) (&r_h), nWaitingParticles*sizeof(float)));
+	//Alloc CPU arrays
+	float *x_h=0, *y_h=0, *z_h=0, *vx_h=0, *vy_h=0, *vz_h=0, *m_h=0, *im_h, *r_h=0; //9
+	float *springs_k_h=0, *springs_Lo_h=0, *springs_d_h=0, *springs_Fmax_h=0; //4
+	unsigned int *springs_id1_h, *springs_id2_h; //2
 
-
-	std::list<Particule*>::iterator it = particlesWaitList.begin();
-	int i = 0;
-	nParticles = 0;
-	for (; it != particlesWaitList.end(); it++) {
-		Particule *p = *it;
-		Vec pos = p->getPosition();	
-		x_h[i] = pos.x;
-		y_h[i] = pos.y;
-		z_h[i] = pos.z;
-
-		Vec vel = p->getVelocity();	
-		vx_h[i] = vel.x;
-		vy_h[i] = vel.y;
-		vz_h[i] = vel.z;
-
-		m_h[i] = p->getMass();
-		im_h[i] = p->getInvMass();
-		r_h[i] = p->getRadius();
-
-		nParticles++;
-		i++;
+	unsigned int nRessources = 15;
+	void **data_p_h[15] = {
+						(void**)&x_h, (void**)&y_h, (void**)&z_h, 
+						(void**)&vx_h, (void**)&vy_h, (void**)&vz_h, 
+						(void**)&m_h, (void**)&im_h, (void**)&r_h, //particles float
+						(void**)&springs_k_h, (void**)&springs_Lo_h, 
+						(void**)&springs_d_h, (void**)&springs_Fmax_h, //springs float
+						(void**)&springs_id1_h, (void**)&springs_id2_h, //springs unsigned int
+						};
+	
+	size_t fs = sizeof(float), is = sizeof(unsigned int);
+	size_t ps = nWaitingParticles, ss = nWaitingSprings;
+	size_t dataSize[15] = {
+						ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs,
+						ss*fs, ss*fs, ss*fs, ss*fs,
+						ss*is, ss*is, 
+						};
+	
+	for (unsigned int i = 0; i < nRessources; i++) {
+		CHECK_CUDA_ERRORS(cudaMallocHost(data_p_h[i], dataSize[i]));
 	}
 
-	particlesWaitList.clear();
-	nWaitingParticles = 0;
-	
-	float *data_h[] = {x_h, y_h, z_h, vx_h, vy_h, vz_h, m_h, im_h, r_h};
+	//AoS to SoA
+	assert(nParticles == 0);
+	assert(nSprings == 0);
 
+	{
+		std::list<Particule*>::iterator it = particlesWaitList.begin();
+		int i = 0;
+		for (; it != particlesWaitList.end(); it++) {
+			Particule *p = *it;
+			Vec pos = p->getPosition();	
+			x_h[i] = pos.x;
+			y_h[i] = pos.y;
+			z_h[i] = pos.z;
+
+			Vec vel = p->getVelocity();	
+			vx_h[i] = vel.x;
+			vy_h[i] = vel.y;
+			vz_h[i] = vel.z;
+
+			m_h[i] = p->getMass();
+			im_h[i] = p->getInvMass();
+			r_h[i] = p->getRadius();
+
+			nParticles++;
+			i++;
+		}
+	}
+
+	{
+		std::list<Ressort*>::iterator it = springsWaitList.begin();
+		int i = 0;
+		for (; it != springsWaitList.end(); it++) {
+			Ressort *r = *it;
+			springs_id1_h[i] = r->IdP1;
+			springs_id1_h[i] = r->IdP2;
+			springs_k_h[i] = r->k;
+			springs_Lo_h[i] = r->Lo;
+			springs_d_h[i] = r->d;
+			springs_Fmax_h[i] = r->Fmax;
+
+			nSprings++;
+			i++;
+		}
+	}
+
+	//on libère les ressources de la liste
+	while(!particlesWaitList.empty()) delete particlesWaitList.front(), particlesWaitList.pop_front();
+	while(!springsWaitList.empty()) delete springsWaitList.front(), springsWaitList.pop_front();
+	nWaitingSprings = 0;
+	nWaitingParticles = 0;
+
+	//send to GPU
 	mapRessources();
 	{
-		float *data_d[] = {x_d, y_d, z_d, vx_d, vy_d, vz_d, m_d, im_d, r_d};
+		void *data_d[15] = {
+						x_d, y_d, z_d, 
+						vx_d, vy_d, vz_d, m_d, im_d, r_d, //particles float
+						springs_k_d, springs_Lo_d, springs_d_d, springs_Fmax_d, //springs float
+						springs_id1_d, springs_id2_d, //springs unsigned int
+						};
 
-		for (unsigned int i = 0; i < 9; i++) {
-			CHECK_CUDA_ERRORS(cudaMemcpy(data_d[i], data_h[i], nParticles*sizeof(float), cudaMemcpyHostToDevice));
+		for (unsigned int i = 0; i < nRessources; i++) {
+			CHECK_CUDA_ERRORS(cudaMemcpy(data_d[i], data_p_h[i][0], dataSize[i], cudaMemcpyHostToDevice));
 		}
 
+		//set memory to 0
 		CHECK_CUDA_ERRORS(cudaMemset(kill_d, 0, nParticles*sizeof(bool)));
 		CHECK_CUDA_ERRORS(cudaMemset(fx_d, 0, nParticles*sizeof(float)));
 		CHECK_CUDA_ERRORS(cudaMemset(fy_d, 0, nParticles*sizeof(float)));
 		CHECK_CUDA_ERRORS(cudaMemset(fz_d, 0, nParticles*sizeof(float)));
+		
+		CHECK_CUDA_ERRORS(cudaMemset(springs_kill_d, 0, nSprings*sizeof(bool)));
 	}
 	unmapRessources();
-		
-	for (unsigned int i = 0; i < 9; i++) {
-			CHECK_CUDA_ERRORS(cudaFreeHost(data_h[i]));
+
+	for (unsigned int i = 0; i < nRessources; i++) {
+		CHECK_CUDA_ERRORS(cudaFreeHost(data_p_h[i][0]));
 	}
 }
 
@@ -385,10 +446,10 @@ void ParticleGroup::mapRessources() {
 	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &z_d, &size, z_r));	
 	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &r_d, &size, r_r));	
 	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &kill_d, &size, kill_r));	
-	
-	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &springs_lines_b, &size, springs_lines_r));	
-	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &springs_intensity_b, &size, springs_intensity_r));	
-	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &springs_kill_b, &size, springs_kill_r));	
+
+	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &springs_lines_d, &size, springs_lines_r));	
+	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &springs_intensity_d, &size, springs_intensity_r));	
+	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &springs_kill_d, &size, springs_kill_r));	
 
 	_mapped = true;
 }
@@ -405,30 +466,30 @@ void ParticleGroup::unmapRessources() {
 	springs_lines_d = 0;
 	springs_intensity_d = 0;
 	springs_kill_d = 0;
-	
+
 	_mapped = false;
 }
 
 
 void ParticleGroup::makeDebugProgram() {
-		_debugProgram = new Program("ParticleGroup Debug Program");
+	_debugProgram = new Program("ParticleGroup Debug Program");
 
-        _debugProgram->bindAttribLocations("0 1 2 3 4", "x y z r alive");
-        _debugProgram->bindFragDataLocation(0, "out_colour");
+	_debugProgram->bindAttribLocations("0 1 2 3 4", "x y z r alive");
+	_debugProgram->bindFragDataLocation(0, "out_colour");
 
-        _debugProgram->attachShader(Shader("shaders/particle/vs.glsl", GL_VERTEX_SHADER));
-        _debugProgram->attachShader(Shader("shaders/particle/fs.glsl", GL_FRAGMENT_SHADER));
+	_debugProgram->attachShader(Shader("shaders/particle/vs.glsl", GL_VERTEX_SHADER));
+	_debugProgram->attachShader(Shader("shaders/particle/fs.glsl", GL_FRAGMENT_SHADER));
 
-        _debugProgram->link();
-		
-       _uniformLocs = _debugProgram->getUniformLocationsMap("modelMatrix projectionMatrix viewMatrix", true);
+	_debugProgram->link();
+
+	_uniformLocs = _debugProgram->getUniformLocationsMap("modelMatrix projectionMatrix viewMatrix", true);
 }
-		
+
 void ParticleGroup::releaseParticles() {
-	fromDevice();
+	//fromDevice();
 	toDevice();
 }
-		
+
 struct mappedParticlePointers *ParticleGroup::getMappedRessources() const {
 	if(!_mapped) {
 		log_console.errorStream() << "Trying to get ressources that have not been mapped !";	
@@ -444,19 +505,19 @@ struct mappedParticlePointers *ParticleGroup::getMappedRessources() const {
 
 	return pt;
 }
-		
+
 unsigned int ParticleGroup::getParticleCount() const {
 	return nParticles;
 }
-		
+
 unsigned int ParticleGroup::getMaxParticles() const {
 	return maxParticles;
 }
-		
+
 unsigned int ParticleGroup::getParticleWaitingCount() const {
 	return nWaitingParticles;
 }
-		
+
 unsigned int ParticleGroup::getSpringCount() const {
 	return nSprings;
 }
