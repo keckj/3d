@@ -12,7 +12,7 @@ uniform	float fogDensity = 0.02;
 uniform	float underWaterFogEnd = 30.0;
 //uniform vec3 cameraPos;
 uniform float waterHeight = 10.0;
-uniform vec3 sunDir = vec3(150.0,20.0,0.0);
+uniform vec3 sunDir = vec3(100.0,100.0,0.0);
 
 out vec3 fPosition;
 out vec3 fNormal;
@@ -201,7 +201,7 @@ void computeFogColor(in vec4 position) {
         // Brouillard exponentiel au dessus de l'eau (soleil de la skybox pris en compte)
         fogFactor = exp( -distance*fogDensity );
         float sunFactor = max( dot( rayDir, normalize(sunDir) ), 0.0 );
-        fogColor = mix( /*vec3(0.5,0.6,0.7)*/ vec3(0.8,0.8,0.8), // bluish
+        fogColor = mix( vec3(0.5,0.6,0.7),// vec3(0.8,0.8,0.8), // bluish
                         vec3(1.0,0.9,0.7), // yellowish
                         pow(sunFactor,8.0) );
         //fogColor = vec3(0.8,0.8,0.8);
@@ -236,7 +236,7 @@ vec3 calcNormals(in vec3 pos) {
 
     vec3 modelXGrad = modelXOffset - pos;
     vec3 modelZGrad = modelZOffset - pos;
-    return normalize(cross(modelXGrad, modelZGrad));
+    return -normalize(cross(modelXGrad, modelZGrad));
 }
 
 
