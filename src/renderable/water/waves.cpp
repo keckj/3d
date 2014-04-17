@@ -77,8 +77,8 @@ program("Waves") {
 	program.bindFragDataLocation(0, "out_color");
 	
     // -- shaders --
-	program.attachShader(Shader("shaders/water.vert", GL_VERTEX_SHADER));
-	program.attachShader(Shader("shaders/water.frag", GL_FRAGMENT_SHADER));
+	program.attachShader(Shader("shaders/waves/water.vert", GL_VERTEX_SHADER));
+	program.attachShader(Shader("shaders/waves/water.frag", GL_FRAGMENT_SHADER));
 
     // -- linkage --
 	program.link();
