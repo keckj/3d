@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "Node.h"
+#include "tiny_obj_loader.h"
 
 #include "renderable.h"
 #ifndef __APPLE__
@@ -15,19 +15,14 @@
 
 class ObjLoader : public Renderable {
     public:
-        ObjLoader (std::string const& filename);
+        ObjLoader (std::string const& file, std::string const& basepath = "obj_files/");
         void print ();
         void draw();
 
     private:
-        std::string filename;
-        GLfloat* vector2float (std::vector<float>& array);
-        std::vector<std::string> splitOnWS (std::string const& str);
-        int countSlashes (std::string const& str);
-        void strToVector (std::string const& str, float &x, float &y, float &z);
-        void parse ();
-
-        Node node;
+        std::string objFilename;
+        std::string mtlFilename;
+        std::vector<tinyobj::shape_t> shapes;
 };
 
 #endif

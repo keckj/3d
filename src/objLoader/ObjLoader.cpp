@@ -1,197 +1,94 @@
 #include <iostream>
-#include <fstream>
-#include <cstring>
-#include <sstream>
-#include <vector>
+#include <cassert>
 
+#include "tiny_obj_loader.h"
 #include "ObjLoader.h"
-#include "Vector3f.h"
 
-ObjLoader::ObjLoader (std::string const& filename) : filename(filename), node(filename) {
-    parse();
+ObjLoader::ObjLoader (std::string const& file, std::string const& basepath) : objFilename(file + ".obj"), mtlFilename(file + ".mtl") {
+    std::string err = tinyobj::LoadObj(shapes, objFilename.c_str(), basepath.c_str());
+    if (!err.empty()) {
+        std::cout << "Error during loading of "  << basepath << objFilename << std::endl;
+        std::cerr << err << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
     print();
 }
 
 void ObjLoader::print () {
-    node.print();
-}
+    std::cout << "# of shapes : " << shapes.size() << std::endl;
 
-void ObjLoader::parse () {
-    std::ifstream file(filename.c_str());
-
-    std::vector<int> iv, in, it;
-    std::vector<Vector3f> ver, nor, tex;
-    std::vector<std::string> face;
-
-    // vertex : v x y z
-    std::string line;
-    while (getline(file, line)) {
-        // skip comments and blank lines
-        if (line[0] == '#' || line == "")
-            continue;
-
-        switch (line[0]) {
-            // vertex, normal or texture
-            case 'v':
-                switch (line[1]) {
-                    case ' ':
-                        // vertex
-                        float x, y, z;
-                        strToVector(line.substr(2), x, y, z);
-
-                        ver.push_back(Vector3f(x, y, z));
-                        break;
-
-                    case 'n':
-                        // normal
-                        float xn, yn, zn;
-                        strToVector(line.substr(2), xn, yn, zn);
-
-                        nor.push_back(Vector3f(xn, yn, zn));
-                        break;
-
-                    case 't':
-                        // textures
-                        float xt, yt, zt;
-                        strToVector(line.substr(2), xt, yt, zt);
-
-                        tex.push_back(Vector3f(xt, yt));
-                        break;
-
-                    default:
-                        break;
-                }
-                break;
-
-            // face
-            case 'f':
-                face.clear();
-                face = splitOnWS(line.substr(2));
-                int v, vt, vn;
-
-                for (unsigned int i = 0; i < face.size(); i++) {
-                    switch (countSlashes(face[i])) {
-                        case 0:
-                            sscanf(face[i].c_str(), "%d", &v);
-                            vt = 0;
-                            vn = 0;
-                            break;
-
-                        case 2:
-                            sscanf(face[i].c_str(), "%d/%d/%d", &v, &vt, &vn);
-                            break;
-
-                        default:
-                            std::cerr << "Unsuported format" << std::endl;
-                            break;
-                    }
-                    iv.push_back(v - 1);
-                    it.push_back(vt - 1);
-                    in.push_back(vn - 1);
-                }
-                break;
-
-            default:
-                break;
+    for (size_t i = 0; i < shapes.size(); i++) {
+        printf("shape[%ld].name = %s\n", i, shapes[i].name.c_str());
+        printf("shape[%ld].indices: %ld\n", i, shapes[i].mesh.indices.size());
+        assert((shapes[i].mesh.indices.size() % 3) == 0);
+        for (size_t f = 0; f < shapes[i].mesh.indices.size(); f++) {
+            printf("  idx[%ld] = %d\n", f, shapes[i].mesh.indices[f]);
         }
-    }
 
-    file.close();
-    // Parsing is done!
-    // Now, we have to create vectors of vertices, normals and textures in the correct order
-    std::vector<GLfloat> tv, tn, tt;
-    for (unsigned int i = 0; i < iv.size(); i++) {
-        if (iv[i] < int(ver.size())) {
-            tv.push_back(ver[iv[i]].getX());
-            tv.push_back(ver[iv[i]].getY());
-            tv.push_back(ver[iv[i]].getZ());
+        printf("shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
+        assert((shapes[i].mesh.positions.size() % 3) == 0);
+        for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
+            printf("  v[%ld] = (%f, %f, %f)\n", v,
+                   shapes[i].mesh.positions[3*v+0],
+                   shapes[i].mesh.positions[3*v+1],
+                   shapes[i].mesh.positions[3*v+2]);
         }
-    }
 
-    for (unsigned int i = 0; i < in.size(); i++) {
-        if (in[i] < int(nor.size()) && in[i] != -1) {
-            tn.push_back(nor[in[i]].getX());
-            tn.push_back(nor[in[i]].getY());
-            tn.push_back(nor[in[i]].getZ());
+        printf("shape[%ld].normals: %ld\n", i, shapes[i].mesh.normals.size());
+        assert((shapes[i].mesh.normals.size() % 3) == 0);
+        for (size_t v = 0; v < shapes[i].mesh.normals.size() / 3; v++) {
+            printf("  v[%ld] = (%f, %f, %f)\n", v,
+                   shapes[i].mesh.normals[3*v+0],
+                   shapes[i].mesh.normals[3*v+1],
+                   shapes[i].mesh.normals[3*v+2]);
         }
+
+        /* printf("shape[%ld].material.name = %s\n", i, shapes[i].material.name.c_str()); */
+        /* printf("  material.Ka = (%f, %f ,%f)\n", shapes[i].material.ambient[0], shapes[i].material.ambient[1], shapes[i].material.ambient[2]); */
+        /* printf("  material.Kd = (%f, %f ,%f)\n", shapes[i].material.diffuse[0], shapes[i].material.diffuse[1], shapes[i].material.diffuse[2]); */
+        /* printf("  material.Ks = (%f, %f ,%f)\n", shapes[i].material.specular[0], shapes[i].material.specular[1], shapes[i].material.specular[2]); */
+        /* printf("  material.Tr = (%f, %f ,%f)\n", shapes[i].material.transmittance[0], shapes[i].material.transmittance[1], shapes[i].material.transmittance[2]); */
+        /* printf("  material.Ke = (%f, %f ,%f)\n", shapes[i].material.emission[0], shapes[i].material.emission[1], shapes[i].material.emission[2]); */
+        /* printf("  material.Ns = %f\n", shapes[i].material.shininess); */
+        /* printf("  material.Ni = %f\n", shapes[i].material.ior); */
+        /* printf("  material.dissolve = %f\n", shapes[i].material.dissolve); */
+        /* printf("  material.illum = %d\n", shapes[i].material.illum); */
+        /* printf("  material.map_Ka = %s\n", shapes[i].material.ambient_texname.c_str()); */
+        /* printf("  material.map_Kd = %s\n", shapes[i].material.diffuse_texname.c_str()); */
+        /* printf("  material.map_Ks = %s\n", shapes[i].material.specular_texname.c_str()); */
+        /* printf("  material.map_Ns = %s\n", shapes[i].material.normal_texname.c_str()); */
+        /* std::map<std::string, std::string>::iterator it(shapes[i].material.unknown_parameter.begin()); */
+        /* std::map<std::string, std::string>::iterator itEnd(shapes[i].material.unknown_parameter.end()); */
+        /* for (; it != itEnd; it++) { */
+        /*     printf("  material.%s = %s\n", it->first.c_str(), it->second.c_str()); */
+        /* } */
+        printf("\n");
     }
-
-    for (unsigned int i = 0; i < it.size(); i++) {
-        if (it[i] < int(tex.size()) && it[i] != -1) {
-            tt.push_back(tex[it[i]].getX());
-            tt.push_back(tex[it[i]].getZ());
-        }
-    }
-
-    // Everything is in the appropriate order, we convert the vectors into GLfloat*
-    node.setSizeVertices(tv.size());
-    node.setSizeNormals(tn.size());
-    node.setSizeTextures(tt.size());
-
-    node.setVertices(vector2float(tv));
-    node.setNormals(vector2float(tn));
-    node.setTextures(vector2float(tt));
-
-    ver.clear();
-    nor.clear();
-    tex.clear();
-
-    iv.clear();
-    in.clear();
-    it.clear();
-}
-
-/* Convert string to float */
-void ObjLoader::strToVector (std::string const& str, float &x, float &y, float &z) {
-    std::stringstream ss(str);
-    ss >> x >> y >> z;
-}
-
-/* Count the number of '/' in a string */
-int ObjLoader::countSlashes (std::string const& str) {
-    int res = 0;
-
-    for (unsigned int i = 0; i < str.size(); i++) {
-        if (str[i] == '/') {
-            res++;
-        }
-    }
-
-    return res;
-}
-
-/* Convert a vector of a float into a GLfloat array */
-GLfloat* ObjLoader::vector2float (std::vector<float>& array) {
-    GLfloat *res = new GLfloat[array.size()];
-
-    for (unsigned int i = 0; i < array.size(); i++) {
-        res[i] = array[i];
-    }
-
-    return res;
-}
-
-/* Split a string on whitespaces */
-std::vector<std::string> ObjLoader::splitOnWS (std::string const& str) {
-    std::vector<std::string> res;
-    std::string tmp;
-
-    for (unsigned int i = 0; i < str.size(); i++) {
-        if (str[i] == ' ') {
-            if (tmp != "") {
-                res.push_back(tmp);
-                tmp = "";
-            }
-        } else {
-            tmp += str[i];
-        }
-    }
-    res.push_back(tmp);
-
-    return res;
 }
 
 void ObjLoader::draw () {
-    node.draw();
+    // TODO : use vbos and add normals
+    glBegin(GL_TRIANGLES);
+
+    for (size_t i = 0; i < shapes.size(); i++) {
+        for (size_t f = 0; f < shapes[i].mesh.indices.size(); f++) {
+            float ind = shapes[i].mesh.indices[f];
+            float x = shapes[i].mesh.positions[3 * ind + 0];
+            float y = shapes[i].mesh.positions[3 * ind + 1];
+            float z = shapes[i].mesh.positions[3 * ind + 2];
+
+            if (shapes[i].mesh.normals.size() == shapes[i].mesh.positions.size()) {
+                float xn = shapes[i].mesh.normals[3 * ind + 0];
+                float yn = shapes[i].mesh.normals[3 * ind + 1];
+                float zn = shapes[i].mesh.normals[3 * ind + 2];
+
+                glNormal3f(xn, yn, zn);
+            }
+            glVertex3f(x, y, z);
+        }
+    }
+
+    glEnd();
 }
 
