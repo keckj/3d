@@ -18,13 +18,13 @@ Trunk::Trunk (float width, float height, float depth) : RenderTree(), rect(width
 
     LeftForeArm *leftForearm = new LeftForeArm(WIDTH_FOREARM, HEIGHT_FOREARM);
     addChild("leftForearm", leftForearm);
-    /* rotateChild("leftForearm", qglviewer::Quaternion(Vec(1, 0, 0), M_PI / 2)); */
-    /* translateChild("leftForearm", 0, getWidth() / 2, 0); */
+    rotateChild("leftForearm", qglviewer::Quaternion(Vec(1, 0, 0), M_PI / 2));
+    translateChild("leftForearm", 0, getWidth() / 2, 0);
 
-    /* RightForeArm *rightForearm = new RightForeArm(WIDTH_FOREARM, HEIGHT_FOREARM); */
-    /* addChild("rightForearm", rightForearm); */
-    /* rotateChild("rightForearm", qglviewer::Quaternion(Vec(1, 0, 0), -M_PI / 2)); */
-    /* translateChild("rightForearm", 0, -getWidth() / 2, 0); */
+    RightForeArm *rightForearm = new RightForeArm(WIDTH_FOREARM, HEIGHT_FOREARM);
+    addChild("rightForearm", rightForearm);
+    rotateChild("rightForearm", qglviewer::Quaternion(Vec(1, 0, 0), -M_PI / 2));
+    translateChild("rightForearm", 0, -getWidth() / 2, 0);
 
     LeftThigh *leftThigh = new LeftThigh(WIDTH_THIGH, HEIGHT_THIGH);
     addChild("leftThigh", leftThigh);

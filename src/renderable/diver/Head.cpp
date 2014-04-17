@@ -8,6 +8,7 @@ float Head::getRadius () const {
 }
 
 void Head::drawDownwards(const float *currentTransformationMatrix) {
+    std::cout << "down head" << std::endl;
     glPushMatrix();
 
     glMultTransposeMatrixf(relativeModelMatrix);
@@ -15,5 +16,6 @@ void Head::drawDownwards(const float *currentTransformationMatrix) {
 }
 
 void Head::drawUpwards (const float *currentTransformationMatrix) {
+    std::cout << "up head" << std::endl;
     glPopMatrix();
 }

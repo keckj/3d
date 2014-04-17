@@ -58,7 +58,7 @@ class RenderTree : public Renderable {
 		//render current node before all children
 		virtual void drawDownwards(const float *currentTransformationMatrix = consts::identity4) = 0;
 		//render current node after all children
-		virtual void drawUpwards(const float *currentTransformationMatrix = consts::identity4) {std::cout << "virtual" << std::endl;};
+		virtual void drawUpwards(const float *currentTransformationMatrix = consts::identity4) {};
 		//NOTE: Changed const-qualifier, const was to restrictive for drawing.
 	
 		//same thing with animations
