@@ -17,6 +17,7 @@ void Arm::drawDownwards(const float *currentTransformationMatrix) {
     glMultTransposeMatrixf(relativeModelMatrix);
     cyl.draw();
 }
+
 void Arm::drawUpwards (const float *currentTransformationMatrix) {
     glPopMatrix();
 }

@@ -33,9 +33,8 @@ Trunk::Trunk (float width, float height, float depth) : RenderTree(), rect(width
     RightThigh *rightThigh = new RightThigh(WIDTH_THIGH, HEIGHT_THIGH);
     addChild("rightThigh", rightThigh);
     translateChild("rightThigh", 0, (-getWidth() + rightThigh->getWidth()) / 2, -1.5 * getHeight());
-
-
 }
+
 void Trunk::drawDownwards(const float *currentTransformationMatrix) {
     glPushMatrix();
 

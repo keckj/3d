@@ -74,7 +74,6 @@ bool Skybox::Initialize () {
 
     for (int i = 0; i < 6; i++) {
         if (texture_image[i].bits()) {
-            std::cout << texture_image[i].width() << std::endl;
             glTexImage2D(cube_map_target[i], 0, GL_RGBA, texture_image[i].width(), texture_image[i].height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_image[i].bits());
         }
     }

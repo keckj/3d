@@ -10,6 +10,7 @@
 #include <string>
 #include <map>
 
+#include <iostream>
 
 // Depth first drawing tree
 // Childs are drawn according to their priority //TODO
