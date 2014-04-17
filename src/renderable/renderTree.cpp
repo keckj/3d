@@ -72,8 +72,10 @@ void RenderTree::draw(const float *currentTransformationMatrix) {
 	//draw subtrees
 	std::map<std::string, RenderTree*>::const_iterator it;
 	for (it = children.cbegin(); it != children.cend(); it++) {
+        /* std::cout << it->first << std::endl; */
 		it->second->draw(newTransformationMatrix);
 	}
+    std::cout << "fin boucle draw" << std::endl;
 
 	this->drawUpwards(newTransformationMatrix);
 

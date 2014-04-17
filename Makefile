@@ -13,15 +13,15 @@ OS=$(shell uname -s)
 
 # Mac ##########################################################
 ifeq ($(OS), Darwin)
-VIEWER_LIBPATH = -F/usr/local/Cellar/qt/4.8.5/lib -L/usr/local/Cellar/qt/4.8.5/lib  -L/opt/X11/lib -L/usr/local/Cellar/qt/4.8.5/lib -F/usr/local/Cellar/qt/4.8.5/lib
-VIEWER_INCLUDEPATH       = -I/usr/local/Cellar/qt/4.8.5/mkspecs/macx-g++ -I. -I/usr/local/Cellar/qt/4.8.5/lib/QtCore.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtCore.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtGui.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtGui.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtOpenGL.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtOpenGL.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtXml.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtXml.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/include -I/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers -I/System/Library/Frameworks/AGL.framework/Headers -I. -F/usr/local/Cellar/qt/4.8.5/lib
-VIEWER_LIBS = -framework Glut -framework OpenGL -framework AGL -framework QtXml -framework QtCore -framework QtOpenGL -framework QtGui 
+VIEWER_LIBPATH = -L/usr/local/Cellar/qt/4.8.5/lib -L/usr/local/Cellar/qt/4.8.5/lib  -L/opt/X11/lib -L/usr/local/Cellar/qt/4.8.5/lib -L/usr/local/Cellar/qt/4.8.5/lib
+VIEWER_INCLUDEPATH       = -I/usr/local/Cellar/qt/4.8.5/mkspecs/macx-g++ -I. -I/usr/local/Cellar/qt/4.8.5/lib/QtCore.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtCore.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtGui.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtGui.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtOpenGL.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtOpenGL.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtXml.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtXml.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/include -I/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers -I/System/Library/Frameworks/AGL.framework/Headers -I. -L/usr/local/Cellar/qt/4.8.5/lib
+VIEWER_LIBS = -framework Glut -framework OpenGL -framework AGL -framework QtXml -framework QtCore -framework QtOpenGL -framework QtGui -lGLEW
 VIEWER_DEFINES = -D_REENTRANT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 
 NARCH=12  #Archi cuda
-CUDA_INCLUDEPATH =
-CUDA_LIBPATH =
-CUDA_LIBS = 
+CUDA_INCLUDEPATH = -I/Developer/NVIDIA/CUDA-5.5/include
+CUDA_LIBPATH = -L/Developer/NVIDIA/CUDA-5.5/lib
+CUDA_LIBS = -lcudart
 endif
 ################################################################
 
@@ -39,7 +39,7 @@ CUDA_LIBPATH = -L/usr/local/cuda-5.5/lib64 -L/usr/local/cuda-6.0/lib64 -L/usr/li
 CUDA_LIBS = -lcuda -lcudart
 
 DISTRIB=$(filter-out Distributor ID:, $(shell lsb_release -i))
-#Ubuntu 
+#Ubuntu
 ifeq ($(DISTRIB), Ubuntu)
 else #Centos
 endif
@@ -48,37 +48,35 @@ endif
 ###############################################################
 
 
-POULPY_LINK= -lGLEW -lopencv_core -lopencv_imgproc -lopencv_highgui
-
 #Compilateurs
-LINK= g++
+LINK= g++-4.8
 LINKFLAGS= -W -Wall -Wextra -pedantic -std=c++0x
-LDFLAGS= $(VIEWER_LIBS) $(L_QGLVIEWER) -llog4cpp $(CUDA_LIBS)
-INCLUDE = -Ilocal/include/ -I$(SRCDIR) $(foreach dir, $(call subdirs, $(SRCDIR)), -I$(dir)) $(VIEWER_INCLUDEPATH) $(CUDA_INCLUDEPATH)
-LIBS = -Llocal/lib/ $(VIEWER_LIBPATH) $(CUDA_LIBPATH)
+LDFLAGS= $(VIEWER_LIBS) $(L_QGLVIEWER) -llog4cpp $(CUDA_LIBS) -F/usr/local/Cellar/qt/4.8.5/lib -L/Developer/NVIDIA/CUDA-5.5/lib
+INCLUDE = -I$(SRCDIR) $(foreach dir, $(call subdirs, $(SRCDIR)), -I$(dir)) $(VIEWER_INCLUDEPATH) $(CUDA_INCLUDEPATH)
+LIBS = $(VIEWER_LIBPATH) $(CUDA_LIBPATH)
 DEFINES= $(VIEWER_DEFINES) $(OPT)
 
 
-CC=gcc
+CC=gcc-4.8
 CFLAGS= -W -Wall -Wextra -pedantic -std=c99 -m64
 
-CXX=g++
+CXX=g++-4.8
 CXXFLAGS= -W -Wall -Wextra -pedantic -std=c++0x -m64
 #-Wshadow -Wstrict-aliasing -Weffc++ -Werror
 
 #preprocesseur QT
-MOC=moc 
+MOC=moc
 MOCFLAGS=
 
-NVCC=nvcc
+NVCC=/Developer/NVIDIA/CUDA-5.5/bin/nvcc -ccbin /usr/bin/clang
 NVCCFLAGS= -Xcompiler -Wall -m64 -arch sm_$(NARCH) -O3
 
 AS = nasm
 ASFLAGS= -f elf64
 
-# Autres flags 
+# Autres flags
 DEBUGFLAGS= -g -O0
-CUDADEBUGFLAGS= -Xcompiler -Wall -m64 -G -g -arch sm_$(NARCH) -Xptxas="-v" 
+CUDADEBUGFLAGS= -Xcompiler -Wall -m64 -G -g -arch sm_$(NARCH) -Xptxas="-v"
 PROFILINGFLAGS= -pg
 RELEASEFLAGS= -O3
 

@@ -12,12 +12,15 @@ float Arm::getHeight() const {
 }
 
 void Arm::drawDownwards(const float *currentTransformationMatrix) {
+    std::cout << "down arm" << std::endl;
     glPushMatrix();
 
     glMultTransposeMatrixf(relativeModelMatrix);
     cyl.draw();
 }
+
 void Arm::drawUpwards (const float *currentTransformationMatrix) {
+    std::cout << "up arm" << std::endl;
     glPopMatrix();
 }
 

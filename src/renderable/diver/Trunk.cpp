@@ -18,13 +18,13 @@ Trunk::Trunk (float width, float height, float depth) : RenderTree(), rect(width
 
     LeftForeArm *leftForearm = new LeftForeArm(WIDTH_FOREARM, HEIGHT_FOREARM);
     addChild("leftForearm", leftForearm);
-    rotateChild("leftForearm", qglviewer::Quaternion(Vec(1, 0, 0), M_PI / 2));
-    translateChild("leftForearm", 0, getWidth() / 2, 0);
+    /* rotateChild("leftForearm", qglviewer::Quaternion(Vec(1, 0, 0), M_PI / 2)); */
+    /* translateChild("leftForearm", 0, getWidth() / 2, 0); */
 
-    RightForeArm *rightForearm = new RightForeArm(WIDTH_FOREARM, HEIGHT_FOREARM);
-    addChild("rightForearm", rightForearm);
-    rotateChild("rightForearm", qglviewer::Quaternion(Vec(1, 0, 0), -M_PI / 2));
-    translateChild("rightForearm", 0, -getWidth() / 2, 0);
+    /* RightForeArm *rightForearm = new RightForeArm(WIDTH_FOREARM, HEIGHT_FOREARM); */
+    /* addChild("rightForearm", rightForearm); */
+    /* rotateChild("rightForearm", qglviewer::Quaternion(Vec(1, 0, 0), -M_PI / 2)); */
+    /* translateChild("rightForearm", 0, -getWidth() / 2, 0); */
 
     LeftThigh *leftThigh = new LeftThigh(WIDTH_THIGH, HEIGHT_THIGH);
     addChild("leftThigh", leftThigh);
@@ -33,10 +33,10 @@ Trunk::Trunk (float width, float height, float depth) : RenderTree(), rect(width
     RightThigh *rightThigh = new RightThigh(WIDTH_THIGH, HEIGHT_THIGH);
     addChild("rightThigh", rightThigh);
     translateChild("rightThigh", 0, (-getWidth() + rightThigh->getWidth()) / 2, -1.5 * getHeight());
-
-
 }
+
 void Trunk::drawDownwards(const float *currentTransformationMatrix) {
+    std::cout << "down trunk" << std::endl;
     glPushMatrix();
 
     glMultTransposeMatrixf(relativeModelMatrix);
@@ -44,6 +44,7 @@ void Trunk::drawDownwards(const float *currentTransformationMatrix) {
 }
 
 void Trunk::drawUpwards (const float *currentTransformationMatrix) {
+    std::cout << "up trunk" << std::endl;
     glPopMatrix();
 }
 

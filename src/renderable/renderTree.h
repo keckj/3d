@@ -10,6 +10,7 @@
 #include <string>
 #include <map>
 
+#include <iostream>
 
 // Depth first drawing tree
 // Childs are drawn according to their priority //TODO
@@ -57,7 +58,7 @@ class RenderTree : public Renderable {
 		//render current node before all children
 		virtual void drawDownwards(const float *currentTransformationMatrix = consts::identity4) = 0;
 		//render current node after all children
-		virtual void drawUpwards(const float *currentTransformationMatrix = consts::identity4) {};
+		virtual void drawUpwards(const float *currentTransformationMatrix = consts::identity4) {std::cout << "virtual" << std::endl;};
 		//NOTE: Changed const-qualifier, const was to restrictive for drawing.
 	
 		//same thing with animations
