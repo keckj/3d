@@ -100,8 +100,8 @@ int main(int argc, char** argv) {
 
 		RenderRoot *root = new RenderRoot();
 
-		unsigned int nParticles = 3;
-		ParticleGroup *p = new ParticleGroup(10,10);
+		unsigned int nParticles = 100;
+		ParticleGroup *p = new ParticleGroup(100,1000);
 	
 		qglviewer::Vec g = 0.01*Vec(0,-9.81,0);
 		ParticleGroupKernel *archimede = new ConstantForce(-g);
@@ -115,15 +115,29 @@ int main(int argc, char** argv) {
 		stringstream name;
 	
                 for (unsigned int i = 0; i < nParticles; i++) {
-                        qglviewer::Vec pos = Vec(0.1*i,0,0);
-                        qglviewer::Vec  vel = Vec(0, 0, 0);
-                        float r = 0.1;
+                        qglviewer::Vec pos = Vec(i%10,i/10,0);
+                        qglviewer::Vec  vel = Vec(0,0,0);
+                        float r = 1;
                         float rho = 1.2;//kg/m^3
                         float m = rho*4/3.0*3.14*r*r*r;
                         p->addParticle(new Particule(pos, vel, m, r));	
                 }
                 for (unsigned int i = 0; i < nParticles-1; i++) {
-                        p->addSpring(i,i+1, 1,0.1, 0,100);
+						
+						if(i%10>=1)
+							p->addSpring(i,i-1, 100,1.1, 50, 200);
+						if(i%10<9)
+							p->addSpring(i,i+1, 100,1.1, 50, 200);
+						if(i/10>=1)
+							p->addSpring(i,i-10, 100,1.1, 50, 200);
+						if(i/10<9)
+							p->addSpring(i,i+10, 100,1.1, 50, 200);
+					
+						if(i%10>=1 && i/10<9)
+							p->addSpring(i,i+9,100,sqrt(2)*1.1, 50,200);
+						
+						if(i%10<9 && i/10<9)
+							p->addSpring(i,i+11,100,sqrt(2)*1.1,50,200);
                 }
 
                 //pg[j]->addKernel(attractor);

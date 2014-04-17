@@ -175,13 +175,13 @@ __global__ void attractors(
 				float *vx, float *vy, float *vz,
 				float *fx, float *fy, float *fz,
 				float *k, float *Lo, float *d, float *Fmax,
-				bool *kill, float *outputLines,
+				bool *kill, float *intensity, float *outputLines,
 				const bool handleDumping, 
 				const unsigned int nSprings) {
 
 	int id = blockIdx.x*blockDim.x + threadIdx.x;
 	
-	if(id > nSprings)
+	if(id >= nSprings)
 		return;
 		
 	if(kill[id])
@@ -190,15 +190,20 @@ __global__ void attractors(
 	unsigned int _id1 = id1[id];
 	unsigned int _id2 = id2[id];
 
+
 	float _x1 = x[_id1], _y1 = y[_id1], _z1 = z[_id1];
 	float _x2 = x[_id2], _y2 = y[_id2], _z2 = z[_id2];
+	
+	/*printf("\n(%f,%f,%f) \t(%f,%f,%f)", _x1, _y1, _z1, _x2, _y2, _z2 );*/
 	
 	float dx = _x2 - _x1; 
 	float dy = _y2 - _y1; 
 	float dz = _z2 - _z1;
+
+	/*printf("\n%f %f %f", dx, dy, dz);*/
 	
 	float N = sqrt(dx*dx + dy*dy + dz*dz);
-	
+
 	if(N<1.0e-4)
 		return; //null force
 
@@ -206,24 +211,26 @@ __global__ void attractors(
 	float _Lo = Lo[id];
 	float _d = d[id];
 	float _Fmax = Fmax[id];
+	
+	/*printf("\n%i %f %f %f %f", id, _k, _Lo, _d, _Fmax);*/
 
 	float dF, dFs, dFd, dfx, dfy, dfz;
 
 	//stiffness
 	dFs = - _k*(N - _Lo);
+	/*printf("\ndFs %f", dFs);*/
 
 	//damping
 	dFd = 0;
-	/*if(handleDumping && _d>1.0e-6) {*/
-		/*float _vx1 = vx[_id1], _vy1 = vy[_id1], _vz1 = vz[_id1];*/
-		/*float _vx2 = vx[_id2], _vy2 = vy[_id2], _vz2 = vz[_id2];*/
+	if(handleDumping && _d>1.0e-6) {
+		float _vx1 = vx[_id1], _vy1 = vy[_id1], _vz1 = vz[_id1];
+		float _vx2 = vx[_id2], _vy2 = vy[_id2], _vz2 = vz[_id2];
 		
-		/*float dvx = _vx2 - _vx1; */
-		/*float dvy = _vy2 - _vy1; */
-		/*float dvz = _vz2 - _vz1;*/
-
-		/*dFd = _d*(dvx*dx + dvy*dy + dvz*dz)/N;*/
-	/*}*/
+		float dvx = _vx2 - _vx1;
+		float dvy = _vy2 - _vy1;
+		float dvz = _vz2 - _vz1;
+		dFd = -_d*(dvx*dx + dvy*dy + dvz*dz)/N;
+	}
 	
 	//total force
 	dF = dFs + dFd;
@@ -252,6 +259,12 @@ __global__ void attractors(
 	outputLines[6*id+3] = _x2;
 	outputLines[6*id+4] = _y2;
 	outputLines[6*id+5] = _z2;
+
+	intensity[2*id+0] = min(abs(dF)/_Fmax,1.0f);
+	intensity[2*id+1] = min(abs(dF)/_Fmax,1.0f);
+
+	/*printf("\n%f", intensity[id]);*/
+	/*printf("\n(%f,%f,%f) \t(%f,%f,%f)", _x1, _y1, _z1, _x2, _y2, _z2 );*/
 }
 
 				
@@ -423,7 +436,7 @@ void springKernel(const struct mappedParticlePointers *pt,
 				pt->vx, pt->vy, pt->vz,
 				pt->fx, pt->fy, pt->fz,
 				pt->k, pt->Lo, pt->d, pt->Fmax,
-				pt->killSpring, pt->lines,
+				pt->killSpring, pt->intensity, pt->lines,
 				handleDumping, 
 				nSprings);
 	

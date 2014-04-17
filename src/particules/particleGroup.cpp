@@ -59,11 +59,12 @@ ParticleGroup::ParticleGroup(unsigned int maxParticles, unsigned int maxSprings)
 	springs_kill_b = buffers[7]; //bool
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffers[5]);
-	glBufferData(GL_ARRAY_BUFFER, maxSprings*sizeof(float), 0, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 2*maxSprings*sizeof(float), 0, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, buffers[6]);
 	glBufferData(GL_ARRAY_BUFFER, 6*maxSprings*sizeof(float), 0, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, buffers[7]);
 	glBufferData(GL_ARRAY_BUFFER, maxSprings*sizeof(bool), 0, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
 	//CUDA MEMORY (CAN'T BE SHARED WITH OPENGL)
 	//particles//
@@ -199,54 +200,53 @@ void ParticleGroup::addKernel(ParticleGroupKernel *kernel) {
 void ParticleGroup::drawDownwards(const float *modelMatrix) {
 
 	static float *proj = new float[16], *view = new float[16];
-        glGetFloatv(GL_MODELVIEW_MATRIX, view);
-        glGetFloatv(GL_PROJECTION_MATRIX, proj);
+    glGetFloatv(GL_MODELVIEW_MATRIX, view);
+    glGetFloatv(GL_PROJECTION_MATRIX, proj);
 
 	if(_particlesDebugProgram == 0)
 		makeDebugPrograms();
 	
-	//_particlesDebugProgram->use();
+	_particlesDebugProgram->use();
 
-	//glEnable(GL_PROGRAM_POINT_SIZE);
-	//glEnable(GL_POINT_SMOOTH);
+	glEnable(GL_PROGRAM_POINT_SIZE);
+	glEnable(GL_POINT_SMOOTH);
+	glEnable (GL_LINE_SMOOTH);
 
-	//glGetFloatv(GL_MODELVIEW_MATRIX, view);
-	//glGetFloatv(GL_PROJECTION_MATRIX, proj);
-	//glUniformMatrix4fv(_particleUniformLocs["projectionMatrix"], 1, GL_FALSE, proj);
-	//glUniformMatrix4fv(_particleUniformLocs["viewMatrix"], 1, GL_FALSE, view);
-	//glUniformMatrix4fv(_particleUniformLocs["modelMatrix"], 1, GL_TRUE, modelMatrix);
+	glGetFloatv(GL_MODELVIEW_MATRIX, view);
+	glGetFloatv(GL_PROJECTION_MATRIX, proj);
+	glUniformMatrix4fv(_particleUniformLocs["projectionMatrix"], 1, GL_FALSE, proj);
+	glUniformMatrix4fv(_particleUniformLocs["viewMatrix"], 1, GL_FALSE, view);
+	glUniformMatrix4fv(_particleUniformLocs["modelMatrix"], 1, GL_TRUE, modelMatrix);
 
-	//glBindBuffer(GL_ARRAY_BUFFER, x_b);
-	//glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 0, 0);
-	//glVertexAttribDivisor(0, 1);
-	//glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, x_b);
+	glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribDivisor(0, 1);
+	glEnableVertexAttribArray(0);
 
-	//glBindBuffer(GL_ARRAY_BUFFER, y_b);
-	//glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, 0);
-	//glVertexAttribDivisor(1, 1);
-	//glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, y_b);
+	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribDivisor(1, 1);
+	glEnableVertexAttribArray(1);
 
-	//glBindBuffer(GL_ARRAY_BUFFER, z_b);
-	//glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
-	//glVertexAttribDivisor(2, 1);
-	//glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, z_b);
+	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribDivisor(2, 1);
+	glEnableVertexAttribArray(2);
 	
-	//glBindBuffer(GL_ARRAY_BUFFER, r_b);
-	//glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 0, 0);
-	//glVertexAttribDivisor(3, 1);
-	//glEnableVertexAttribArray(3);
+	glBindBuffer(GL_ARRAY_BUFFER, r_b);
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribDivisor(3, 1);
+	glEnableVertexAttribArray(3);
 
-	//glBindBuffer(GL_ARRAY_BUFFER, kill_b);
-	//glVertexAttribPointer(4, 1, GL_BYTE, GL_FALSE, 0, 0);
-	//glVertexAttribDivisor(4, 1);
-	//glEnableVertexAttribArray(4);
+	glBindBuffer(GL_ARRAY_BUFFER, kill_b);
+	glVertexAttribPointer(4, 1, GL_BYTE, GL_FALSE, 0, 0);
+	glVertexAttribDivisor(4, 1);
+	glEnableVertexAttribArray(4);
 
-	//glDrawArraysInstanced(GL_POINTS, 0, 1, nParticles);
+	glDrawArraysInstanced(GL_POINTS, 0, 1, nParticles);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glUseProgram(0);
 	
-	//glDisable(GL_PROGRAM_POINT_SIZE);
-	//glDisable(GL_POINT_SMOOTH);
-
-
 	_springsDebugProgram->use();
 	glUniformMatrix4fv(_springsUniformLocs["projectionMatrix"], 1, GL_FALSE, proj);
 	glUniformMatrix4fv(_springsUniformLocs["viewMatrix"], 1, GL_FALSE, view);
@@ -254,23 +254,20 @@ void ParticleGroup::drawDownwards(const float *modelMatrix) {
 	
 	glBindBuffer(GL_ARRAY_BUFFER, springs_lines_b);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	//glVertexAttribDivisor(0, 1);
+	glVertexAttribDivisor(0, 0);
 	glEnableVertexAttribArray(0);
 	
-	//glBindBuffer(GL_ARRAY_BUFFER, springs_intensity_b);
-	//glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, 0);
-	//glVertexAttribDivisor(1, 2);
-	//glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, springs_intensity_b);
+	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribDivisor(1, 0);
+	glEnableVertexAttribArray(1);
 	
-	//glBindBuffer(GL_ARRAY_BUFFER, springs_kill_b);
-	//glVertexAttribPointer(2, 1, GL_BYTE, GL_FALSE, 0, 0);
-	//glVertexAttribDivisor(2, 2);
-	//glEnableVertexAttribArray(2);
-	
-        glPointSize(15.0f);
-        glLineWidth(5.0f);
-        glDrawArrays(GL_LINES, 0,nSprings*2);
-        //glDrawArraysInstanced(GL_LINES, 0, 2, nSprings);
+    glLineWidth(1.0f);
+	glDrawArrays(GL_LINES, 0,nSprings*2);
+
+	glDisable(GL_PROGRAM_POINT_SIZE);
+	glDisable(GL_POINT_SMOOTH);
+	glDisable(GL_LINE_SMOOTH);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glUseProgram(0);
@@ -422,7 +419,6 @@ void ParticleGroup::toDevice() {
 		int i = 0;
 		for (; it != springsWaitList.end(); it++) {
 			Ressort *r = *it;
-                        std::cout << i << std::endl;
 			springs_id1_h[i] = r->IdP1;
 			springs_id2_h[i] = r->IdP2;
 			springs_k_h[i] = r->k;
@@ -461,6 +457,8 @@ void ParticleGroup::toDevice() {
 		CHECK_CUDA_ERRORS(cudaMemset(fy_d, 0, nParticles*sizeof(float)));
 		CHECK_CUDA_ERRORS(cudaMemset(fz_d, 0, nParticles*sizeof(float)));
 		
+		CHECK_CUDA_ERRORS(cudaMemset(springs_lines_d, 0, 6*nSprings*sizeof(float)));
+		CHECK_CUDA_ERRORS(cudaMemset(springs_intensity_d, 0, nSprings*sizeof(float)));
 		CHECK_CUDA_ERRORS(cudaMemset(springs_kill_d, 0, nSprings*sizeof(bool)));
 	}
 	unmapRessources();
@@ -479,7 +477,7 @@ void ParticleGroup::mapRessources() {
 	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &z_d, &size, z_r));	
 	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &r_d, &size, r_r));	
 	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &kill_d, &size, kill_r));	
-
+	
 	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &springs_lines_d, &size, springs_lines_r));	
 	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &springs_intensity_d, &size, springs_intensity_r));	
 	CHECK_CUDA_ERRORS(cudaGraphicsResourceGetMappedPointer((void**) &springs_kill_d, &size, springs_kill_r));	
@@ -523,10 +521,8 @@ void ParticleGroup::makeDebugPrograms() {
 	_springsDebugProgram->attachShader(Shader("shaders/particle/spring_vs.glsl", GL_VERTEX_SHADER));
 	_springsDebugProgram->attachShader(Shader("shaders/particle/spring_fs.glsl", GL_FRAGMENT_SHADER));
 	
-        _springsUniformLocs = _particlesDebugProgram->getUniformLocationsMap("modelMatrix projectionMatrix viewMatrix", true);
-
 	_springsDebugProgram->link();
-
+    _springsUniformLocs = _springsDebugProgram->getUniformLocationsMap("modelMatrix projectionMatrix viewMatrix", true);
 }
 
 void ParticleGroup::releaseParticles() {
