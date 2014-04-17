@@ -66,8 +66,8 @@ class ParticleGroup : public RenderTree {
 		//graphic ressources to share context
 		cudaGraphicsResource_t *ressources;
 		cudaGraphicsResource_t x_r, y_r, z_r, 
-							   r_r, kill_r, 
-							   springs_lines_r, springs_intensity_r, springs_kill_r;
+        				   r_r, kill_r, 
+	        			   springs_lines_r, springs_intensity_r, springs_kill_r;
 	
 		//device pointers
 		float *x_d, *y_d, *z_d, 

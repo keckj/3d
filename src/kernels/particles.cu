@@ -199,7 +199,7 @@ __global__ void attractors(
 	
 	float N = sqrt(dx*dx + dy*dy + dz*dz);
 	
-	if(N<1.0e-6)
+	if(N<1.0e-4)
 		return; //null force
 
 	float _k = k[id];
@@ -214,21 +214,21 @@ __global__ void attractors(
 
 	//damping
 	dFd = 0;
-	if(handleDumping && _d>1.0e-6) {
-		float _vx1 = vx[_id1], _vy1 = vy[_id1], _vz1 = vz[_id1];
-		float _vx2 = vx[_id2], _vy2 = vy[_id2], _vz2 = vz[_id2];
+	/*if(handleDumping && _d>1.0e-6) {*/
+		/*float _vx1 = vx[_id1], _vy1 = vy[_id1], _vz1 = vz[_id1];*/
+		/*float _vx2 = vx[_id2], _vy2 = vy[_id2], _vz2 = vz[_id2];*/
 		
-		float dvx = _vx2 - _vx1; 
-		float dvy = _vy2 - _vy1; 
-		float dvz = _vz2 - _vz1;
+		/*float dvx = _vx2 - _vx1; */
+		/*float dvy = _vy2 - _vy1; */
+		/*float dvz = _vz2 - _vz1;*/
 
-		dFd = _d*(dvx*dx + dvy*dy + dvz*dz)/N;
-	}
+		/*dFd = _d*(dvx*dx + dvy*dy + dvz*dz)/N;*/
+	/*}*/
 	
 	//total force
 	dF = dFs + dFd;
-	if(dF > _Fmax)
-		kill[id] = true;
+	/*if(dF > _Fmax)*/
+		/*kill[id] = true;*/
 
 	dF /= N;
 	dfx = dF*dx;
@@ -236,13 +236,13 @@ __global__ void attractors(
 	dfz = dF*dz;
 
 	//update force on particles
-	fx[_id1] += dfx;
-	fy[_id1] += dfy;
-	fz[_id1] += dfz;
+	fx[_id1] -= dfx;
+	fy[_id1] -= dfy;
+	fz[_id1] -= dfz;
 	
-	fx[_id2] -= dfx;
-	fy[_id2] -= dfy;
-	fz[_id2] -= dfz;
+	fx[_id2] += dfx;
+	fy[_id2] += dfy;
+	fz[_id2] += dfz;
 
 	//update vbos
 	outputLines[6*id+0] = _x1;

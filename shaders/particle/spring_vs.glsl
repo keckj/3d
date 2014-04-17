@@ -12,10 +12,7 @@ uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 
 void main(void) {
-	vec4 cameraPos = viewMatrix*modelMatrix*vec4(pos,1);
-	float d = -cameraPos.z;
-
-	gl_Position = projectionMatrix * cameraPos;
+	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1.0);
 	intensity_out = intensity;
 	alive_out = alive;
 }

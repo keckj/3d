@@ -100,9 +100,8 @@ int main(int argc, char** argv) {
 
 		RenderRoot *root = new RenderRoot();
 
-		unsigned int nParticles = 10000;
-		unsigned int nParticleGroups = 1;
-		ParticleGroup **pg = new ParticleGroup*[nParticleGroups];
+		unsigned int nParticles = 3;
+		ParticleGroup *p = new ParticleGroup(10,10);
 	
 		qglviewer::Vec g = 0.01*Vec(0,-9.81,0);
 		ParticleGroupKernel *archimede = new ConstantForce(-g);
@@ -115,39 +114,39 @@ int main(int argc, char** argv) {
 
 		stringstream name;
 	
-		for (unsigned int j = 0; j < nParticleGroups; j++) {
-			pg[j] = new ParticleGroup(nParticles, 100);
-			for (unsigned int i = 0; i < nParticles; i++) {
-				qglviewer::Vec pos = Vec(Random::randf(), Random::randf(), Random::randf());
-				qglviewer::Vec  vel = Vec(0, 0, 0);
-				float r = Random::randf(0.2,0.8);
-				float rho = 1.2;//kg/m^3
-				float m = rho*4/3.0*3.14*r*r*r;
-				pg[j]->addParticle(new Particule(pos, vel, m, r));	
-			}
-		
-			//pg[j]->addKernel(attractor);
-			//pg[j]->addKernel(repulsor);
-			//pg[j]->addKernel(seaFlow);
-			//pg[j]->addKernel(springsSystem);
-			pg[j]->addKernel(archimede);
-			pg[j]->addKernel(frottement);
-			pg[j]->addKernel(dynamicScheme);
-			pg[j]->scale(10);
-			pg[j]->releaseParticles();
-	
-			name.clear();
-			name << "particules" << j;
-			root->addChild(name.str(), pg[j]);
-		}
+                for (unsigned int i = 0; i < nParticles; i++) {
+                        qglviewer::Vec pos = Vec(0.1*i,0,0);
+                        qglviewer::Vec  vel = Vec(0, 0, 0);
+                        float r = 0.1;
+                        float rho = 1.2;//kg/m^3
+                        float m = rho*4/3.0*3.14*r*r*r;
+                        p->addParticle(new Particule(pos, vel, m, r));	
+                }
+                for (unsigned int i = 0; i < nParticles-1; i++) {
+                        p->addSpring(i,i+1, 1,0.1, 0,100);
+                }
+
+                //pg[j]->addKernel(attractor);
+                //pg[j]->addKernel(repulsor);
+                //pg[j]->addKernel(seaFlow);
+                //pg[j]->addKernel(archimede);
+                //pg[j]->addKernel(frottement);
+                p->addKernel(springsSystem);
+                p->addKernel(dynamicScheme);
+                p->releaseParticles();
+                p->scale(10);
+
+                name.clear();
+                name << "particules";
+                root->addChild(name.str(), p);
 
 
-		//root->addChild("terrain", terrain);
-		//root->addChild("vagues",[id] waves);
+                //root->addChild("terrain", terrain);
+                //root->addChild("vagues",[id] waves);
 
-		viewer.addRenderable(root);
+                viewer.addRenderable(root);
 
-        // Run main loop.
-        return application.exec();
+                // Run main loop.
+                return application.exec();
 }
 
