@@ -36,7 +36,6 @@ Trunk::Trunk (float width, float height, float depth) : RenderTree(), rect(width
 }
 
 void Trunk::drawDownwards(const float *currentTransformationMatrix) {
-    std::cout << "down trunk" << std::endl;
     glPushMatrix();
 
     glMultTransposeMatrixf(relativeModelMatrix);
@@ -44,7 +43,6 @@ void Trunk::drawDownwards(const float *currentTransformationMatrix) {
 }
 
 void Trunk::drawUpwards (const float *currentTransformationMatrix) {
-    std::cout << "up trunk" << std::endl;
     glPopMatrix();
 }
 

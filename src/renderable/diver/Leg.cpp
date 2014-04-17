@@ -12,7 +12,6 @@ float Leg::getHeight() const {
 }
 
 void Leg::drawDownwards(const float *currentTransformationMatrix) {
-    std::cout << "down leg" << std::endl;
     glPushMatrix();
 
     glMultTransposeMatrixf(relativeModelMatrix);
@@ -20,7 +19,6 @@ void Leg::drawDownwards(const float *currentTransformationMatrix) {
 }
 
 void Leg::drawUpwards (const float *currentTransformationMatrix) {
-    std::cout << "up leg" << std::endl;
     glPopMatrix();
 }
 

@@ -16,10 +16,10 @@ void LeftThigh::animateDownwards () {
     float pas = 0.05f;
 
     if (down) {
-        rotate(Quaternion(Vec(0, 1, 0), -pas));
+        rotate(Quaternion(Vec(0, 1, 0), pas));
         theta -= pas;
     } else {
-        rotate(Quaternion(Vec(0, 1, 0), pas));
+        rotate(Quaternion(Vec(0, 1, 0), -pas));
         theta += pas;
     }
 
