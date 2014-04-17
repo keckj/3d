@@ -1,0 +1,30 @@
+# 3ds Max Wavefront OBJ Exporter v0.94b - (c)2007 guruware
+# File Created: 08.07.2008 18:26:06
+
+newmtl WSHTOOTH
+	Ns 100.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 1.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.9020 0.8706 0.7804
+	Ks 0.8200 0.8200 0.8200
+	Ke 0.0000 0.0000 0.0000
+
+newmtl WSHSKINM
+	Ns 40.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 1.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.7647 0.7412 0.6667
+	Ks 0.2700 0.2700 0.2700
+	Ke 0.0000 0.0000 0.0000
+	map_Ka maps\WSHSKIN.jpg
+	map_Kd maps\WSHSKIN.jpg
+	map_bump maps\WSHSKINM.jpg
+	bump maps\WSHSKINM.jpg

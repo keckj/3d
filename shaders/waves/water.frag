@@ -117,7 +117,8 @@ void main()
     vec3 l = normalize(sunDir);
     vec4 specular = vec4(0.05,0.05,0.05,1.0);
     float noise = (snoise3(fPosition*1.0)+1.0);
-    vec4 diffuse = vec4(57.0/256.0+noise*0.05,88.0/256.0+noise*0.01,121.0/256+0.15*noise,0.5);//vec4(57.0/256.0,88.0/256.0,121.0/256.0,.5);
+    //vec4 diffuse = vec4(57.0/256.0+noise*0.05,88.0/256.0+noise*0.01,121.0/256+0.15*noise,0.2);
+    vec4 diffuse = vec4(57.0/256.0,88.0/256.0,121.0/256.0,.5);
     vec4 ambient = diffuse/4.0;
     float shininess = 10.0;
 
