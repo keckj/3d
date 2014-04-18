@@ -105,6 +105,7 @@ Cube::Cube() {
 	alListenerfv(AL_ORIENTATION, listenerOri);
 
 	Audible *test = new Audible("sounds/ambiant/waves_converted.wav", qglviewer::Vec(0,0,0));
+	test->setGain(5.0f);
 	test->playSource();
 }
 
