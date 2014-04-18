@@ -2,6 +2,8 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+#include "headers.h"
+#include "viewer.h"
 #include <ostream>
 #include <string>
 
@@ -22,6 +24,8 @@ class Globals {
 		static float *glPointSizeRange;
 		static float glPointSizeGranularity;
 		static float glPointSize;
+		
+		static Viewer *viewer;
 };
 	
 #endif /* end of include guard: GLOBALS_H */

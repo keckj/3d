@@ -11,7 +11,7 @@ class RenderRoot : public RenderTree {
 
 		~RenderRoot() {};
 		
-		void drawDownwards(const float *currentTransformationMatrix = consts::identity4) {};
+		void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
 };
 
 #endif /* end of include guard: RENDERROOT_H */

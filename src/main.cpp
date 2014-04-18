@@ -1,5 +1,5 @@
 
-#include <GL/glew.h>
+#include "headers.h"
 
 #include <qapplication.h>
 #include "viewer.h"
@@ -13,7 +13,6 @@
 #include "shader.h"
 #include "SeaDiver.h"
 #include "Rectangle.h"
-#include <QWidget>
 
 #include <ostream>
 #include <cassert>
@@ -37,6 +36,7 @@
 #include "seaFlow.h"
 #include "attractor.h"
 #include "springsSystem.h"
+#include "audible.h"
 
 
 using namespace std;
@@ -60,11 +60,18 @@ int main(int argc, char** argv) {
         // Read command lines arguments.
         QApplication application(argc,argv);
         log_console.infoStream() << "[Qt Init] ";
+	
 
+		//openal 
+		Audible::initOpenALContext();
+		alutInit(&argc, argv);
+		log_console.infoStream() << "[Alut Init] ";
+		
         // Instantiate the viewer (mandatory)
-        Viewer viewer;
-        viewer.setWindowTitle("Sea diver");
-        viewer.show();
+        Viewer *viewer = new Viewer();
+        viewer->setWindowTitle("Sea diver");
+        viewer->show();
+		Globals::viewer = viewer;
 
         //glew initialisation (mandatory)
         log_console.infoStream() << "[Glew Init] " << glewGetErrorString(glewInit());
@@ -77,33 +84,19 @@ int main(int argc, char** argv) {
 
         log_console.infoStream() << "Running with OpenGL " << Globals::glVersion << " and glsl version " << Globals::glShadingLanguageVersion << " !";
 
-        viewer.setSceneRadius(100.0f);
+	
+		//EXEMPLE DE SON POUR ASSIST
+		Audible *test = new Audible("sounds/ambiant/waves_converted.wav", qglviewer::Vec(0,0,0));
+		test->setGain(5.0f);
+		test->playSource();
+		//////////////////////////////////// voir src/utils/openal/audible.h
 		
-		//EXEMPLE DE COMMENT UTILISER PROGRAM ET TEXTURE DANS TERRAIN.CPP 
-		QImage rgb_heightmap = QGLWidget::convertToGLFormat(QImage("img/tamriel3.jpg","jpg"));
-        assert(rgb_heightmap.bits());
-        unsigned char *black_img = new unsigned char[rgb_heightmap.height()*rgb_heightmap.width()];
-
-        for (int i = 0; i < rgb_heightmap.width(); i++) {
-                for (int j = 0; j < rgb_heightmap.height(); j++) {
-                        QRgb color = rgb_heightmap.pixel(i,j);
-                        black_img[j*rgb_heightmap.width() + i] = (unsigned char) ((qRed(color) + qGreen(color) + qBlue(color))/3);
-                }
-        }
-		
-		
-		Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true);
-		terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2));
-
-		Waves *waves = new Waves(0.0,0.0,10.0,10.0,1.0);
-		waves->scale(100);
-
 		RenderRoot *root = new RenderRoot();
 
 		unsigned int nParticles = 1000;
 		unsigned int nLevel = 8;
 		ParticleGroup *p = new ParticleGroup(nLevel*nParticles,(nLevel-1)*nParticles);
-	
+
 		qglviewer::Vec g = 0.002*Vec(0,+9.81,0);
 		ParticleGroupKernel *archimede = new ConstantForce(g);
 		ParticleGroupKernel *seaFlow = new SeaFlow(0.01*qglviewer::Vec(1,0,1));
@@ -114,8 +107,8 @@ int main(int argc, char** argv) {
 		ParticleGroupKernel *springsSystem = new SpringsSystem(true);
 
 		stringstream name;
-	
-		
+
+
 		for (unsigned int i = 0; i < nParticles; i++) {
 			float r1 = Random::randf(0,5), r2 = Random::randf(0,5);
 			for (unsigned int j = 0; j < nLevel; j++) {
@@ -131,7 +124,7 @@ int main(int argc, char** argv) {
 			}
 		}
 
-		//pg[j]->addKernel(attractor);
+		//p->addKernel(attractor);
 		//p->addKernel(repulsor);
 		//p->addKernel(seaFlow);
 		p->addKernel(archimede);
@@ -146,12 +139,14 @@ int main(int argc, char** argv) {
 		root->addChild(name.str(), p);
 
 
-		//root->addChild("terrain", terrain);
-		//root->addChild("vagues",[id] waves);
-
-		viewer.addRenderable(root);
+        viewer->setSceneRadius(100.0f);
+		viewer->addRenderable(root);
 
 		// Run main loop.
-		return application.exec();
+		application.exec();
+
+		alutExit();
+
+		return EXIT_SUCCESS;
 }
 
