@@ -100,67 +100,58 @@ int main(int argc, char** argv) {
 
 		RenderRoot *root = new RenderRoot();
 
-		unsigned int nParticles = 100;
-		ParticleGroup *p = new ParticleGroup(100,1000);
+		unsigned int nParticles = 1000;
+		unsigned int nLevel = 8;
+		ParticleGroup *p = new ParticleGroup(nLevel*nParticles,(nLevel-1)*nParticles);
 	
-		qglviewer::Vec g = 0.01*Vec(0,-9.81,0);
-		ParticleGroupKernel *archimede = new ConstantForce(-g);
-		ParticleGroupKernel *seaFlow = new SeaFlow(0.2*qglviewer::Vec(1,0,1));
-		ParticleGroupKernel *frottement = new FrottementFluideAvance(0.47, 0.47, 0.47, 1000);
+		qglviewer::Vec g = 0.002*Vec(0,+9.81,0);
+		ParticleGroupKernel *archimede = new ConstantForce(g);
+		ParticleGroupKernel *seaFlow = new SeaFlow(0.01*qglviewer::Vec(1,0,1));
+		ParticleGroupKernel *frottement = new FrottementFluideAvance(0.47, 0.47, 0.47, 1);
 		ParticleGroupKernel *attractor = new Attractor(0.2, 100, 0.001);
-		ParticleGroupKernel *repulsor = new Attractor(0.1, 0.2, -0.00);
+		ParticleGroupKernel *repulsor = new Attractor(0.1, 1.0, -1.00);
 		ParticleGroupKernel *dynamicScheme = new DynamicScheme();
-		ParticleGroupKernel *springsSystem = new SpringsSystem(false);
+		ParticleGroupKernel *springsSystem = new SpringsSystem(true);
 
 		stringstream name;
 	
-                for (unsigned int i = 0; i < nParticles; i++) {
-                        qglviewer::Vec pos = Vec(i%10,i/10,0);
-                        qglviewer::Vec  vel = Vec(0,0,0);
-                        float r = 1;
-                        float rho = 1.2;//kg/m^3
-                        float m = rho*4/3.0*3.14*r*r*r;
-                        p->addParticle(new Particule(pos, vel, m, r));	
-                }
-                for (unsigned int i = 0; i < nParticles-1; i++) {
-						
-						if(i%10>=1)
-							p->addSpring(i,i-1, 100,1.1, 50, 200);
-						if(i%10<9)
-							p->addSpring(i,i+1, 100,1.1, 50, 200);
-						if(i/10>=1)
-							p->addSpring(i,i-10, 100,1.1, 50, 200);
-						if(i/10<9)
-							p->addSpring(i,i+10, 100,1.1, 50, 200);
-					
-						if(i%10>=1 && i/10<9)
-							p->addSpring(i,i+9,100,sqrt(2)*1.1, 50,200);
-						
-						if(i%10<9 && i/10<9)
-							p->addSpring(i,i+11,100,sqrt(2)*1.1,50,200);
-                }
+		
+		for (unsigned int i = 0; i < nParticles; i++) {
+			float r1 = Random::randf(0,5), r2 = Random::randf(0,5);
+			for (unsigned int j = 0; j < nLevel; j++) {
+				qglviewer::Vec pos = Vec(r1,0.002*j,r2);
+				qglviewer::Vec  vel = Vec(Random::randf()*5,0,Random::randf()*5);
+				float m = 0.001;
+				p->addParticle(new Particule(pos, vel, m, 0.01, j==0));	
+			}
+		}
+		for (unsigned int i = 0; i < nParticles; i++) {
+			for (unsigned int j = 0; j < nLevel-1; j++) {
+				p->addSpring(nLevel*i+j,nLevel*i+j+1,2,0.1,0.01,0.1);
+			}
+		}
 
-                //pg[j]->addKernel(attractor);
-                //pg[j]->addKernel(repulsor);
-                //pg[j]->addKernel(seaFlow);
-                //pg[j]->addKernel(archimede);
-                //pg[j]->addKernel(frottement);
-                p->addKernel(springsSystem);
-                p->addKernel(dynamicScheme);
-                p->releaseParticles();
-                p->scale(10);
+		//pg[j]->addKernel(attractor);
+		//p->addKernel(repulsor);
+		//p->addKernel(seaFlow);
+		p->addKernel(archimede);
+		//p->addKernel(frottement);
+		p->addKernel(springsSystem);
+		p->addKernel(dynamicScheme);
+		p->releaseParticles();
+		p->scale(10);
 
-                name.clear();
-                name << "particules";
-                root->addChild(name.str(), p);
+		name.clear();
+		name << "particules";
+		root->addChild(name.str(), p);
 
 
-                //root->addChild("terrain", terrain);
-                //root->addChild("vagues",[id] waves);
+		//root->addChild("terrain", terrain);
+		//root->addChild("vagues",[id] waves);
 
-                viewer.addRenderable(root);
+		viewer.addRenderable(root);
 
-                // Run main loop.
-                return application.exec();
+		// Run main loop.
+		return application.exec();
 }
 

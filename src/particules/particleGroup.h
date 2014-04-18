@@ -14,7 +14,7 @@
 struct mappedParticlePointers {
 	//particules
 	float *x, *y, *z, *vx, *vy, *vz, *fx, *fy, *fz, *m, *im, *r;
-	bool *kill;
+	bool *kill, *fixed;
 	//ressorts
 	float *k, *Lo, *d, *Fmax, *lines, *intensity;
 	unsigned int *id1, *id2;
@@ -66,7 +66,7 @@ class ParticleGroup : public RenderTree {
 		//graphic ressources to share context
 		cudaGraphicsResource_t *ressources;
 		cudaGraphicsResource_t x_r, y_r, z_r, 
-        				   r_r, kill_r, 
+        				   r_r, kill_r,
 	        			   springs_lines_r, springs_intensity_r, springs_kill_r;
 	
 		//device pointers
@@ -78,7 +78,7 @@ class ParticleGroup : public RenderTree {
 			  *springs_lines_d, *springs_intensity_d;
 
 		unsigned int *springs_id1_d, *springs_id2_d;
-		bool *kill_d, *springs_kill_d;
+		bool *kill_d, *fixed_d, *springs_kill_d;
 		
 		//funcs
 		bool _mapped;

@@ -11,7 +11,7 @@ extern void checkKernelExecution();
 struct mappedParticlePointers {
 	//particules
 	float *x, *y, *z, *vx, *vy, *vz, *fx, *fy, *fz, *m, *im, *r;
-	bool *kill;
+	bool *kill, *fixed;
 	//ressorts
 	float *k, *Lo, *d, *Fmax, *lines, *intensity;
 	unsigned int *id1, *id2;
@@ -259,9 +259,16 @@ __global__ void attractors(
 	outputLines[6*id+3] = _x2;
 	outputLines[6*id+4] = _y2;
 	outputLines[6*id+5] = _z2;
-
-	intensity[2*id+0] = min(abs(dF)/_Fmax,1.0f);
-	intensity[2*id+1] = min(abs(dF)/_Fmax,1.0f);
+	
+	float _ratio = dF/_Fmax;
+	if(_ratio >=0) {
+		intensity[2*id+0] = min(_ratio,1.0f);
+		intensity[2*id+1] = min(_ratio,1.0f);
+	}
+	else {
+		intensity[2*id+0] = max(_ratio,-1.0f);
+		intensity[2*id+1] = max(_ratio,-1.0f);
+	}
 
 	/*printf("\n%f", intensity[id]);*/
 	/*printf("\n(%f,%f,%f) \t(%f,%f,%f)", _x1, _y1, _z1, _x2, _y2, _z2 );*/
@@ -274,12 +281,16 @@ __global__ void dynamicScheme(
 		float *vx, float *vy, float *vz,
 		float *fx, float *fy, float *fz,
 		float *im,
+		bool *fixed,
 		float dt,
 		unsigned int nParticles) {
 
 	int id = blockIdx.x*blockDim.x + threadIdx.x;
 	
 	if(id >= nParticles)
+		return;
+
+	if(fixed[id])
 		return;
 
 	float inverseMass = im[id];
@@ -399,7 +410,9 @@ void dynamicSchemeKernel(const struct mappedParticlePointers *pt, unsigned int n
 		pt->x, pt->y, pt->z, 
 		pt->vx, pt->vy, pt->vz,
 		pt->fx, pt->fy, pt->fz,
-		pt->im, dt, nParticles);
+		pt->im, 
+		pt->fixed,
+		dt, nParticles);
 
 	cudaDeviceSynchronize();
 	checkKernelExecution();

@@ -12,20 +12,23 @@ private:
 	Vec position;
 	Vec velocity;
 
-	double mass; 
-	double invMass; // the inverse of the mass is also stored
-	double radius;
+	float mass; 
+	float invMass; // the inverse of the mass is also stored
+	float radius;
+
+	bool fixed;
 	
 public:
-	Particule(Vec pos, Vec vel, double m, double r);
+	Particule(Vec pos, Vec vel, float m, float r, bool fixed = false);
 	virtual ~Particule();
 	
 	const Vec & getPosition() const;
 	const Vec & getVelocity() const;
 
-	double getMass() const;
-	double getInvMass() const;
-	double getRadius() const;
+	float getMass() const;
+	float getInvMass() const;
+	float getRadius() const;
+	bool isFixed() const;
 
 	void setPosition(const Vec &pos);
 	void setVelocity(const Vec &vel);

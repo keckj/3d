@@ -1,10 +1,11 @@
 #include "particule.h"
 
-Particule::Particule(Vec pos, Vec vel, double m, double r) :
+Particule::Particule(Vec pos, Vec vel, float m, float r, bool fixed) :
 	position(pos),
 	velocity(vel),
 	mass(m),
-	radius(r)
+	radius(r),
+	fixed(fixed)
 {
 	invMass = (m > 0 ? 1 / m : 0.0);
 }
@@ -24,17 +25,17 @@ const Vec & Particule::getVelocity() const
 	return velocity;
 }
 
-double Particule::getMass() const
+float Particule::getMass() const
 {
 	return mass;
 }
 
-double Particule::getInvMass() const
+float Particule::getInvMass() const
 {
 	return invMass;
 }
 
-double Particule::getRadius() const
+float Particule::getRadius() const
 {
 	return radius;
 }
@@ -65,3 +66,6 @@ std::ostream& operator<<(std::ostream& os, const Particule& p)
 	return os;
 }
 
+bool Particule::isFixed() const {
+	return fixed;
+}

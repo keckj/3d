@@ -30,7 +30,7 @@ ParticleGroup::ParticleGroup(unsigned int maxParticles, unsigned int maxSprings)
 	
 	springs_id1_d(0), springs_id2_d(0), 
 
-	kill_d(0), springs_kill_d(0),
+	kill_d(0), fixed_d(0), springs_kill_d(0),
 
 	_mapped(false)
 {
@@ -76,6 +76,7 @@ ParticleGroup::ParticleGroup(unsigned int maxParticles, unsigned int maxSprings)
 	CHECK_CUDA_ERRORS(cudaMalloc((void**) &fz_d, maxParticles*sizeof(float)));
 	CHECK_CUDA_ERRORS(cudaMalloc((void**) &m_d, maxParticles*sizeof(float)));
 	CHECK_CUDA_ERRORS(cudaMalloc((void**) &im_d, maxParticles*sizeof(float)));
+	CHECK_CUDA_ERRORS(cudaMalloc((void**) &fixed_d, maxParticles*sizeof(bool)));
 	
 	//springs//
 	CHECK_CUDA_ERRORS(cudaMalloc((void**) &springs_id1_d, maxSprings*sizeof(unsigned int)));
@@ -132,6 +133,7 @@ ParticleGroup::~ParticleGroup() {
 	CHECK_CUDA_ERRORS(cudaFree(m_d));
 	CHECK_CUDA_ERRORS(cudaFree(im_d));
 	CHECK_CUDA_ERRORS(cudaFree(r_d));
+	CHECK_CUDA_ERRORS(cudaFree(fixed_d));
 	
 	CHECK_CUDA_ERRORS(cudaFree(springs_id1_d));
 	CHECK_CUDA_ERRORS(cudaFree(springs_id2_d));
@@ -290,13 +292,13 @@ void ParticleGroup::fromDevice() {
 	float *x_h=0, *y_h=0, *z_h=0, *vx_h=0, *vy_h=0, *vz_h=0, *m_h=0, *r_h=0; //8
 	float *springs_k_h=0, *springs_Lo_h=0, *springs_d_h=0, *springs_Fmax_h=0; //4
 	unsigned int *springs_id1_h, *springs_id2_h; //2
-	bool *kill_h=0, *springs_kill_h=0; //2
+	bool *kill_h=0, *fixed_h=0, *springs_kill_h=0; //3
 
-	unsigned int nRessources = 16;
-	void **data_p_h[16] = {
+	unsigned int nRessources = 17;
+	void **data_p_h[17] = {
 						(void**)&x_h, (void**)&y_h, (void**)&z_h, 
 						(void**)&vx_h, (void**)&vy_h, (void**)&vz_h, (void**)&m_h, (void**)&r_h, //particles float
-						(void**)&kill_h, //particles bool
+						(void**)&kill_h, (void**)&fixed_h, //particles bool
 						(void**)&springs_k_h, (void**)&springs_Lo_h, (void**)&springs_d_h, (void**)&springs_Fmax_h, //springs float
 						(void**)&springs_id1_h, (void**)&springs_id2_h, //springs unsigned int
 						(void**)&springs_kill_h //springs bool
@@ -304,9 +306,9 @@ void ParticleGroup::fromDevice() {
 	
 	size_t fs = sizeof(float), bs = sizeof(bool), is = sizeof(unsigned int);
 	size_t ps = nParticles, ss = nSprings;
-	size_t dataSize[16] = {
+	size_t dataSize[17] = {
 						ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs,
-						ps*bs,
+						ps*bs, ps*bs,
 						ss*fs, ss*fs, ss*fs, ss*fs,
 						ss*is, ss*is, 
 						ss*bs
@@ -318,10 +320,10 @@ void ParticleGroup::fromDevice() {
 	
 	mapRessources();
 	{
-		void *data_d[16] = {
+		void *data_d[17] = {
 						x_d, y_d, z_d, 
 						vx_d, vy_d, vz_d, m_d, r_d, //particles float
-						kill_d, //particles bool
+						kill_d, fixed_d, //particles bool
 						springs_k_d, springs_Lo_d, springs_d_d, springs_Fmax_d, //springs float
 						springs_id1_d, springs_id2_d, //springs unsigned int
 						springs_kill_d //springs bool
@@ -335,7 +337,7 @@ void ParticleGroup::fromDevice() {
 
 	for (unsigned int i = 0; i < nParticles; i++) {
 		if(!kill_h[i]) {
-			particlesWaitList.push_back(new Particule(Vec(x_h[i], y_h[i], z_h[i]), Vec(vx_h[i], vy_h[i], vz_h[i]), m_h[i], r_h[i]));
+			particlesWaitList.push_back(new Particule(Vec(x_h[i], y_h[i], z_h[i]), Vec(vx_h[i], vy_h[i], vz_h[i]), m_h[i], r_h[i], fixed_h[i]));
 			nWaitingParticles++;
 		}
 	}
@@ -361,23 +363,26 @@ void ParticleGroup::toDevice() {
 
 	//Alloc CPU arrays
 	float *x_h=0, *y_h=0, *z_h=0, *vx_h=0, *vy_h=0, *vz_h=0, *m_h=0, *im_h, *r_h=0; //9
+	bool *fixed_h=0; //1
 	float *springs_k_h=0, *springs_Lo_h=0, *springs_d_h=0, *springs_Fmax_h=0; //4
 	unsigned int *springs_id1_h=0, *springs_id2_h=0; //2
 
-	unsigned int nRessources = 15;
-	void **data_p_h[15] = {
+	unsigned int nRessources = 16;
+	void **data_p_h[16] = {
 						(void**)&x_h, (void**)&y_h, (void**)&z_h, 
 						(void**)&vx_h, (void**)&vy_h, (void**)&vz_h, 
 						(void**)&m_h, (void**)&im_h, (void**)&r_h, //particles float
+						(void**)&fixed_h, //particle bools
 						(void**)&springs_k_h, (void**)&springs_Lo_h, 
 						(void**)&springs_d_h, (void**)&springs_Fmax_h, //springs float
 						(void**)&springs_id1_h, (void**)&springs_id2_h, //springs unsigned int
 						};
 	
-	size_t fs = sizeof(float), is = sizeof(unsigned int);
+	size_t fs = sizeof(float), is = sizeof(unsigned int), bs = sizeof(bool);
 	size_t ps = nWaitingParticles, ss = nWaitingSprings;
-	size_t dataSize[15] = {
+	size_t dataSize[16] = {
 						ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs,
+						ps*bs,
 						ss*fs, ss*fs, ss*fs, ss*fs,
 						ss*is, ss*is, 
 						};
@@ -408,6 +413,8 @@ void ParticleGroup::toDevice() {
 			m_h[i] = p->getMass();
 			im_h[i] = p->getInvMass();
 			r_h[i] = p->getRadius();
+
+			fixed_h[i] = p->isFixed();
 
 			nParticles++;
 			i++;
@@ -440,9 +447,10 @@ void ParticleGroup::toDevice() {
 	//send to GPU
 	mapRessources();
 	{
-		void *data_d[15] = {
+		void *data_d[16] = {
 						x_d, y_d, z_d, 
 						vx_d, vy_d, vz_d, m_d, im_d, r_d, //particles float
+						fixed_d, //particle bools
 						springs_k_d, springs_Lo_d, springs_d_d, springs_Fmax_d, //springs float
 						springs_id1_d, springs_id2_d, //springs unsigned int
 						};
@@ -539,7 +547,7 @@ struct mappedParticlePointers *ParticleGroup::getMappedRessources() const {
 	struct mappedParticlePointers *pt = new struct mappedParticlePointers;
 	*pt = {
 		x_d, y_d, z_d, vx_d, vy_d, vz_d, fx_d, fy_d, fz_d, m_d, im_d, r_d,
-		kill_d,
+		kill_d, fixed_d,
 		springs_k_d, springs_Lo_d, springs_d_d, springs_Fmax_d, springs_lines_d, springs_intensity_d,
 		springs_id1_d, springs_id2_d, 
 		springs_kill_d
