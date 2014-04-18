@@ -9,10 +9,7 @@
 #include "kernel.h"
 #include "matrix.h"
 #include "cudaUtils.h"
-
-#include <AL/al.h>
-#include <AL/alc.h>
-#include <AL/alut.h>
+#include "audible.h"
 
 using namespace std;
 
@@ -101,57 +98,14 @@ Cube::Cube() {
 	glUseProgram(0);
 
 
-	log_console.infoStream() << "Testing openal";
-
-	ALboolean enumeration;
-
-	enumeration = alcIsExtensionPresent(NULL, "ALC_ENUMERATION_EXT");
-	if (enumeration == AL_FALSE) {
-		log_console.infoStream() << "Enumerating devices is not supported";
-	}
-	else {
-		const ALCchar *device = alcGetString(NULL, ALC_DEVICE_SPECIFIER);
-		// enumeration supported
-		log_console.infoStream() << "Devices list :";
-		printf("\t\t\t----------\n");
-		printf("\t\t\t%s\n", device);
-		printf("\t\t\t----------\n");
-	}
-	
-	ALCdevice *devices = alcOpenDevice(NULL);
-	if(!devices) {
-		log_console.errorStream() << "Failed to open openAL devices !";
-		exit(1);
-	}
-	else {
-		log_console.infoStream() << "Initialized openAL devices !";
-	}
-
-	ALCcontext *context = alcCreateContext(devices, NULL);
-	if (!alcMakeContextCurrent(context)) {
-		log_console.infoStream() << "Failed to initialize openAL context !";
-		exit(1);
-	}
-	else {
-		log_console.errorStream() << "Initialized openAL context !";
-	}
 
 	ALfloat listenerOri[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
 	alListener3f(AL_POSITION, 0, 0, 0);
 	alListener3f(AL_VELOCITY, 0, 0, 0);
 	alListenerfv(AL_ORIENTATION, listenerOri);
 
-	alGenSources((ALuint)1, &source);
-	alSourcef(source, AL_PITCH, 1);
-	alSourcef(source, AL_GAIN, 1);
-	alSource3f(source, AL_POSITION, 0, 0, 0);
-	alSource3f(source, AL_VELOCITY, 0, 0, 0);
-	alSourcei(source, AL_LOOPING, AL_TRUE);
-
-	ALuint buffer = alutCreateBufferFromFile("sounds/ambiant/waves_converted.wav");
-	
-	alSourcei(source, AL_BUFFER, buffer);
-	alSourcePlay(source);
+	Audible *test = new Audible("sounds/ambiant/waves_converted.wav", qglviewer::Vec(0,0,0));
+	test->playSource();
 }
 
 Cube::~Cube() {

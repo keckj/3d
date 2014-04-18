@@ -24,6 +24,7 @@
 #include "cudaUtils.h"
 #include "texture.h"
 #include "renderRoot.h"
+#include "audible.h"
 
 
 using namespace std;
@@ -47,10 +48,13 @@ int main(int argc, char** argv) {
         // Read command lines arguments.
         QApplication application(argc,argv);
         log_console.infoStream() << "[Qt Init] ";
+	
 
+		//openal 
+		Audible::initOpenALContext();
 		alutInit(&argc, argv);
-        log_console.infoStream() << "[Alut Init] ";
-
+		log_console.infoStream() << "[Alut Init] ";
+		
         // Instantiate the viewer (mandatory)
         Viewer *viewer = new Viewer();
         viewer->setWindowTitle("Sea diver");
@@ -73,6 +77,10 @@ int main(int argc, char** argv) {
 		viewer->addRenderable(new Cube());
 
         // Run main loop.
-        return application.exec();
+        application.exec();
+
+		alutExit();
+
+		return EXIT_SUCCESS;
 }
 
