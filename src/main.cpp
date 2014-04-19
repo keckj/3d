@@ -66,19 +66,6 @@ int main(int argc, char** argv) {
 
     viewer.setSceneRadius(100.0f);
 
-    //EXEMPLE DE COMMENT UTILISER PROGRAM ET TEXTURE DANS TERRAIN.CPP 
-    /* QImage rgb_heightmap = QGLWidget::convertToGLFormat(QImage("img/tamriel3.jpg","jpg")); */
-    /* assert(rgb_heightmap.bits()); */
-    /* unsigned char *black_img = new unsigned char[rgb_heightmap.height()*rgb_heightmap.width()]; */
-
-    /* for (int i = 0; i < rgb_heightmap.width(); i++) { */
-    /*     for (int j = 0; j < rgb_heightmap.height(); j++) { */
-    /*         QRgb color = rgb_heightmap.pixel(i,j); */
-    /*         black_img[j*rgb_heightmap.width() + i] = (unsigned char) ((qRed(color) + qGreen(color) + qBlue(color))/3); */
-    /*     } */
-    /* } */
-
-
     /* Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); */
     /* terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2)); */
 
