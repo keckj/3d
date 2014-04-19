@@ -1,0 +1,19 @@
+#ifndef CONSTANTFORCE_H
+#define CONSTANTFORCE_H
+
+#include "particleGroupKernel.h"
+
+class ConstantForce : public ParticleGroupKernel {
+
+	public:
+		ConstantForce(bool dumping);
+		~ConstantForce();
+
+		void operator ()(const ParticleGroup *particleGroup);
+
+	private:
+		bool dumping;
+};
+
+
+#endif /* end of include guard: CONSTANTFORCE_H */

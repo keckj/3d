@@ -1,4 +1,5 @@
 *.o
+<<<<<<< HEAD
 textures/*.png
 *~
 .*.swp
@@ -7,3 +8,17 @@ qglviewer.mk
 main
 .qglviewer.xml
 local/*
+=======
+*~
+.*.swp
+.DS_Store
+main
+.qglviewer.xml
+.exrc
+textures/*.png
+tags
+types_c.taghl
+program.log
+qglviewer.mk
+local/
+>>>>>>> poulpy2
