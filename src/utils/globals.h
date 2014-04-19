@@ -17,10 +17,12 @@ class Globals {
 		static const unsigned char *glVersion;
 		static const unsigned char *glShadingLanguageVersion;
 			
+		static int glMax3DTextureSize;
+		static int glMaxTextureSize;
 		static int glMaxVertexAttribs;
 		static int glMaxDrawBuffers;
 		static int glMaxCombinedTextureImageUnits;
-
+		
 		static float *glPointSizeRange;
 		static float glPointSizeGranularity;
 		static float glPointSize;

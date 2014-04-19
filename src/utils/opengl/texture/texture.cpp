@@ -29,7 +29,6 @@ Texture::Texture(GLenum textureType) :
 	std::stringstream ss;
 	ss << "[Texture][id=" << textureId << "]  ";
 	logTextureHead = ss.str();
-	
 } 
 
 Texture::~Texture() {

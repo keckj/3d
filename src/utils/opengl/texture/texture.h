@@ -7,6 +7,7 @@
 #include <list>
 #include <QImage>
 
+#include "headers.h"
 #include "parameter.h"
 
 class Texture {

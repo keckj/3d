@@ -1,8 +1,10 @@
 
+#include "headers.h"
 #include "globals.h"
 #include "log.h"
-#include <GL/glew.h>
 
+int Globals::glMax3DTextureSize = 0;
+int Globals::glMaxTextureSize = 0;
 int Globals::glMaxVertexAttribs = 0;
 int Globals::glMaxDrawBuffers = 0;
 int Globals::glMaxCombinedTextureImageUnits = 0;
@@ -25,6 +27,8 @@ void Globals::init() {
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &glMaxVertexAttribs);
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &glMaxDrawBuffers);
 	glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &glMaxCombinedTextureImageUnits);
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &glMaxTextureSize);
+	glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &glMax3DTextureSize);
 
 	glPointSizeRange = new float[2];
 	glGetFloatv(GL_POINT_SIZE_RANGE, glPointSizeRange);
@@ -42,6 +46,8 @@ void Globals::print(std::ostream &out) {
 	out << "[Globals]";
 	out << "\n\tGL_VERSION " << glVersion;
 	out << "\n\tGL_SHADING_LANGUAGE_VERSION " << glShadingLanguageVersion;
+	out << "\n\tGL_MAX_TEXTURE_SIZE " << glMaxTextureSize << " x " << glMaxTextureSize;
+	out << "\n\tGL_MAX_3D_TEXTURE_SIZE " << glMax3DTextureSize << " x " << glMax3DTextureSize << " x " << glMax3DTextureSize ;
 	out << "\n\tGL_MAX_VERTEX_ATTRIBS " << glMaxVertexAttribs;
 	out << "\n\tGL_MAX_DRAW_BUFFERS " << glMaxDrawBuffers;
 	out << "\n\tGL_MAX_COMBINED_TEXTURE_IMAGE_UNITS " << glMaxCombinedTextureImageUnits;
