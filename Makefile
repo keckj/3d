@@ -17,20 +17,29 @@ OS=$(shell uname -s)
 
 # Mac ##########################################################
 ifeq ($(OS), Darwin)
-VIEWER_LIBPATH = -F/usr/local/Cellar/qt/4.8.5/lib -L/usr/local/Cellar/qt/4.8.5/lib  -L/opt/X11/lib -L/usr/local/Cellar/qt/4.8.5/lib -F/usr/local/Cellar/qt/4.8.5/lib
-VIEWER_INCLUDEPATH       = -I/usr/local/Cellar/qt/4.8.5/mkspecs/macx-g++ -I. -I/usr/local/Cellar/qt/4.8.5/lib/QtCore.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtCore.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtGui.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtGui.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtOpenGL.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtOpenGL.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtXml.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtXml.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/include -I/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers -I/System/Library/Frameworks/AGL.framework/Headers -I. -F/usr/local/Cellar/qt/4.8.5/lib
-VIEWER_LIBS = -framework Glut -framework OpenGL -framework AGL -framework QtXml -framework QtCore -framework QtOpenGL -framework QtGui 
+VIEWER_LIBPATH = -L/usr/local/Cellar/qt/4.8.5/lib -L/usr/local/Cellar/qt/4.8.5/lib  -L/opt/X11/lib -L/usr/local/Cellar/qt/4.8.5/lib -L/usr/local/Cellar/qt/4.8.5/lib
+VIEWER_INCLUDEPATH       = -I/usr/local/Cellar/qt/4.8.5/mkspecs/macx-g++ -I. -I/usr/local/Cellar/qt/4.8.5/lib/QtCore.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtCore.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtGui.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtGui.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtOpenGL.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtOpenGL.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtXml.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/lib/QtXml.framework/Versions/4/Headers -I/usr/local/Cellar/qt/4.8.5/include -I/System/Library/Frameworks/OpenGL.framework/Versions/A/Headers -I/System/Library/Frameworks/AGL.framework/Headers -I. -L/usr/local/Cellar/qt/4.8.5/lib
+VIEWER_LIBS = -framework Glut -framework OpenGL -framework AGL -framework QtXml -framework QtCore -framework QtOpenGL -framework QtGui -lGLEW
 VIEWER_DEFINES = -D_REENTRANT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 
+<<<<<<< HEAD
 #merge fail deso 
 CUDA_INCLUDEPATH =
 CUDA_LIBPATH =
 CUDA_LIBS = 
 
+=======
+>>>>>>> poulpy
 OPENAL_INCLUDEPATH =
 OPENAL_LIBPATH =
 OPENAL_LIBS = -lopenal -lalut
 
+<<<<<<< HEAD
+=======
+CUDA_INCLUDEPATH = -I/Developer/NVIDIA/CUDA-5.5/include
+CUDA_LIBPATH = -L/Developer/NVIDIA/CUDA-5.5/lib
+CUDA_LIBS = -lcudart
+>>>>>>> poulpy
 endif
 ################################################################
 
@@ -42,8 +51,8 @@ VIEWER_INCLUDEPATH = -I/usr/include/Qt -I/usr/include/QtCore -I/usr/include/QtGu
 VIEWER_LIBS = -lGLU -lglut -lGL -lQtXml -lQtOpenGL -lQtGui -lQtCore -lpthread -lGLEW
 VIEWER_DEFINES = -D_REENTRANT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 
-CUDA_INCLUDEPATH = -I/usr/local/cuda/include
-CUDA_LIBPATH = -L/usr/local/cuda/lib64 
+CUDA_INCLUDEPATH = -I/usr/local/cuda-5.5/include #-I/usr/local/cuda-6.0/include
+CUDA_LIBPATH = -L/usr/local/cuda-5.5/lib64 -L/usr/lib/nvidia-331 #-L/usr/local/cuda-6.0/lib64
 CUDA_LIBS = -lcuda -lcudart
 
 OPENAL_INCLUDEPATH =
@@ -51,7 +60,7 @@ OPENAL_LIBPATH =
 OPENAL_LIBS = -lopenal -lalut
 
 DISTRIB=$(filter-out Distributor ID:, $(shell lsb_release -i))
-#Ubuntu 
+#Ubuntu
 ifeq ($(DISTRIB), Ubuntu)
 else #Centos
 endif
@@ -62,8 +71,8 @@ endif
 #Compilateurs
 LINK= g++
 LINKFLAGS= -W -Wall -Wextra -pedantic -std=c++0x
-LDFLAGS= $(VIEWER_LIBS) $(L_QGLVIEWER) -llog4cpp $(CUDA_LIBS) $(OPENAL_LIBS)
-INCLUDE = -Ilocal/include/ -I$(SRCDIR) $(foreach dir, $(call subdirs, $(SRCDIR)), -I$(dir)) $(VIEWER_INCLUDEPATH) $(CUDA_INCLUDEPATH) $(OPENAL_INCLUDEPATH)
+LDFLAGS= $(VIEWER_LIBS) $(L_QGLVIEWER) -ltinyobjloader -llog4cpp $(CUDA_LIBS) $(OPENAL_LIBS)
+INCLUDE = -Ilocal/include/ -I$(SRCDIR) $(foreach dir, $(call subdirs, $(SRCDIR)), -I$(dir)) $(VIEWER_INCLUDEPATH) $(CUDA_INCLUDEPATH) $(OPENAl_INCLUDEPATH)
 LIBS = -Llocal/lib/ $(VIEWER_LIBPATH) $(CUDA_LIBPATH) $(OPENAL_LIBPATH)
 DEFINES= $(VIEWER_DEFINES) $(OPT)
 
@@ -76,7 +85,7 @@ CXXFLAGS= -W -Wall -Wextra -pedantic -std=c++0x -m64
 #-Wshadow -Wstrict-aliasing -Weffc++ -Werror
 
 #preprocesseur QT
-MOC=moc 
+MOC=moc
 MOCFLAGS=
 
 NVCC=nvcc
@@ -85,9 +94,9 @@ NVCCFLAGS= -Xcompiler -Wall -m64 -arch sm_$(NARCH) -O3
 AS = nasm
 ASFLAGS= -f elf64
 
-# Autres flags 
+# Autres flags
 DEBUGFLAGS= -g -O0
-CUDADEBUGFLAGS= -Xcompiler -Wall -m64 -G -g -arch sm_$(NARCH) -Xptxas="-v" 
+CUDADEBUGFLAGS= -Xcompiler -Wall -m64 -G -g -arch sm_$(NARCH) -Xptxas="-v"
 PROFILINGFLAGS= -pg
 RELEASEFLAGS= -O3
 

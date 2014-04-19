@@ -13,7 +13,7 @@ CardinalSpline::CardinalSpline (std::vector<Vec> points, float k) : points(point
 }
 
 Vec CardinalSpline::operator() (unsigned int n, float t) {
-    assert(n >= 0 && n < points.size());
+    assert(n < points.size());
     assert(t >= 0 && t <= 1);
 
     return (points[n] * h00(t) + tangents[n] * h10(t) + points[n+1] * h01(t) + tangents[n+1] * h11(t));

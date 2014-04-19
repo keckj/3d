@@ -9,6 +9,7 @@
 #include <string>
 #include <map>
 
+#include <iostream>
 
 // Depth first drawing tree
 // Childs are drawn according to their priority //TODO
@@ -21,7 +22,7 @@ class RenderTree : public Renderable {
 	
 	public:
 		virtual ~RenderTree();
-	
+
 		//draw the whole tree with initial modelMatrix set to 4x4 Identity
 		//(renderable draw wrapper)
 		void draw(const float *currentTransformationMatrix = consts::identity4);

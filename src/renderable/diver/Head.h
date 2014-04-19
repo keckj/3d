@@ -1,14 +1,19 @@
 #ifndef HEAD_H
 #define HEAD_H
 
-#include "BodyPart.h"
+#include "renderable.h"
+#include "headers.h"
 
-class Head : public BodyPart {
+#include "renderTree.h"
+
+class Head : public RenderTree {
     public:
         Head (float radius);
         float getRadius () const;
 
-        void draw ();
+    protected:
+        void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
+        void drawUpwards(const float *currentTransformationMatrix = consts::identity4);
 
     private:
         float radius;

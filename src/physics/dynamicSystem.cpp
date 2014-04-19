@@ -7,15 +7,31 @@ using namespace std;
 #include "viewer.h"
 #include "dynamicSystem.h"
 
-DynamicSystem::DynamicSystem() :
-        defaultGravity(0.0, 0.0, -10.0),
-        defaultMediumViscosity(1.0),
-        dt(0.1),
-        groundPosition(0.0, 0.0, 0.0),
-        groundNormal(0.0, 0.0, 1.0),
-        rebound(0.5)
+DynamicSystem::DynamicSystem()
 {
-    // default values reset in init()
+    // global scene parameters
+    numberParticles = 10;
+    defaultGravity = Vec(0.0, 0.0, -10.0);
+    gravity = defaultGravity;
+    defaultMediumViscosity = 1.0;
+    mediumViscosity = defaultMediumViscosity;
+    handleCollisions = true;
+    dt = 0.1;
+    groundPosition = Vec(0.0, 0.0, 0.0);
+    groundNormal = Vec(0.0, 0.0, 1.0);
+    rebound = 0.5;
+    // parameters shared by all particles
+    particleMass = 1.0;
+    particleRadius = 0.25;
+    distanceBetweenParticles = 4.0 * particleRadius;
+    // parameters shared by all springs
+    springStiffness = 30.0;
+    springInitLength = 0.5;
+    springDamping = 1.0;
+    // toggles
+    toggleGravity = true;
+    toggleViscosity = true;
+    toggleCollisions = true;
 }
 
 DynamicSystem::~DynamicSystem()
@@ -74,32 +90,7 @@ void DynamicSystem::setCollisionsDetection(bool onOff)
 
 void DynamicSystem::init(Viewer &viewer)
 {
-    toggleGravity = true;
-    toggleViscosity = true;
-    toggleCollisions = true;
     clear();
-
-    // global scene parameters
-    numberParticles = 10;
-    defaultGravity = Vec(0.0, 0.0, -10.0);
-    gravity = defaultGravity;
-    defaultMediumViscosity = 1.0;
-    mediumViscosity = defaultMediumViscosity;
-    handleCollisions = true;
-    dt = 0.1;
-    groundPosition = Vec(0.0, 0.0, 0.0);
-    groundNormal = Vec(0.0, 0.0, 1.0);
-    rebound = 0.5;
-    // parameters shared by all particles
-    particleMass = 1.0;
-    particleRadius = 0.25;
-    distanceBetweenParticles = 4.0 * particleRadius;
-    // parameters shared by all springs
-    springStiffness = 30.0;
-    springInitLength = 0.5;
-    springDamping = 1.0;
-
-    createSystemScene();
 
     // add a manipulatedFrame to move particle 0 with the mouse
     viewer.setManipulatedFrame(new qglviewer::ManipulatedFrame());
@@ -132,10 +123,10 @@ void DynamicSystem::draw()
     // Ground
     glColor3f(0.0, 0.0, 1.0);
     glBegin(GL_QUADS);
-    glVertex3f(-10.0f, -10.0f, 0.0f);
-    glVertex3f(-10.0f, 10.0f,  0.0f);
-    glVertex3f( 10.0f, 10.0f,  0.0f);
-    glVertex3f( 10.0f, -10.0f, 0.0f);
+    glVertex3f(-10.0f, -10.0f, groundPosition.z);
+    glVertex3f(-10.0f, 10.0f,  groundPosition.z);
+    glVertex3f( 10.0f, 10.0f,  groundPosition.z);
+    glVertex3f( 10.0f, -10.0f, groundPosition.z);
     glEnd();
 
     glColor3f(1.0, 1.0, 1.0);
@@ -266,6 +257,6 @@ void DynamicSystem::keyPressEvent(QKeyEvent* e, Viewer& viewer)
 
 void DynamicSystem::mouseMoveEvent(QMouseEvent*, Viewer& v)
 {
-    setFixedParticlePosition(v.manipulatedFrame()->position());
+    /* setFixedParticlePosition(v.manipulatedFrame()->position()); */
 }
 

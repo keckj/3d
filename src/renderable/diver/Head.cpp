@@ -1,17 +1,19 @@
 #include "Head.h"
 
-Head::Head (float radius) : BodyPart(true), radius(radius) {
+Head::Head (float radius) : RenderTree(), radius(radius) {
 }
 
 float Head::getRadius () const {
     return radius;
 }
 
-void Head::draw () {
+void Head::drawDownwards(const float *currentTransformationMatrix) {
     glPushMatrix();
 
+    glMultTransposeMatrixf(relativeModelMatrix);
     glutSolidSphere(radius, 20, 20);
-
-    glPopMatrix();
 }
 
+void Head::drawUpwards (const float *currentTransformationMatrix) {
+    glPopMatrix();
+}

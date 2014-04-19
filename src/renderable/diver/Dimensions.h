@@ -22,3 +22,7 @@
 #define WIDTH_THIGH 0.2
 #define HEIGHT_THIGH 1
 
+// LEG
+#define WIDTH_LEG 0.2
+#define HEIGHT_LEG 1
+

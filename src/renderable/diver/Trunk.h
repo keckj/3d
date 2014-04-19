@@ -1,10 +1,10 @@
 #ifndef TRUNK_H
 #define TRUNK_H
 
-#include "BodyPart.h"
+#include "renderTree.h"
 #include "Rectangle.h"
 
-class Trunk : public BodyPart {
+class Trunk : public RenderTree {
     public:
         Trunk (float width, float height, float depth);
 
@@ -12,7 +12,9 @@ class Trunk : public BodyPart {
         float getHeight() const;
         float getDepth () const;
 
-        void draw();
+    protected:
+        void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
+        void drawUpwards(const float *currentTransformationMatrix = consts::identity4);
 
     private:
         Rectangle rect;

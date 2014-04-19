@@ -1,26 +1,10 @@
-#include <ctime>
-
 #include "headers.h"
-
-#include <qapplication.h>
-#include "viewer.h"
-
-#include "objLoader/ObjLoader.h"
-
-#include "waves.h"
-#include "fog.h"
-
 #include "diver/SeaDiver.h"
 #include "diver/Pipe.h"
 #include "terrain.h"
-#include "shader.h"
 #include "SeaDiver.h"
+#include "Pipe.h"
 #include "Rectangle.h"
-
-#include <ostream>
-#include <cassert>
-#include <sstream>
-
 #include "log.h"
 #include "program.h"
 #include "globals.h"
@@ -30,6 +14,7 @@
 #include "renderRoot.h"
 #include "particleGroup.h"
 #include "rand.h"
+#include "waves.h"
 #include "pousseeArchimede.h"
 #include "constantForce.h"
 #include "constantMassForce.h"
@@ -41,114 +26,149 @@
 #include "springsSystem.h"
 #include "audible.h"
 #include "splines/CardinalSpline.h"
+#include "skybox.h"
+
+#include <qapplication.h>
+#include <QWidget>
+#include <vector>
+#include <ctime>
+
+#include <ostream>
+#include <cassert>
+#include <sstream>
 
 using namespace std;
 using namespace log4cpp;
 
 int main(int argc, char** argv) {
-        srand(time(NULL));
+    srand(time(NULL));
 
-        log4cpp::initLogs();
+    log4cpp::initLogs();
 
-        CudaUtils::logCudaDevices(log_console);
+    CudaUtils::logCudaDevices(log_console);
 
-        log_console.infoStream() << "[Rand Init] ";
-        log_console.infoStream() << "[Logs Init] ";
+    log_console.infoStream() << "[Rand Init] ";
+    log_console.infoStream() << "[Logs Init] ";
 
-        // glut initialisation (mandatory) 
-        glutInit(&argc, argv);
-        log_console.infoStream() << "[Glut Init] ";
+    // glut initialisation (mandatory) 
+    glutInit(&argc, argv);
+    log_console.infoStream() << "[Glut Init] ";
 
-        // Read command lines arguments.
-        QApplication application(argc,argv);
-        log_console.infoStream() << "[Qt Init] ";
+    // Read command lines arguments.
+    QApplication application(argc,argv);
+    log_console.infoStream() << "[Qt Init] ";
+
+    // Instantiate the viewer (mandatory)
+    Viewer *viewer = new Viewer();
+    viewer->setWindowTitle("Sea diver");
+    viewer->show();
+	Globals::viewer = viewer;
+
+    //glew initialisation (mandatory)
+    log_console.infoStream() << "[Glew Init] " << glewGetErrorString(glewInit());
+		
+	//openal 
+	Audible::initOpenALContext();
+	alutInit(&argc, argv);
+	log_console.infoStream() << "[Alut Init] ";
+
+    Globals::init();
+    Globals::print(std::cout);
+    Globals::check();
+
+    Texture::init();
+
+    log_console.infoStream() << "Running with OpenGL " << Globals::glVersion << " and glsl version " << Globals::glShadingLanguageVersion << " !";
+	//FIN INIT//
+
+
+	//EXEMPLE DE SON POUR ASSIST
+	Audible *test = new Audible("sounds/ambiant/waves_converted.wav", qglviewer::Vec(0,0,0));
+	test->setGain(5.0f);
+	test->playSource();
+	//////////////////////////////////// voir src/utils/openal/audible.h
+    
 	
+	RenderRoot *root = new RenderRoot(); 
 
-		//openal 
-		Audible::initOpenALContext();
-		alutInit(&argc, argv);
-		log_console.infoStream() << "[Alut Init] ";
-		
-        // Instantiate the viewer (mandatory)
-        Viewer *viewer = new Viewer();
-        viewer->setWindowTitle("Sea diver");
-        viewer->show();
-		Globals::viewer = viewer;
+	//Terrain
+	//Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); 
+	//terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2)); 
+	//root->addChild("terrain", terrain);
 
-        //glew initialisation (mandatory)
-        log_console.infoStream() << "[Glew Init] " << glewGetErrorString(glewInit());
 
-        Globals::init();
-        Globals::print(std::cout);
-        Globals::check();
-		
-		Texture::init();
+	//Waves
+	Waves *waves = new Waves(0.0,0.0,100.0,100.0,10.0);
+	waves->scale(10);
+	root->addChild("vagues", waves);
 
-        log_console.infoStream() << "Running with OpenGL " << Globals::glVersion << " and glsl version " << Globals::glShadingLanguageVersion << " !";
-
+    
+	// Diver
+	SeaDiver *diver = new SeaDiver();
+	root->addChild("diver", diver);
 	
-		//EXEMPLE DE SON POUR ASSIST
-		Audible *test = new Audible("sounds/ambiant/waves_converted.wav", qglviewer::Vec(0,0,0));
-		test->setGain(5.0f);
-		test->playSource();
-		//////////////////////////////////// voir src/utils/openal/audible.h
-		
-		RenderRoot *root = new RenderRoot();
+	//Skybox
+    Skybox *skybox = new Skybox();
+    viewer->addRenderable(skybox);
 
-		unsigned int nParticles = 1000;
-		unsigned int nLevel = 8;
-		ParticleGroup *p = new ParticleGroup(nLevel*nParticles,(nLevel-1)*nParticles);
+    // Pipe
+    // TODO : put this in Dimensions
+    /* std::vector<Vec> tmp; */
+    /* tmp.push_back(Vec(PIPE_FIXED_PART_X, PIPE_FIXED_PART_Y, PIPE_FIXED_PART_Z)); */
+    /* tmp.push_back(Vec(0, 2, 4)); */
+    /* tmp.push_back(Vec(0, 1, 1)); */
+    /* tmp.push_back(Vec(0, 0, 0)); */
 
-		qglviewer::Vec g = 0.002*Vec(0,+9.81,0);
-		ParticleGroupKernel *archimede = new ConstantForce(g);
-		ParticleGroupKernel *seaFlow = new SeaFlow(0.01*qglviewer::Vec(1,0,1));
-		ParticleGroupKernel *frottement = new FrottementFluideAvance(0.47, 0.47, 0.47, 1);
-		ParticleGroupKernel *attractor = new Attractor(0.2, 100, 0.001);
-		ParticleGroupKernel *repulsor = new Attractor(0.1, 1.0, -1.00);
-		ParticleGroupKernel *dynamicScheme = new DynamicScheme();
-		ParticleGroupKernel *springsSystem = new SpringsSystem(true);
+    /* Pipe *pipe = new Pipe(tmp); */
+    /* tmp.clear(); */
+    /* viewer.addRenderable(pipe); */
 
-		stringstream name;
+    
+
+	unsigned int nParticles = 1000;
+	unsigned int nLevel = 8;
+	ParticleGroup *p = new ParticleGroup(nLevel*nParticles,(nLevel-1)*nParticles);
+
+	qglviewer::Vec g = 0.002*Vec(0,+9.81,0);
+	ParticleGroupKernel *archimede = new ConstantForce(g);
+	ParticleGroupKernel *dynamicScheme = new DynamicScheme();
+	ParticleGroupKernel *springsSystem = new SpringsSystem(true);
+
+	stringstream name;
 
 
-		for (unsigned int i = 0; i < nParticles; i++) {
-			float r1 = Random::randf(0,5), r2 = Random::randf(0,5);
-			for (unsigned int j = 0; j < nLevel; j++) {
-				qglviewer::Vec pos = Vec(r1,0.002*j,r2);
-				qglviewer::Vec  vel = Vec(Random::randf()*5,0,Random::randf()*5);
-				float m = 0.001;
-				p->addParticle(new Particule(pos, vel, m, 0.01, j==0));	
-			}
+	for (unsigned int i = 0; i < nParticles; i++) {
+		float r1 = Random::randf(0,5), r2 = Random::randf(0,5);
+		for (unsigned int j = 0; j < nLevel; j++) {
+			qglviewer::Vec pos = Vec(r1,0.002*j,r2);
+			qglviewer::Vec  vel = Vec(Random::randf()*5,0,Random::randf()*5);
+			float m = 0.001;
+			p->addParticle(new Particule(pos, vel, m, 0.01, j==0));	
 		}
-		for (unsigned int i = 0; i < nParticles; i++) {
-			for (unsigned int j = 0; j < nLevel-1; j++) {
-				p->addSpring(nLevel*i+j,nLevel*i+j+1,2,0.1,0.01,0.1);
-			}
+	}
+	for (unsigned int i = 0; i < nParticles; i++) {
+		for (unsigned int j = 0; j < nLevel-1; j++) {
+			p->addSpring(nLevel*i+j,nLevel*i+j+1,2,0.1,0.01,0.1);
 		}
+	}
 
-		//p->addKernel(attractor);
-		//p->addKernel(repulsor);
-		//p->addKernel(seaFlow);
-		p->addKernel(archimede);
-		//p->addKernel(frottement);
-		p->addKernel(springsSystem);
-		p->addKernel(dynamicScheme);
-		p->releaseParticles();
-		p->scale(10);
+	p->addKernel(archimede);
+	p->addKernel(springsSystem);
+	p->addKernel(dynamicScheme);
+	p->releaseParticles();
+	p->scale(10);
+	p->translate(0,10,0);
+	root->addChild("particules", p);
 
-		name.clear();
-		name << "particules";
-		root->addChild(name.str(), p);
+	//Configure viwer
+	viewer->setSceneRadius(100.0f);
+	viewer->addRenderable(root);
+	
+	//Run main loop.
+	application.exec();
+	
+	alutExit();
 
-
-        viewer->setSceneRadius(100.0f);
-		viewer->addRenderable(root);
-
-		// Run main loop.
-		application.exec();
-
-		alutExit();
-
-		return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
