@@ -3,7 +3,7 @@
 #include "cuda_runtime.h"
 #include <iostream>
 
-#include "kernel.h"
+#include "kernelHeaders.h"
 
 __global__ void moveVertex(float *vertex,
 		float dx) {

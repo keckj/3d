@@ -5,8 +5,12 @@
 #include "cube.h"
 #include "consts.h"
 #include "shader.h"
-#include "kernel.h"
+#include "kernelHeaders.h"
+#include "globals.h"
+#include "kernelHeaders.h"
+#include "matrix.h"
 #include "cudaUtils.h"
+#include "audible.h"
 
 using namespace std;
 
@@ -93,6 +97,9 @@ Cube::Cube() {
 	assert(viewMatrixLocation != -1);
 	assert(projectionMatrixLocation != -1);
 	glUseProgram(0);
+
+
+
 }
 
 Cube::~Cube() {
@@ -104,7 +111,7 @@ Cube::~Cube() {
 
 void Cube::draw() {
 	static float *proj = new float[16], *view = new float[16];
-	
+
 	//switch program
 	glUseProgram(program);
 
@@ -130,7 +137,7 @@ void Cube::animate() {
 
 	if(counter % 50 == 0)
 		dx*=-1;
-	
+
 	//give cuda exclusive access to the vbo
 	cudaGraphicsMapResources(1, &cudaVbo, 0);
 
@@ -142,8 +149,9 @@ void Cube::animate() {
 	//compute some random kernel
 	moveVertexKernel(vertex, subsize/3, dx);
 	cudaDeviceSynchronize();
-        checkKernelExecution();
 	
+	checkKernelExecution();
+
 	//give back access to openGL
 	cudaGraphicsUnmapResources(1, &cudaVbo, 0);
 

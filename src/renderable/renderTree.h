@@ -2,11 +2,10 @@
 #ifndef RENDERTREE_H
 #define RENDERTREE_H
 
-#include <QGLViewer/vec.h>
-#include <QGLViewer/quaternion.h>
-
+#include "headers.h"
 #include "renderable.h"
 #include "consts.h"
+
 #include <string>
 #include <map>
 
@@ -17,6 +16,7 @@
 // Father node draw can be done before and/or after all its children
 // The same possibilities are available for animate()
 // Note : Your class should inherit RenderTree instead of Renderable
+// Warning : Renderable init func is deprecated
 
 class RenderTree : public Renderable {
 	

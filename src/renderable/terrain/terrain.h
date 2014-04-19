@@ -34,6 +34,8 @@ class Terrain : public RenderTree {
 		void inline sendToDevice();
 		
 		void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
+		void animateDownwards();
+
 		void initializeRelativeModelMatrix();
 };
 

@@ -5,6 +5,10 @@ ifndef L_QGLVIEWER
 L_QGLVIEWER=-lQGLViewer
 endif
 
+ifndef NARCH
+NARCH=11
+endif
+
 ####################
 ### LIB EXTERNES ###
 ####################
@@ -18,7 +22,10 @@ VIEWER_INCLUDEPATH       = -I/usr/local/Cellar/qt/4.8.5/mkspecs/macx-g++ -I. -I/
 VIEWER_LIBS = -framework Glut -framework OpenGL -framework AGL -framework QtXml -framework QtCore -framework QtOpenGL -framework QtGui -lGLEW
 VIEWER_DEFINES = -D_REENTRANT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 
-NARCH=12  #Archi cuda
+OPENAL_INCLUDEPATH =
+OPENAL_LIBPATH =
+OPENAL_LIBS = -lopenal -lalut
+
 CUDA_INCLUDEPATH = -I/Developer/NVIDIA/CUDA-5.5/include
 CUDA_LIBPATH = -L/Developer/NVIDIA/CUDA-5.5/lib
 CUDA_LIBS = -lcudart
@@ -33,10 +40,13 @@ VIEWER_INCLUDEPATH = -I/usr/include/Qt -I/usr/include/QtCore -I/usr/include/QtGu
 VIEWER_LIBS = -lGLU -lglut -lGL -lQtXml -lQtOpenGL -lQtGui -lQtCore -lpthread -lGLEW
 VIEWER_DEFINES = -D_REENTRANT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 
-NARCH=12  #Archi cuda
 CUDA_INCLUDEPATH = -I/usr/local/cuda-5.5/include #-I/usr/local/cuda-6.0/include
 CUDA_LIBPATH = -L/usr/local/cuda-5.5/lib64 -L/usr/lib/nvidia-331 #-L/usr/local/cuda-6.0/lib64
 CUDA_LIBS = -lcuda -lcudart
+
+OPENAL_INCLUDEPATH =
+OPENAL_LIBPATH =
+OPENAL_LIBS = -lopenal -lalut
 
 DISTRIB=$(filter-out Distributor ID:, $(shell lsb_release -i))
 #Ubuntu
@@ -48,14 +58,13 @@ endif
 ###############################################################
 
 
-POULPY_LINK= -lGLEW -lopencv_core -lopencv_imgproc -lopencv_highgui
 
 #Compilateurs
 LINK= g++
 LINKFLAGS= -W -Wall -Wextra -pedantic -std=c++0x
-LDFLAGS= $(VIEWER_LIBS) $(L_QGLVIEWER) -ltinyobjloader -llog4cpp $(CUDA_LIBS)
-INCLUDE = -Ilocal/include/ -I$(SRCDIR) $(foreach dir, $(call subdirs, $(SRCDIR)), -I$(dir)) $(VIEWER_INCLUDEPATH) $(CUDA_INCLUDEPATH)
-LIBS = -Llocal/lib/ $(VIEWER_LIBPATH) $(CUDA_LIBPATH)
+LDFLAGS= $(VIEWER_LIBS) $(L_QGLVIEWER) -ltinyobjloader -llog4cpp $(CUDA_LIBS) $(OPENAL_LIBS)
+INCLUDE = -Ilocal/include/ -I$(SRCDIR) $(foreach dir, $(call subdirs, $(SRCDIR)), -I$(dir)) $(VIEWER_INCLUDEPATH) $(CUDA_INCLUDEPATH) $(OPENAl_INCLUDEPATH)
+LIBS = -Llocal/lib/ $(VIEWER_LIBPATH) $(CUDA_LIBPATH) $(OPENAL_LIBPATH)
 DEFINES= $(VIEWER_DEFINES) $(OPT)
 
 
@@ -87,7 +96,7 @@ TARGET = main
 
 SRCDIR = $(realpath .)/src
 OBJDIR = $(realpath .)/obj
-EXCL=poulpy #excluded dirs in src
+EXCL=#excluded dirs in src
 EXCLUDED_SUBDIRS = $(foreach DIR, $(EXCL), $(call subdirs, $(SRCDIR)/$(DIR)))
 SUBDIRS =  $(filter-out $(EXCLUDED_SUBDIRS), $(call subdirs, $(SRCDIR)))
 

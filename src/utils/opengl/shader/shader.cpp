@@ -58,6 +58,7 @@ shader(0), location(location)
 		log_console.errorStream() << "\n" << buffer;
 
 		delete [] buffer;
+		exit(1);
 	}
 }
 
