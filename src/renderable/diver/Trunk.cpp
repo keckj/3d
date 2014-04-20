@@ -18,21 +18,19 @@ Trunk::Trunk (float width, float height, float depth) : RenderTree(), rect(width
 
     LeftForeArm *leftForearm = new LeftForeArm(WIDTH_FOREARM, HEIGHT_FOREARM);
     addChild("leftForearm", leftForearm);
-    rotateChild("leftForearm", qglviewer::Quaternion(Vec(1, 0, 0), M_PI / 2));
-    translateChild("leftForearm", 0, getWidth() / 2, 0);
+    translateChild("leftForearm", 0, leftForearm->getWidth() / 2 + getWidth() / 2, -getHeight() + leftForearm->getHeight());
 
     RightForeArm *rightForearm = new RightForeArm(WIDTH_FOREARM, HEIGHT_FOREARM);
     addChild("rightForearm", rightForearm);
-    rotateChild("rightForearm", qglviewer::Quaternion(Vec(1, 0, 0), -M_PI / 2));
-    translateChild("rightForearm", 0, -getWidth() / 2, 0);
+    translateChild("rightForearm", 0, -rightForearm->getWidth() / 2 - getWidth() / 2, -getHeight() + rightForearm->getHeight());
 
     LeftThigh *leftThigh = new LeftThigh(WIDTH_THIGH, HEIGHT_THIGH);
     addChild("leftThigh", leftThigh);
-    translateChild("leftThigh", 0, (getWidth() - leftThigh->getWidth()) / 2, -1.5 * getHeight());
+    translateChild("leftThigh", 0, (getWidth() - leftThigh->getWidth()) / 2, -getHeight() / 2 - leftThigh->getHeight());
 
     RightThigh *rightThigh = new RightThigh(WIDTH_THIGH, HEIGHT_THIGH);
     addChild("rightThigh", rightThigh);
-    translateChild("rightThigh", 0, (-getWidth() + rightThigh->getWidth()) / 2, -1.5 * getHeight());
+    translateChild("rightThigh", 0, (-getWidth() + rightThigh->getWidth()) / 2, -getHeight() / 2 - rightThigh->getHeight());
 }
 
 void Trunk::drawDownwards(const float *currentTransformationMatrix) {

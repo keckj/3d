@@ -23,9 +23,9 @@ void LeftThigh::animateDownwards () {
         theta += pas;
     }
 
-    if (theta > M_PI / 4) {
+    if (theta > M_PI / 6) {
         down = true;
-    } else if (theta < -M_PI / 4) {
+    } else if (theta < -M_PI / 6) {
         down = false;
     }
 }

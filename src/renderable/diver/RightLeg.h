@@ -7,7 +7,11 @@ class RightLeg : public Leg {
     public:
         RightLeg (float width, float height);
 
+        void animateDownwards ();
+
     private:
+        bool down;
+        float theta;
 };
 
 #endif

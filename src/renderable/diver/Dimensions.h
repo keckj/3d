@@ -13,6 +13,10 @@
 #define WIDTH_FOREARM 0.2
 #define HEIGHT_FOREARM 0.7
 
+// ARM
+#define WIDTH_ARM 0.2
+#define HEIGHT_ARM 0.7
+
 // TRUNK
 #define WIDTH_TRUNK 1
 #define HEIGHT_TRUNK 1
@@ -20,9 +24,9 @@
 
 // THIGH
 #define WIDTH_THIGH 0.2
-#define HEIGHT_THIGH 1
+#define HEIGHT_THIGH 0.7
 
 // LEG
 #define WIDTH_LEG 0.2
-#define HEIGHT_LEG 1
+#define HEIGHT_LEG 0.7
 
