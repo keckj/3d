@@ -36,8 +36,10 @@ Trunk::Trunk (float width, float height, float depth) : RenderTree(), rect(width
 void Trunk::drawDownwards(const float *currentTransformationMatrix) {
     glPushMatrix();
 
+    glColor3ub(165, 93, 53);
     glMultTransposeMatrixf(relativeModelMatrix);
     rect.draw();
+    glColor3ub(255, 255, 255);
 }
 
 void Trunk::drawUpwards (const float *currentTransformationMatrix) {

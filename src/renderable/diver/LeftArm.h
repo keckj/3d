@@ -7,6 +7,7 @@ class LeftArm : public Arm {
     public:
         LeftArm (float width, float height);
 
+        void drawDownwards(const float *currentTransformationMatrix);
         void animateDownwards ();
 
     private:

@@ -7,6 +7,12 @@ using namespace qglviewer;
 LeftLeg::LeftLeg (float width, float height) : Leg(width, height) {
 }
 
+void LeftLeg::drawDownwards (const float* currentTransformationMatrix) {
+    glColor3ub(255, 255, 255);
+    Leg::drawDownwards(currentTransformationMatrix);
+    glColor3ub(255, 255, 255);
+}
+
 void LeftLeg::animateDownwards () {
     float pas = 0.05f;
 

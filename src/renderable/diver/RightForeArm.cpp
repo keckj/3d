@@ -12,6 +12,12 @@ RightForeArm::RightForeArm (float width, float height) : Arm(width, height), dow
     translateChild("rightArm", 0, 0, -getHeight());
 }
 
+void RightForeArm::drawDownwards (const float *currentTransformationMatrix) {
+    glColor3ub(165, 93, 53);
+    Arm::drawDownwards(currentTransformationMatrix);
+    glColor3ub(255, 255, 255);
+}
+
 void RightForeArm::animateDownwards() {
     float pas = 0.05f;
 
