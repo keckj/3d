@@ -208,7 +208,6 @@ const std::vector<int> Program::getUniformLocations(std::string const &varNames,
 		if(id == -1) {
 			if(assert) {
 				log_console.errorStream() << logProgramHead << "Uniform variable location of '" << var <<"' is -1 !";		
-				std::cout << std::flush;
 				exit(1);
 			}
 			else {

@@ -24,18 +24,23 @@ void main(void) {
 
 	vec4 step = vec4(1.0/voxelGridSize.xyz, 0.0);
 
+	vec3 textureCoordLowerLeft = vec3(voxelLowerLeft.x + step.x/2.0,
+					  voxelLowerLeft.y + step.z/2.0,
+					  (gl_InstanceID + 0.5)/textureSize.z);
+
+
 	vec4 f0123 = vec4(
-		texture(density, voxelLowerLeft - step.www).x,
-		texture(density, voxelLowerLeft - step.wwz).x,
-		texture(density, voxelLowerLeft - step.xwz).x,
-		texture(density, voxelLowerLeft - step.xww).x
+		texture(density, textureCoordLowerLeft + step.www).x,
+		texture(density, textureCoordLowerLeft + step.wyw).x,
+		texture(density, textureCoordLowerLeft + step.xyw).x,
+		texture(density, textureCoordLowerLeft + step.xww).x
 		);
 	
 	vec4 f4567 = vec4(
-		texture(density, voxelLowerLeft - step.wyw).x,
-		texture(density, voxelLowerLeft - step.wyz).x,
-		texture(density, voxelLowerLeft - step.xyz).x,
-		texture(density, voxelLowerLeft - step.xyw).x
+		texture(density, textureCoordLowerLeft + step.wwz).x,
+		texture(density, textureCoordLowerLeft + step.wyz).x,
+		texture(density, textureCoordLowerLeft + step.xyz).x,
+		texture(density, textureCoordLowerLeft + step.xwz).x
 		);
 
 	uvec4 n0123 = uvec4(clamp(f0123*99999, 0.0, 1.0));

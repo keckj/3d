@@ -85,8 +85,6 @@ void main(void) {
 				triangleData.z
 				);
 		EmitVertex();	
-
-
 		EndPrimitive();
 	}
 	

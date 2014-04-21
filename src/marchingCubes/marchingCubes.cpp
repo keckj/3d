@@ -127,6 +127,7 @@ MarchingCubes::MarchingCubes(unsigned int width, unsigned int height, unsigned i
 							(GLfloat)_voxelWidth,     (GLfloat)_voxelHeight,     (GLfloat)_voxelLength,     0.0f
 						};
 
+
 	glGenBuffers(1, &_generalDataUBO);
 	glBindBuffer(GL_UNIFORM_BUFFER, _generalDataUBO);
 	glBufferData(GL_UNIFORM_BUFFER, 12*sizeof(GLfloat), generalData, GL_STATIC_DRAW);
@@ -172,8 +173,9 @@ void MarchingCubes::drawDownwards(const float *currentTransformationMatrix) {
 	glBindBufferBase(GL_UNIFORM_BUFFER, 2 , _generalDataUBO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _marchingCubesLowerLeftXY_VBO);           
-	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribDivisor(0,0);
+	glEnableVertexAttribArray(0);
 
 	glDrawArraysInstanced(GL_POINTS, 0, _voxelGridWidth*_voxelGridHeight, _voxelGridLength);
 
@@ -232,9 +234,8 @@ void MarchingCubes::generateMarchingCubesPoints() {
 	for (unsigned int j = 0; j < _voxelGridHeight; j++) {
 		float posX = 0;
 		for (unsigned int i = 0; i < _voxelGridWidth; i++) {
-			lowerLeftXY[2*i*j + 0] = posX;
-			lowerLeftXY[2*i*j + 1] = posY;
-			//std::cout << lowerLeftXY[2*i*j+0] << " " << lowerLeftXY[i*j*2+1] << std::endl;
+			lowerLeftXY[2*(j*_voxelGridWidth + i) + 0] = posX;
+			lowerLeftXY[2*(j*_voxelGridWidth + i) + 1] = posY;
 			posX += stepX;
 		}
 		posY += stepY;
@@ -242,7 +243,7 @@ void MarchingCubes::generateMarchingCubesPoints() {
 
 	glGenBuffers(1, &_marchingCubesLowerLeftXY_VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _marchingCubesLowerLeftXY_VBO);
-	glBufferData(GL_ARRAY_BUFFER, 2*_voxelGridWidth*_voxelGridHeight, lowerLeftXY, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 2*_voxelGridWidth*_voxelGridHeight*sizeof(float), lowerLeftXY, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	delete [] lowerLeftXY;
@@ -273,7 +274,7 @@ void MarchingCubes::makeDensityProgram() {
 	_densityProgram->attachShader(Shader("shaders/marchingCubes/density_fs.glsl", GL_FRAGMENT_SHADER));
 	
 	_densityProgram->link();
-	_densityUniformLocs = _densityProgram->getUniformLocationsMap("totalLayers textureSize", true);
+	_densityUniformLocs = _densityProgram->getUniformLocationsMap("totalLayers textureSize", false);
 }
 
 void MarchingCubes::makeMarchingCubesProgram() {
@@ -289,7 +290,7 @@ void MarchingCubes::makeMarchingCubesProgram() {
 
 	_marchingCubesUniformLocs = _marchingCubesProgram->getUniformLocationsMap("viewMatrix projectionMatrix", true);
 	
-	_marchingCubesProgram->bindTextures(&_density, "density", true);
+	_marchingCubesProgram->bindTextures(&_density, "density", false);
 }
 
 void MarchingCubes::generateUniformBlockBuffers() {
