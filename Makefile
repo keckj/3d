@@ -22,24 +22,14 @@ VIEWER_INCLUDEPATH       = -I/usr/local/Cellar/qt/4.8.5/mkspecs/macx-g++ -I. -I/
 VIEWER_LIBS = -framework Glut -framework OpenGL -framework AGL -framework QtXml -framework QtCore -framework QtOpenGL -framework QtGui -lGLEW
 VIEWER_DEFINES = -D_REENTRANT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 
-<<<<<<< HEAD
-#merge fail deso 
-CUDA_INCLUDEPATH =
-CUDA_LIBPATH =
-CUDA_LIBS = 
+CUDA_INCLUDEPATH = -I/Developer/NVIDIA/CUDA-5.5/include
+CUDA_LIBPATH = -L/Developer/NVIDIA/CUDA-5.5/lib
+CUDA_LIBS = -lcudart
 
-=======
->>>>>>> poulpy
 OPENAL_INCLUDEPATH =
 OPENAL_LIBPATH =
 OPENAL_LIBS = -lopenal -lalut
 
-<<<<<<< HEAD
-=======
-CUDA_INCLUDEPATH = -I/Developer/NVIDIA/CUDA-5.5/include
-CUDA_LIBPATH = -L/Developer/NVIDIA/CUDA-5.5/lib
-CUDA_LIBS = -lcudart
->>>>>>> poulpy
 endif
 ################################################################
 
@@ -81,7 +71,7 @@ CC=gcc
 CFLAGS= -W -Wall -Wextra -pedantic -std=c99 -m64
 
 CXX=g++
-CXXFLAGS= -W -Wall -Wextra -pedantic -std=c++0x -m64
+CXXFLAGS= -W -Wall -Wextra -Wno-unused-parameter -pedantic -std=c++0x -m64
 #-Wshadow -Wstrict-aliasing -Weffc++ -Werror
 
 #preprocesseur QT

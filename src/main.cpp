@@ -29,6 +29,7 @@
 #include "skybox.h"
 #include "ObjLoader.h"
 #include "object.h"
+#include "marchingCubes.h"
 
 #include <qapplication.h>
 #include <QWidget>
@@ -82,14 +83,6 @@ int main(int argc, char** argv) {
 
     log_console.infoStream() << "Running with OpenGL " << Globals::glVersion << " and glsl version " << Globals::glShadingLanguageVersion << " !";
 	//FIN INIT//
-
-
-	//EXEMPLE DE SON POUR ASSIST
-	Audible *test = new Audible("sounds/ambiant/waves_converted.wav", qglviewer::Vec(0,0,0));
-	test->setGain(5.0f);
-	test->playSource();
-	//////////////////////////////////// voir src/utils/openal/audible.h
-    
 	
 	RenderRoot *root = new RenderRoot(); 
 
@@ -169,6 +162,9 @@ int main(int argc, char** argv) {
 	p->translate(0,10,0);
 	root->addChild("particules", p);
 */
+
+	root->addChild("test", new MarchingCubes());
+
 	//Configure viwer
 	viewer->setSceneRadius(100.0f);
 	viewer->addRenderable(root);
