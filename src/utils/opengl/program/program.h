@@ -18,9 +18,11 @@ class Program {
 
 		void bindAttribLocation(unsigned int location, std::string const &attribVarName);
 		void bindFragDataLocation(unsigned int location, std::string const &fragVarName);
+		void bindUniformBufferLocation(unsigned int location, std::string const &blockName);
 		
 		void bindAttribLocations(std::string locations, std::string const &attribVarNames);
 		void bindFragDataLocations(std::string locations, std::string const &fragVarNames);
+		void bindUniformBufferLocations(std::string locations, std::string const &blockNames);
 
 		void link(); //can be called multiple times (ex : transform feedback)
 		void use() const; //use program, request linked textures, update linked texture uniforms
@@ -42,8 +44,11 @@ class Program {
 		bool linked;
 
 		std::map<std::string, unsigned int> attribLocations;
+		std::map<std::string, unsigned int> uniformBufferLocations;
 		std::vector<std::pair<int, Texture *> > linkedTextures;
 		std::string logProgramHead;
+
+		void bindUniformBlocks(bool assert);
 };
 
 

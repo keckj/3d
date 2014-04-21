@@ -6,9 +6,9 @@ in vec3 vertex_position;
 out vec3 pos;
 
 uniform mat4 modelMatrix = mat4(1,0,0,0,
-								0,1,0,0,
-								0,0,1,0,
-								0,0,0,1);
+				0,1,0,0,
+				0,0,1,0,
+				0,0,0,1);
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 
