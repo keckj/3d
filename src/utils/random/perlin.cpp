@@ -2,12 +2,12 @@
 /* (copyright Ken Perlin) */
 
 
-extern "C" {
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include "perlin.h"
+
+extern "C" {
 
 	static int p[B + B + 2];
 	static double g3[B + B + 2][3];
