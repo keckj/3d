@@ -7,15 +7,29 @@
 ObjLoader::ObjLoader (std::string const& file, std::string const& basepath) : objFilename(file + ".obj"), mtlFilename(file + ".mtl") {
     std::string err = tinyobj::LoadObj(shapes, objFilename.c_str(), basepath.c_str());
     if (!err.empty()) {
-        std::cout << "Error during loading of "  << basepath << objFilename << std::endl;
+        std::cerr << "Error during loading of "  << basepath << objFilename << std::endl;
         std::cerr << err << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    print();
+    //print();
 }
 
+ObjLoader::~ObjLoader() {
+}
+
+std::vector<Object*> ObjLoader::getObjects() 
+{
+    std::vector<Object*> vec;
+    for (size_t i = 0; i < shapes.size(); i++) {
+        vec.push_back(new Object(shapes[i], NULL)); //program TODO
+    } 
+    return vec;
+}
+
+
 void ObjLoader::print () {
+
     std::cout << "# of shapes : " << shapes.size() << std::endl;
 
     for (size_t i = 0; i < shapes.size(); i++) {
@@ -44,31 +58,34 @@ void ObjLoader::print () {
                    shapes[i].mesh.normals[3*v+2]);
         }
 
-        /* printf("shape[%ld].material.name = %s\n", i, shapes[i].material.name.c_str()); */
-        /* printf("  material.Ka = (%f, %f ,%f)\n", shapes[i].material.ambient[0], shapes[i].material.ambient[1], shapes[i].material.ambient[2]); */
-        /* printf("  material.Kd = (%f, %f ,%f)\n", shapes[i].material.diffuse[0], shapes[i].material.diffuse[1], shapes[i].material.diffuse[2]); */
-        /* printf("  material.Ks = (%f, %f ,%f)\n", shapes[i].material.specular[0], shapes[i].material.specular[1], shapes[i].material.specular[2]); */
-        /* printf("  material.Tr = (%f, %f ,%f)\n", shapes[i].material.transmittance[0], shapes[i].material.transmittance[1], shapes[i].material.transmittance[2]); */
-        /* printf("  material.Ke = (%f, %f ,%f)\n", shapes[i].material.emission[0], shapes[i].material.emission[1], shapes[i].material.emission[2]); */
-        /* printf("  material.Ns = %f\n", shapes[i].material.shininess); */
-        /* printf("  material.Ni = %f\n", shapes[i].material.ior); */
-        /* printf("  material.dissolve = %f\n", shapes[i].material.dissolve); */
-        /* printf("  material.illum = %d\n", shapes[i].material.illum); */
-        /* printf("  material.map_Ka = %s\n", shapes[i].material.ambient_texname.c_str()); */
-        /* printf("  material.map_Kd = %s\n", shapes[i].material.diffuse_texname.c_str()); */
-        /* printf("  material.map_Ks = %s\n", shapes[i].material.specular_texname.c_str()); */
-        /* printf("  material.map_Ns = %s\n", shapes[i].material.normal_texname.c_str()); */
-        /* std::map<std::string, std::string>::iterator it(shapes[i].material.unknown_parameter.begin()); */
-        /* std::map<std::string, std::string>::iterator itEnd(shapes[i].material.unknown_parameter.end()); */
-        /* for (; it != itEnd; it++) { */
-        /*     printf("  material.%s = %s\n", it->first.c_str(), it->second.c_str()); */
-        /* } */
+        printf("shape[%ld].material.name = %s\n", i, shapes[i].material.name.c_str());
+        printf("  material.Ka = (%f, %f ,%f)\n", shapes[i].material.ambient[0], shapes[i].material.ambient[1], shapes[i].material.ambient[2]);
+        printf("  material.Kd = (%f, %f ,%f)\n", shapes[i].material.diffuse[0], shapes[i].material.diffuse[1], shapes[i].material.diffuse[2]);
+        printf("  material.Ks = (%f, %f ,%f)\n", shapes[i].material.specular[0], shapes[i].material.specular[1], shapes[i].material.specular[2]);
+        printf("  material.Tr = (%f, %f ,%f)\n", shapes[i].material.transmittance[0], shapes[i].material.transmittance[1], shapes[i].material.transmittance[2]);
+        printf("  material.Ke = (%f, %f ,%f)\n", shapes[i].material.emission[0], shapes[i].material.emission[1], shapes[i].material.emission[2]);
+        printf("  material.Ns = %f\n", shapes[i].material.shininess);
+        printf("  material.Ni = %f\n", shapes[i].material.ior);
+        printf("  material.dissolve = %f\n", shapes[i].material.dissolve);
+        printf("  material.illum = %d\n", shapes[i].material.illum);
+        printf("  material.map_Ka = %s\n", shapes[i].material.ambient_texname.c_str());
+        printf("  material.map_Kd = %s\n", shapes[i].material.diffuse_texname.c_str());
+        printf("  material.map_Ks = %s\n", shapes[i].material.specular_texname.c_str());
+        printf("  material.map_Ns = %s\n", shapes[i].material.normal_texname.c_str());
+        std::map<std::string, std::string>::iterator it(shapes[i].material.unknown_parameter.begin());
+        std::map<std::string, std::string>::iterator itEnd(shapes[i].material.unknown_parameter.end());
+        /*for (; it != itEnd; it++) {
+            printf("  material.%s = %s\n", it->first.c_str(), it->second.c_str());
+        }*/
         printf("\n");
     }
 }
 
-void ObjLoader::draw () {
-    // TODO : use vbos and add normals
+//void ObjLoader::drawDownwards() {
+    
+    //TODO
+
+    /*// TODO : use vbos and add normals
     glBegin(GL_TRIANGLES);
 
     for (size_t i = 0; i < shapes.size(); i++) {
@@ -89,6 +106,7 @@ void ObjLoader::draw () {
         }
     }
 
-    glEnd();
-}
+    glEnd();*/
+
+//}
 

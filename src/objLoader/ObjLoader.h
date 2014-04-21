@@ -4,20 +4,17 @@
 #include <string>
 #include <vector>
 
+#include "object.h"
+
 #include "tiny_obj_loader.h"
 
-#include "renderable.h"
-#ifndef __APPLE__
-#include <GL/glut.h>
-#else
-#include <GLUT/glut.h>
-#endif
 
-class ObjLoader : public Renderable {
+class ObjLoader {
     public:
         ObjLoader (std::string const& file, std::string const& basepath = "obj_files/");
-        void print ();
-        void draw();
+        ~ObjLoader();
+        std::vector<Object*> getObjects();
+        void print();
 
     private:
         std::string objFilename;

@@ -27,6 +27,8 @@
 #include "audible.h"
 #include "splines/CardinalSpline.h"
 #include "skybox.h"
+#include "ObjLoader.h"
+#include "object.h"
 
 #include <qapplication.h>
 #include <QWidget>
@@ -91,6 +93,14 @@ int main(int argc, char** argv) {
 	
 	RenderRoot *root = new RenderRoot(); 
 
+    //ObjLoader test
+    ObjLoader *cube = new ObjLoader("obj_files/cube2");
+    vector<Object*> vec = cube->getObjects();
+    for (unsigned int i = 0; i < vec.size(); i++) {
+        log_console.infoStream() << "Adding child: cube2_"+to_string(i);
+        root->addChild("cube2_"+to_string(i), vec[i]);
+    }
+
 	//Terrain
 	//Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); 
 	//terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2)); 
@@ -98,18 +108,17 @@ int main(int argc, char** argv) {
 
 
 	//Waves
-	Waves *waves = new Waves(0.0,0.0,100.0,100.0,10.0);
-	waves->scale(10);
+	/*Waves *waves = new Waves(0.0,0.0,100.0,100.0,10.0);
 	root->addChild("vagues", waves);
-
+    */
     
 	// Diver
-	SeaDiver *diver = new SeaDiver();
+	/*SeaDiver *diver = new SeaDiver();
 	root->addChild("diver", diver);
 	
 	//Skybox
     Skybox *skybox = new Skybox();
-    viewer->addRenderable(skybox);
+    viewer->addRenderable(skybox);*/
 
     // Pipe
     // TODO : put this in Dimensions
@@ -125,7 +134,7 @@ int main(int argc, char** argv) {
 
     
 
-	unsigned int nParticles = 1000;
+/*	unsigned int nParticles = 1000;
 	unsigned int nLevel = 8;
 	ParticleGroup *p = new ParticleGroup(nLevel*nParticles,(nLevel-1)*nParticles);
 
@@ -159,7 +168,7 @@ int main(int argc, char** argv) {
 	p->scale(10);
 	p->translate(0,10,0);
 	root->addChild("particules", p);
-
+*/
 	//Configure viwer
 	viewer->setSceneRadius(100.0f);
 	viewer->addRenderable(root);
