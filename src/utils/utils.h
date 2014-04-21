@@ -2,6 +2,11 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <string>
+#include <map>
+#include <vector>
+#include <algorithm>
+
 namespace Utils {
 
 	template<typename A, typename B>
@@ -32,6 +37,7 @@ namespace Utils {
 			return dst;
 		}
 
+	const std::string toStringMemory(unsigned long bytes);
 }
 
 

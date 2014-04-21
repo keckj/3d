@@ -3,6 +3,7 @@
 #include "globals.h"
 #include "shader.h"
 #include "log.h"
+#include "utils.h"
 
 #include <GL/glew.h>
 #include <sstream>
@@ -56,6 +57,10 @@ void Program::bindFragDataLocation(unsigned int location, std::string const &fra
 
 	glBindFragDataLocation(programId, location, fragVarName.c_str());
 }
+		
+void Program::bindUniformBufferLocation(unsigned int location, std::string const &blockName) {
+	uniformBufferLocations[blockName] = location;
+}
 
 void Program::bindAttribLocations(std::string locations, std::string const &attribVarNames) {
 	std::stringstream locs(locations);
@@ -74,6 +79,7 @@ void Program::bindAttribLocations(std::string locations, std::string const &attr
 	assert(locs.eof());
 	assert(names.eof());
 }
+		
 
 void Program::bindFragDataLocations(std::string locations, std::string const &fragVarNames) {
 	std::stringstream locs(locations);
@@ -87,6 +93,25 @@ void Program::bindFragDataLocations(std::string locations, std::string const &fr
 		locs >> l;
 
 		bindFragDataLocation(l, n);
+	}
+
+	assert(locs.eof());
+	assert(names.eof());
+}
+
+void Program::bindUniformBufferLocations(std::string locations, std::string const &blockNames) {
+	
+	std::stringstream locs(locations);
+	std::stringstream names(blockNames);
+
+	unsigned int l;
+	std::string n;
+
+	while(locs.good() && names.good()) {
+		names >> n;
+		locs >> l;
+
+		bindUniformBufferLocation(l, n);
 	}
 
 	assert(locs.eof());
@@ -121,6 +146,8 @@ void Program::link() {
 		if(id != (int)it->second)
 			log_console.warnStream() << logProgramHead <<"Attrib data '" << it->first << "' was not set to location " << it->second << " (id=-1)."; 
 	}
+
+	bindUniformBlocks(true);
 
 	linked = true;
 }
@@ -181,7 +208,6 @@ const std::vector<int> Program::getUniformLocations(std::string const &varNames,
 		if(id == -1) {
 			if(assert) {
 				log_console.errorStream() << logProgramHead << "Uniform variable location of '" << var <<"' is -1 !";		
-				std::cout << std::flush;
 				exit(1);
 			}
 			else {
@@ -231,6 +257,95 @@ const std::map<std::string,int> Program::getUniformLocationsMap(std::string cons
 	glUseProgram(0);
 
 	return map;
+}
+		
+void Program::bindUniformBlocks(bool assert) {
+	glUseProgram(programId);
+
+	std::map<std::string, unsigned int>::iterator it = uniformBufferLocations.begin();
+	for (; it != uniformBufferLocations.end(); ++it) {
+
+		std::string var = it->first;
+		unsigned int location = it->second;
+
+		int id = glGetUniformBlockIndex(programId, var.c_str());
+
+		if(id == -1) {
+			if(assert) {
+				log_console.errorStream() << logProgramHead << "Uniform block location of '" << var <<"' is -1 !";		
+				std::cout << std::flush;
+				exit(1);
+			} 
+			else {
+				log_console.warnStream() << logProgramHead << "Uniform block location of '" << var <<"' is -1 !";		
+			}
+		}
+		
+		glUniformBlockBinding(programId, id, location);
+		log_console.infoStream() << logProgramHead << "Attached uniform buffer block '" << var << "' (index=" << id << ") to buffer binding location " << location << " !";
+
+		if(id != -1) {
+			log_console.infoStream() << logProgramHead << "Uniform block '" << var << "' info :";
+			int varCount;
+			glGetActiveUniformBlockiv(programId, id, GL_UNIFORM_BLOCK_DATA_SIZE, &varCount);
+			std::cout << "\t\t\tBlock data size : " << Utils::toStringMemory(varCount) << std::endl;
+	
+			if(varCount >= Globals::glMaxUniformBlockSize) {
+				log_console.critStream() << "MAX_UNIFORM_BLOCK_SIZE is " 
+					<< Utils::toStringMemory(Globals::glMaxUniformBlockSize) << " !";
+				exit(1);
+			}
+
+			glGetActiveUniformBlockiv(programId, id, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &varCount);
+			std::cout << "\t\t\tBlock active uniforms count : " << varCount << std::endl;
+			
+			int *indices = new int[varCount];
+			glGetActiveUniformBlockiv(programId, id, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, indices);
+			std::cout << "\t\t\tBlock active uniforms indices : " << varCount;
+			for (int i = 0; i < varCount; i++) {
+				std::cout << indices[i] << " ";
+			}
+			std::cout << std::endl;
+
+			unsigned int *indices_u = new unsigned int[varCount];
+			for (int i = 0; i < varCount; i++) {
+				indices_u[i] = indices[i];
+			}
+
+			char buffer[1000];
+			std::cout << "\t\t\tBlock variable names : ";
+			for (int i = 0; i < varCount; i++) {
+				int size;
+				GLenum type;
+				glGetActiveUniform(programId, indices_u[i], 1000, 0, &size, &type, buffer);
+				std::cout << buffer << " ";
+			}
+			std::cout << std::endl;
+			
+			int *types = new int[varCount];
+			glGetActiveUniformsiv(programId, varCount, indices_u, GL_UNIFORM_TYPE, types);
+			std::cout << "\t\t\tBlock variable types : ";
+			for (int i = 0; i < varCount; i++) {
+				std::cout << types[i] << " ";
+			}
+			std::cout << std::endl;
+			
+			int *offsets = new int[varCount];
+			glGetActiveUniformsiv(programId, varCount, indices_u, GL_UNIFORM_OFFSET, offsets);
+			std::cout << "\t\t\tBlock variable offsets : ";
+			for (int i = 0; i < varCount; i++) {
+				std::cout << offsets[i] << " ";
+			}
+			std::cout << std::endl;
+
+			delete [] indices;
+			delete [] indices_u;
+			delete [] offsets;
+			delete [] types;
+		}
+	}
+
+	glUseProgram(0);
 }
 
 void Program::bindTextures(Texture **textures, std::string uniformNames, bool assert) {
