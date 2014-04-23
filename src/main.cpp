@@ -163,7 +163,7 @@ int main(int argc, char** argv) {
 	root->addChild("particules", p);
 */
 
-	root->addChild("test", new MarchingCubes());
+	//root->addChild("test", new MarchingCubes());
 
 	//Configure viwer
 	viewer->setSceneRadius(100.0f);
