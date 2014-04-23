@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "program.h"
 #include "object.h"
 
 #include "tiny_obj_loader.h"
@@ -17,9 +18,14 @@ class ObjLoader {
         void print();
 
     private:
+        void makeProgram();
+
         std::string objFilename;
         std::string mtlFilename;
         std::vector<tinyobj::shape_t> shapes;
+
+        Program *program;
+        std::map<std::string,int> uniformLocations;
 };
 
 #endif

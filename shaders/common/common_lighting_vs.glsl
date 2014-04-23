@@ -1,9 +1,9 @@
-#version 330 core
+#version 330
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-uniform mat3 normalMatrix = transpose(inverse(mat3(viewMatrix * modelMatrix)));
+uniform mat3 normalMatrix;
 
 in vec4 vertexPosition;
 in vec3 vertexNormal;
@@ -15,7 +15,9 @@ out vec2 fTexCoord;
 
 void main()
 {
-    fNormal = normalize(normalMatrix * vertexNormal);
+    mat3 normalMatrix1 = transpose(inverse(mat3(viewMatrix * modelMatrix)));
+    //fNormal = normalize(normalMatrix * vertexNormal);
+    fNormal = normalize(normalMatrix1 * vertexNormal);
     fTexCoord = vertexTexCoord;
     fPosition = viewMatrix * modelMatrix * vertexPosition;
     gl_Position = projectionMatrix * fPosition;
