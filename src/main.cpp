@@ -87,12 +87,12 @@ int main(int argc, char** argv) {
 	RenderRoot *root = new RenderRoot(); 
 
     //ObjLoader test
-    ObjLoader *cube = new ObjLoader("obj_files/cube2");
-    vector<Object*> vec = cube->getObjects();
-    for (unsigned int i = 0; i < vec.size(); i++) {
-        log_console.infoStream() << "Adding child: cube2_"+to_string(i);
-        root->addChild("cube2_"+to_string(i), vec[i]);
-    }
+    //ObjLoader *cube = new ObjLoader("obj_files/cube2");
+    //vector<Object*> vec = cube->getObjects();
+    //for (unsigned int i = 0; i < vec.size(); i++) {
+        //log_console.infoStream() << "Adding child: cube2_"+to_string(i);
+        //root->addChild("cube2_"+to_string(i), vec[i]);
+    //}
 
 	//Terrain
 	//Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); 

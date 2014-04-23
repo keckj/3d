@@ -126,15 +126,30 @@ void Program::link() {
 	int status;
 	glGetProgramiv(programId, GL_LINK_STATUS, &status);
 	if(status) {
-		log_console.infoStream() << logProgramHead << "Linking program ... Success !";
+		log_console.infoStream() << logProgramHead << "Linking program... Success !";
 	}
 	else {
-		log_console.errorStream() << logProgramHead << "Linking program ... Failed !";
+		log_console.errorStream() << logProgramHead << "Linking program... Failed !";
 
 		GLchar errorLog[1024] = {0};
 		glGetProgramInfoLog(programId, 1024, NULL, errorLog);
 		
 		log_console.errorStream() << logProgramHead << "Shader compilation log :\n" << errorLog;
+		exit(1);
+	}
+
+	glValidateProgram(programId);
+	glGetProgramiv(programId, GL_VALIDATE_STATUS, &status);
+	if(status) {
+		log_console.infoStream() << logProgramHead << "Validating program... Success !";
+	}
+	else {
+		log_console.errorStream() << logProgramHead << "Validating program... Failed !";
+
+		GLchar errorLog[1024] = {0};
+		glGetProgramInfoLog(programId, 1024, NULL, errorLog);
+		
+		log_console.errorStream() << logProgramHead << "Program validation log :\n" << errorLog;
 		exit(1);
 	}
 
@@ -160,6 +175,8 @@ void Program::use() const {
 		std::cout << std::flush;
 		exit(0);
 	}
+	
+	log_console.infoStream() << "Switching to program " << logProgramHead;
 
 	glUseProgram(programId);
 

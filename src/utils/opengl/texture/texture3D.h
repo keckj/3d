@@ -16,13 +16,15 @@ class Texture3D : public Texture {
 				GLint internalFormat, 
 				void *sourceData=0, GLenum sourceFormat=0, GLenum sourceType=0);
 
-		~Texture3D();
+		virtual ~Texture3D();
 
+		//allocate data, transfers data if not NULL and bind to texture unit location 
 		void bindAndApplyParameters(unsigned int location);
+	
+		//data only updated when bind is called !!
+		void setData(void *data, GLenum sourceFormat = 0, GLenum sourceType = 0);
 
-		void setData(void *data);
-
-	private:
+	protected:
 		unsigned int _width, _height, _length;
 
 		void * _texels;

@@ -40,6 +40,8 @@ void Texture3D::bindAndApplyParameters(unsigned int location) {
 	glTexImage3D(GL_TEXTURE_3D, 0, _internalFormat, _width, _height, _length, 0,
 			_sourceFormat, _sourceType, _texels);
 
+	log_console.infoStream() << logTextureHead << "Updated texture data !"; 
+
 	log_console.infoStream() << logTextureHead << "Applying " << params.size() << " parameters !";
 
 	applyParameters();
@@ -54,6 +56,8 @@ void Texture3D::bindAndApplyParameters(unsigned int location) {
 	locationsHitMap[location]++;
 }
 
-void Texture3D::setData(void *data) {
+void Texture3D::setData(void *data, GLenum sourceFormat, GLenum sourceType) {
 	_texels = data;
+	_sourceFormat = sourceFormat;
+	_sourceType = sourceType;
 }

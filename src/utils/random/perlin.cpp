@@ -7,12 +7,12 @@
 #include <math.h>
 #include "perlin.h"
 
-extern "C" {
+namespace Perlin {
 
-	static int p[B + B + 2];
-	static double g3[B + B + 2][3];
-	static double g2[B + B + 2][2];
-	static double g1[B + B + 2];
+	static int p[BB + BB + 2];
+	static double g3[BB + BB + 2][3];
+	static double g2[BB + BB + 2][2];
+	static double g1[BB + BB + 2];
 	static int start = 1;
 
 	double noise1(double arg)
@@ -144,32 +144,32 @@ extern "C" {
 	{
 		int i, j, k;
 
-		for (i = 0 ; i < B ; i++) {
+		for (i = 0 ; i < BB ; i++) {
 			p[i] = i;
-			g1[i] = (double)((random() % (B + B)) - B) / B;
+			g1[i] = (double)((random() % (BB + BB)) - BB) / BB;
 
 			for (j = 0 ; j < 2 ; j++)
-				g2[i][j] = (double)((random() % (B + B)) - B) / B;
+				g2[i][j] = (double)((random() % (BB + BB)) - BB) / BB;
 			normalize2(g2[i]);
 
 			for (j = 0 ; j < 3 ; j++)
-				g3[i][j] = (double)((random() % (B + B)) - B) / B;
+				g3[i][j] = (double)((random() % (BB + BB)) - BB) / BB;
 			normalize3(g3[i]);
 		}
 
 		while (--i) {
 			k = p[i];
-			p[i] = p[j = random() % B];
+			p[i] = p[j = random() % BB];
 			p[j] = k;
 		}
 
-		for (i = 0 ; i < B + 2 ; i++) {
-			p[B + i] = p[i];
-			g1[B + i] = g1[i];
+		for (i = 0 ; i < BB + 2 ; i++) {
+			p[BB + i] = p[i];
+			g1[BB + i] = g1[i];
 			for (j = 0 ; j < 2 ; j++)
-				g2[B + i][j] = g2[i][j];
+				g2[BB + i][j] = g2[i][j];
 			for (j = 0 ; j < 3 ; j++)
-				g3[B + i][j] = g3[i][j];
+				g3[BB + i][j] = g3[i][j];
 		}
 	}
 
@@ -235,4 +235,5 @@ extern "C" {
 		return(sum);
 
 	}
+
 }

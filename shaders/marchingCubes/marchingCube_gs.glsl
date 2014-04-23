@@ -10,6 +10,10 @@ in VS_GS_VERTEX {
 	uint caseId; //le cas du MC 0..255
 } vertex_in[];
 
+out GS_FS_VERTEX {
+	vec4 pos;
+} vertex_out;
+
 //Nombre de triangle par cas + info sur les 12 cotés
 layout (std140) uniform lookupTable {
 	uint caseToNumPolys[256]; //nb de triangle par cas
@@ -65,26 +69,31 @@ void main(void) {
 	for(int i=0; i<num_polys; ++i) {
 
 		ivec3 triangleData = triTable[tri_table_pos++];
-		gl_Position = transformationMatrix * computeTriangleVertex(
+
+		vertex_out.pos = computeTriangleVertex(
 				vertex_in[0].uvw,
 				vertex_in[0].f0123, vertex_in[0].f4567,
 				triangleData.x
 				);
+		gl_Position = transformationMatrix * vertex_out.pos;
 		EmitVertex();	
-
-		gl_Position = transformationMatrix * computeTriangleVertex(
+		
+		vertex_out.pos = computeTriangleVertex(
 				vertex_in[0].uvw,
 				vertex_in[0].f0123, vertex_in[0].f4567,
 				triangleData.y
 				);
+		gl_Position = transformationMatrix * vertex_out.pos;
 		EmitVertex();	
-
-		gl_Position = transformationMatrix * computeTriangleVertex(
+		
+		vertex_out.pos = computeTriangleVertex(
 				vertex_in[0].uvw,
 				vertex_in[0].f0123, vertex_in[0].f4567,
 				triangleData.z
 				);
+		gl_Position = transformationMatrix * vertex_out.pos;
 		EmitVertex();	
+
 		EndPrimitive();
 	}
 	
