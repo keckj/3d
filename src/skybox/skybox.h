@@ -8,6 +8,8 @@
 #include <GLUT/glut.h>
 #endif
 
+#include "textureCube.h"
+
 class Skybox : public RenderTree {
     public:
         Skybox (float t = 1.0f);
@@ -22,6 +24,7 @@ class Skybox : public RenderTree {
         void DrawSkyBox (float camera_yaw, float camera_pitch);
         float t;
 
+        TextureCube textureCube;
         GLuint cube_map_texture_ID;
 };
 

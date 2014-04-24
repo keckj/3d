@@ -20,11 +20,11 @@ Object::Object(tinyobj::shape_t shape) :
 }
 
 Object::~Object() {
-    /*for (unsigned int i = 0; i < nTextures; i++) {
+    for (unsigned int i = 0; i < nTextures; i++) {
         delete textures[i];   
     }
 
-    delete[] textures;*/
+    delete[] textures;
 }
 
 void Object::createUBOs() {
