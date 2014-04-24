@@ -57,6 +57,9 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv);
     log_console.infoStream() << "[Glut Init] ";
 
+    // objs
+    ObjLoader *suzanne = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/");
+
     // Read command lines arguments.
     QApplication application(argc,argv);
     log_console.infoStream() << "[Qt Init] ";
@@ -83,8 +86,8 @@ int main(int argc, char** argv) {
 
     log_console.infoStream() << "Running with OpenGL " << Globals::glVersion << " and glsl version " << Globals::glShadingLanguageVersion << " !";
 	//FIN INIT//
-	
 	RenderRoot *root = new RenderRoot(); 
+    viewer->addRenderable(suzanne);
 
     //ObjLoader test
     /*ObjLoader *cube = new ObjLoader("obj_files/cube2");
@@ -95,14 +98,14 @@ int main(int argc, char** argv) {
         s << "cube2_" << i;
         root->addChild(s.str(), vec[i]);
     }*/
-    ObjLoader *mouette = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/");
-    vector<Object*> vec = mouette->getObjects();
-    for (unsigned int i = 0; i < vec.size(); i++) {
-        log_console.infoStream() << "Adding child: mouette_" << i;
-        stringstream s;
-        s << "mouette_" << i;
-        root->addChild(s.str(), vec[i]);
-    }
+    /* ObjLoader *mouette = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/"); */
+    /* vector<Object*> vec = mouette->getObjects(); */
+    /* for (unsigned int i = 0; i < vec.size(); i++) { */
+    /*     log_console.infoStream() << "Adding child: mouette_" << i; */
+    /*     stringstream s; */
+    /*     s << "mouette_" << i; */
+    /*     root->addChild(s.str(), vec[i]); */
+    /* } */
 
 	//Terrain
 	//Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); 
@@ -116,12 +119,12 @@ int main(int argc, char** argv) {
     */
     
 	// Diver
-	/*SeaDiver *diver = new SeaDiver();
-	root->addChild("diver", diver);
+	/* SeaDiver *diver = new SeaDiver(); */
+	/* root->addChild("diver", diver); */
 	
 	//Skybox
-    Skybox *skybox = new Skybox();
-    viewer->addRenderable(skybox);*/
+    Skybox *skybox = new Skybox(100);
+    root->addChild("skybox", skybox);
 
     // Pipe
     // TODO : put this in Dimensions
@@ -136,7 +139,6 @@ int main(int argc, char** argv) {
     /* viewer.addRenderable(pipe); */
 
     
-
 /*	unsigned int nParticles = 1000;
 	unsigned int nLevel = 8;
 	ParticleGroup *p = new ParticleGroup(nLevel*nParticles,(nLevel-1)*nParticles);
@@ -176,7 +178,7 @@ int main(int argc, char** argv) {
 	//root->addChild("test", new MarchingCubes());
 
 	//Configure viwer
-	viewer->setSceneRadius(100.0f);
+	viewer->setSceneRadius(1000.0f);
 	viewer->addRenderable(root);
 	
 	//Run main loop.

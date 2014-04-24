@@ -87,7 +87,7 @@ bool Skybox::Initialize () {
     return true;
 }
 
-void Skybox::draw () {
+void Skybox::drawDownwards(const float *currentTransformationMatrix) {
     Render(0.0f, 0.0f);
 }
 

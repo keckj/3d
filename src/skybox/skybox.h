@@ -1,14 +1,14 @@
 #ifndef __SKYBOX_H__
 #define __SKYBOX_H__
 
-#include "renderable.h"
+#include "renderTree.h"
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else
 #include <GLUT/glut.h>
 #endif
 
-class Skybox : public Renderable {
+class Skybox : public RenderTree {
     public:
         Skybox (float t = 1.0f);
         ~Skybox ();
@@ -16,7 +16,7 @@ class Skybox : public Renderable {
         bool Initialize ();
         void Render (float camera_yaw, float camera_pitch);
         void Finalize();
-        void draw ();
+		void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
 
     private:
         void DrawSkyBox (float camera_yaw, float camera_pitch);
