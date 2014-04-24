@@ -1,5 +1,6 @@
 
 #include "utils.h"
+#include <cmath>
 
 #include <sstream>
 
