@@ -34,8 +34,8 @@ void Object::createUBOs() {
     float lightPos[] = {-1.0f, -1.0f, 0.0f, 0.0f};
     float lightPos2[] = {0.0f, 0.0f, 1.0f, 0.0f};
     float lightDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
-    float lightDiffuse2[] = {1.0f, 0.0f, 1.0f, 1.0f};
-    float lightSpecular[] = {0.0f, 1.0f, 0.0f, 1.0f};
+    float lightDiffuse2[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    float lightSpecular[] = {0.2f, 0.2f, 0.2f, 1.0f};
     memcpy(lightsData[0].position, lightPos, 4*sizeof(GLfloat));
     memcpy(lightsData[0].diffuse, lightDiffuse, 4*sizeof(GLfloat));
     memcpy(lightsData[0].specular, lightSpecular, 4*sizeof(GLfloat));

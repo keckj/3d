@@ -57,6 +57,11 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv);
     log_console.infoStream() << "[Glut Init] ";
 
+    // ObjLoader
+    ObjLoader *cube = new ObjLoader("obj_files/cube2");
+    ObjLoader *mouette = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/");
+    ObjLoader *shark = new ObjLoader("obj_files/White_Shark/wshark", "obj_files/White_Shark/");
+
     // Read command lines arguments.
     QApplication application(argc,argv);
     log_console.infoStream() << "[Qt Init] ";
@@ -86,7 +91,6 @@ int main(int argc, char** argv) {
 	RenderRoot *root = new RenderRoot(); 
 
     //ObjLoader test
-    ObjLoader *cube = new ObjLoader("obj_files/cube2");
     vector<Object*> vecc = cube->getObjects();
     for (unsigned int i = 0; i < vecc.size(); i++) {
         log_console.infoStream() << "Adding child: cube2_" << i;
@@ -94,7 +98,6 @@ int main(int argc, char** argv) {
         s << "cube2_" << i;
         root->addChild(s.str(), vecc[i]);
     }
-    ObjLoader *mouette = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/");
     vector<Object*> vecm = mouette->getObjects();
     for (unsigned int i = 0; i < vecm.size(); i++) {
         log_console.infoStream() << "Adding child: mouette_" << i;
@@ -105,7 +108,6 @@ int main(int argc, char** argv) {
         vecm[i]->translate(0.0,50.0,0.0);
     }
 
-    ObjLoader *shark = new ObjLoader("obj_files/White_Shark/wshark", "obj_files/White_Shark/");
     vector<Object*> vecs = shark->getObjects();
     for (unsigned int i = 0; i < vecs.size(); i++) {
         log_console.infoStream() << "Adding child: shark_" << i;

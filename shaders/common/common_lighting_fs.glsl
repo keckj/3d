@@ -49,11 +49,9 @@ void main()
 
     vec4 matDiffuseColor = mat.diffuse;
     if (mat.hasTexture != 0.0) {
-        //matDiffuseColor *= texture2D(diffuseTexture, fTexCoord);
-        matDiffuseColor = vec4(0,0,0,1)*texture2D(diffuseTexture, fTexCoord);
+        matDiffuseColor *= texture2D(diffuseTexture, fTexCoord);
     }
-    out_color = matDiffuseColor;
-    /*
+    
     vec3 totalLight = vec3(scene_ambient);// * vec3(mat.ambient);
 
     for (int i = 0; i < nLights; i++) {
@@ -93,5 +91,5 @@ void main()
         }
     }
 
-    out_color = vec4(totalLight, mat.transparency);*/
+    out_color = vec4(totalLight, mat.transparency);
 }
