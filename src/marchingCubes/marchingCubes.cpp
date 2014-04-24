@@ -14,7 +14,10 @@ MarchingCubes::MarchingCubes(unsigned int width, unsigned int height, unsigned i
         _textureWidth(width), _textureHeight(height), _textureLength(length),
         _voxelGridWidth(width-1), _voxelGridHeight(height-1), _voxelGridLength(length-1), 
         _voxelWidth(voxelSize), _voxelHeight(voxelSize), _voxelLength(voxelSize),
-        _drawProgram(0), _densityProgram(0), _normalOcclusionProgram(0), _marchingCubesProgram(0)
+        _drawProgram(0), _densityProgram(0), _normalOcclusionProgram(0), _marchingCubesProgram(0),
+		_vertexVBO(0), _fullscreenQuadVBO(0), _marchingCubesLowerLeftXY_VBO(0),           
+		_marchingCubesFeedbackVertexTBO(0), _marchingCubesFeedbackNormalsTBO(0), _nTriangles(0),
+		_generalDataUBO(0)
 {
 
         if(_triTableUBO == 0 && _lookupTableUBO == 0) {
@@ -71,7 +74,37 @@ MarchingCubes::MarchingCubes(unsigned int width, unsigned int height, unsigned i
         generateMarchingCubesPoints();
         makeMarchingCubesProgram();
 
-        //The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		computeDensitiesAndNormals();
+		marchCubes();
+}
+
+MarchingCubes::~MarchingCubes() {
+}
+
+void MarchingCubes::drawDownwards(const float *currentTransformationMatrix) {
+	_drawProgram->use();
+        
+	static float *proj = new float[16], *view = new float[16];
+	glGetFloatv(GL_MODELVIEW_MATRIX, view);
+	glGetFloatv(GL_PROJECTION_MATRIX, proj);
+	glUniformMatrix4fv(_drawUniformLocs["projectionMatrix"], 1, GL_FALSE, proj);
+	glUniformMatrix4fv(_drawUniformLocs["viewMatrix"], 1, GL_FALSE, view);
+	
+	glBindBufferBase(GL_UNIFORM_BUFFER, 0, _generalDataUBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _marchingCubesFeedbackVertexTBO);           
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	
+    glDrawArrays(GL_TRIANGLES, 0, _nTriangles*3);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glUseProgram(0);
+}
+		
+void MarchingCubes::computeDensitiesAndNormals() {
+        
+		//The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
         GLuint frameBuffer = 0;
         glGenFramebuffers(1, &frameBuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
@@ -127,7 +160,6 @@ MarchingCubes::MarchingCubes(unsigned int width, unsigned int height, unsigned i
         glDrawArraysInstanced(GL_TRIANGLES, 0, 6, _textureLength);
 
         //Render full screen triangle to generate normals and occlusion texture
-        //TODO test framebuffer
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _normals_occlusion->getTextureId(), 0); 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         _normalOcclusionProgram->use();
@@ -148,25 +180,15 @@ MarchingCubes::MarchingCubes(unsigned int width, unsigned int height, unsigned i
         glUseProgram(0);
 
         glPopAttrib();
-
-
 }
 
-MarchingCubes::~MarchingCubes() {
-}
-
-void MarchingCubes::drawDownwards(const float *currentTransformationMatrix) {
-
+void MarchingCubes::marchCubes() {
         unsigned int query[2];
         glGenQueries(2, query);
 
         _marchingCubesProgram->use();
-
-        static float *proj = new float[16], *view = new float[16];
-        glGetFloatv(GL_MODELVIEW_MATRIX, view);
-        glGetFloatv(GL_PROJECTION_MATRIX, proj);
-        glUniformMatrix4fv(_marchingCubesUniformLocs["projectionMatrix"], 1, GL_FALSE, proj);
-        glUniformMatrix4fv(_marchingCubesUniformLocs["viewMatrix"], 1, GL_FALSE, view);
+		
+		glEnable(GL_RASTERIZER_DISCARD);
 
         glBindBufferBase(GL_UNIFORM_BUFFER, 0 , _lookupTableUBO);
         glBindBufferBase(GL_UNIFORM_BUFFER, 1 , _triTableUBO);
@@ -185,36 +207,47 @@ void MarchingCubes::drawDownwards(const float *currentTransformationMatrix) {
         unsigned int primitivesGenerated;
         glGetQueryObjectuiv(query[0], GL_QUERY_RESULT, &primitivesGenerated);
 
-        printf("%u Primitives generated!\n\n", primitivesGenerated);
-
-        unsigned int tbo;
-        glGenBuffers(1, &tbo);
-        glBindBuffer(GL_ARRAY_BUFFER, tbo);
+		if(glIsBuffer(_marchingCubesFeedbackVertexTBO))
+			glDeleteBuffers(1, &_marchingCubesFeedbackVertexTBO);
+        glGenBuffers(1, &_marchingCubesFeedbackVertexTBO);
+        glBindBuffer(GL_ARRAY_BUFFER, _marchingCubesFeedbackVertexTBO);
         glBufferData(GL_ARRAY_BUFFER, primitivesGenerated*4*3*sizeof(GLfloat), 0, GL_STATIC_READ);
 
         const GLchar* feedbackVaryings[] = { "GS_FS_VERTEX.pos" };
         
-        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, tbo);
-        glTransformFeedbackVaryings(_marchingCubesProgram->getProgramId(), 1, feedbackVaryings, GL_INTERLEAVED_ATTRIBS);
-        glBeginTransformFeedback(GL_TRIANGLES);
+        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, _marchingCubesFeedbackVertexTBO);
+        glTransformFeedbackVaryings(_marchingCubesProgram->getProgramId(), 1, feedbackVaryings, GL_SEPARATE_ATTRIBS);
+
+		//update program
+		_marchingCubesProgram->link();
+		_marchingCubesProgram->use();
         
+        glBeginQuery(GL_PRIMITIVES_GENERATED, query[0]);
         glBeginQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, query[1]);
-        glDrawArraysInstanced(GL_POINTS, 0, _voxelGridWidth*_voxelGridHeight, _voxelGridLength);
+        glBeginTransformFeedback(GL_TRIANGLES);
+		glDrawArraysInstanced(GL_POINTS, 0, _voxelGridWidth*_voxelGridHeight, _voxelGridLength);
         glEndTransformFeedback();
         glFlush();
         glEndQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN);
+        glEndQuery(GL_PRIMITIVES_GENERATED);
         
         unsigned int primitivesWritten;
+        glGetQueryObjectuiv(query[0], GL_QUERY_RESULT, &primitivesGenerated);
         glGetQueryObjectuiv(query[1], GL_QUERY_RESULT, &primitivesWritten);
-        printf("%u Primitives written !\n\n", primitivesWritten);
+        
+		
+		log_console.infoStream() << "[Marching Cube] Generated " <<  primitivesGenerated << " primitives.";
+		log_console.infoStream() << "[Marching Cube] Wrote " <<  primitivesGenerated << " primitives.";
+		_nTriangles = primitivesWritten;
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBufferBase(GL_UNIFORM_BUFFER, 0, 0);
+        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0);
+		glDisable(GL_RASTERIZER_DISCARD);
+        glTransformFeedbackVaryings(_marchingCubesProgram->getProgramId(), 0, 0, GL_SEPARATE_ATTRIBS);
         glUseProgram(0);
 
         glDeleteQueries(2, query);
-
-        exit(1);
 }
 
 void MarchingCubes::generateQuads() {
@@ -283,22 +316,20 @@ void MarchingCubes::generateMarchingCubesPoints() {
 }
 
 void MarchingCubes::makeDrawProgram() {
-
-        _drawProgram = new Program("Draw test");
+        _drawProgram = new Program("MC Draw");
         _drawProgram->bindAttribLocations("0", "vertex_position");
         _drawProgram->bindFragDataLocation(0, "out_colour");
+        _drawProgram->bindUniformBufferLocations("0", "generalData");
 
-        _drawProgram->attachShader(Shader("shaders/marchingCubes/test_vs.glsl", GL_VERTEX_SHADER));
-        _drawProgram->attachShader(Shader("shaders/marchingCubes/test_fs.glsl", GL_FRAGMENT_SHADER));
+        _drawProgram->attachShader(Shader("shaders/marchingCubes/draw_vs.glsl", GL_VERTEX_SHADER));
+        _drawProgram->attachShader(Shader("shaders/marchingCubes/draw_fs.glsl", GL_FRAGMENT_SHADER));
 
         _drawProgram->link();
-        _drawUniformLocs = _drawProgram->getUniformLocationsMap("modelMatrix projectionMatrix viewMatrix layers", true);
-
-        _drawProgram->bindTextures(&_density, "density", true);
+        _drawUniformLocs = _drawProgram->getUniformLocationsMap("projectionMatrix viewMatrix", true);
 }
 
 void MarchingCubes::makeDensityProgram() {
-        _densityProgram = new Program("Density");
+        _densityProgram = new Program("MC Density");
         _densityProgram->bindAttribLocations("0", "vertex_position");
         _densityProgram->bindFragDataLocation(0, "out_colour");
 
@@ -309,14 +340,12 @@ void MarchingCubes::makeDensityProgram() {
         _densityProgram->link();
 
         _densityUniformLocs = _densityProgram->getUniformLocationsMap("totalLayers textureSize", true);
-
 }
 
 void MarchingCubes::makeNormalOcclusionProgram() {
-        _normalOcclusionProgram = new Program("Normal & Occlusion");
+        _normalOcclusionProgram = new Program("MC Normal & Occlusion");
         _normalOcclusionProgram->bindAttribLocations("0", "vertex_position");
         _normalOcclusionProgram->bindFragDataLocation(0, "out_colour");
-
         _normalOcclusionProgram->bindUniformBufferLocations("0 1", "poissonDistributions generalData");
 
         _normalOcclusionProgram->attachShader(Shader("shaders/marchingCubes/normals_vs.glsl", GL_VERTEX_SHADER));
@@ -329,24 +358,20 @@ void MarchingCubes::makeNormalOcclusionProgram() {
 }
 
 void MarchingCubes::makeMarchingCubesProgram() {
-        _marchingCubesProgram = new Program("Marching Cube");
+        _marchingCubesProgram = new Program("MC Marching Cube");
         _marchingCubesProgram->bindAttribLocations("0", "voxelLowerLeftXY");
         _marchingCubesProgram->bindUniformBufferLocations("0 1 2", "lookupTable triangleTable generalData");
 
         _marchingCubesProgram->attachShader(Shader("shaders/marchingCubes/marchingCube_vs.glsl", GL_VERTEX_SHADER));
         _marchingCubesProgram->attachShader(Shader("shaders/marchingCubes/marchingCube_gs.glsl", GL_GEOMETRY_SHADER));
-        _marchingCubesProgram->attachShader(Shader("shaders/marchingCubes/marchingCube_fs.glsl", GL_FRAGMENT_SHADER));
 
         _marchingCubesProgram->link();
 
-        _marchingCubesUniformLocs = _marchingCubesProgram->getUniformLocationsMap("viewMatrix projectionMatrix", true);
-
         Texture *tex[] = {_density, _normals_occlusion};
-        _marchingCubesProgram->bindTextures(tex, "density normals_occlusion", false); //TODO
+        _marchingCubesProgram->bindTextures(tex, "density normals_occlusion", false);
 }
 
 void MarchingCubes::generateUniformBlockBuffers() {
-
         log_console.infoStream() << "Size of GLbyte : " << sizeof(GLbyte);
         log_console.infoStream() << "Size of GLfloat : " << sizeof(GLfloat);
         log_console.infoStream() << "Size of GLint : " << sizeof(GLint);

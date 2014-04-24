@@ -11,7 +11,7 @@ in VS_GS_VERTEX {
 } vertex_in[];
 
 out GS_FS_VERTEX {
-	vec4 pos;
+	vec3 pos;
 } vertex_out;
 
 //Nombre de triangle par cas + info sur les 12 cotés
@@ -39,10 +39,7 @@ layout(std140) uniform generalData {
 	vec3 voxelDim;
 };
 
-uniform mat4 viewMatrix;
-uniform mat4 projectionMatrix;
-
-vec4 computeTriangleVertex(vec3 uvw, vec4 f0123, vec4 f4567, int edgeNum) {
+vec3 computeTriangleVertex(vec3 uvw, vec4 f0123, vec4 f4567, int edgeNum) {
 
 	//interpolation linéaire entre le point A et B
 	//pour trouver le point ou la densité vaut 0
@@ -55,12 +52,11 @@ vec4 computeTriangleVertex(vec3 uvw, vec4 f0123, vec4 f4567, int edgeNum) {
 
 	vec3 worldPos = (uvw*voxelGridSize + pos_within_cell)*voxelDim;
 
-	return vec4(worldPos, 1.0);
+	return worldPos;
 }
 
 void main(void) {
 
-	mat4 transformationMatrix = projectionMatrix*viewMatrix;
 
 	int num_polys = int(caseToNumPolys[vertex_in[0].caseId]);
 	
@@ -75,7 +71,6 @@ void main(void) {
 				vertex_in[0].f0123, vertex_in[0].f4567,
 				triangleData.x
 				);
-		gl_Position = transformationMatrix * vertex_out.pos;
 		EmitVertex();	
 		
 		vertex_out.pos = computeTriangleVertex(
@@ -83,7 +78,6 @@ void main(void) {
 				vertex_in[0].f0123, vertex_in[0].f4567,
 				triangleData.y
 				);
-		gl_Position = transformationMatrix * vertex_out.pos;
 		EmitVertex();	
 		
 		vertex_out.pos = computeTriangleVertex(
@@ -91,22 +85,9 @@ void main(void) {
 				vertex_in[0].f0123, vertex_in[0].f4567,
 				triangleData.z
 				);
-		gl_Position = transformationMatrix * vertex_out.pos;
 		EmitVertex();	
 
 		EndPrimitive();
 	}
 	
-	/*if(vertex_in[0].caseId > 128u) {*/
-		/*gl_Position = transformationMatrix*vec4(0,0,0,1);*/
-		/*EmitVertex();	*/
-		/*gl_Position = transformationMatrix*vec4(1,0,0,1);*/
-		/*EmitVertex();	*/
-		/*gl_Position = transformationMatrix*vec4(1,1,0,1);*/
-		/*EmitVertex();	*/
-		/*EndPrimitive();*/
-		
-		/*gl_Position = transformationMatrix*vec4(vertex_in[0].caseId,1,0,1);*/
-		/*EmitVertex();	*/
-	/*}*/
 }

@@ -1,8 +1,7 @@
-
 #version 330
 
-in GS_FS_VERTEX {
-	vec4 pos;
+in VS_FS_VERTEX {
+	vec3 pos;
 } vertex_in;
 
 layout(std140) uniform generalData {

@@ -53,7 +53,7 @@ namespace MarchingCube {
 class MarchingCubes : public RenderTree {
 
 	public:
-		MarchingCubes(unsigned int width=128, unsigned int height=128, unsigned int length=128, float voxelSize = 0.1f);	
+		MarchingCubes(unsigned int width=256, unsigned int height=256, unsigned int length=256, float voxelSize = 0.1f);	
 		~MarchingCubes();	
 
 	private:
@@ -68,9 +68,14 @@ class MarchingCubes : public RenderTree {
 		std::map<std::string,int> _drawUniformLocs, _densityUniformLocs, _normalOcclusionUniformLocs, _marchingCubesUniformLocs; 
 
 		unsigned int _vertexVBO, _fullscreenQuadVBO, _marchingCubesLowerLeftXY_VBO;           
+		
+		unsigned int _marchingCubesFeedbackVertexTBO, _marchingCubesFeedbackNormalsTBO;
+		unsigned int _nTriangles;
 
 		unsigned int _generalDataUBO;
 
+		void computeDensitiesAndNormals();
+		void marchCubes();
 		void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
 
 		void makeDrawProgram();
@@ -81,7 +86,7 @@ class MarchingCubes : public RenderTree {
 		void generateQuads();
 		void generateFullScreenQuad();
 		void generateMarchingCubesPoints();
-
+	
 		static void generateUniformBlockBuffers();
 		static unsigned int _triTableUBO, _lookupTableUBO, _poissonDistributionsUBO;
 };
