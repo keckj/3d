@@ -7,11 +7,11 @@ newmtl octo_body
   Kd 0 0 0
   Ks 0 0 0
   illum 2
-  map_Kd images\octo_t.tif
+  map_Kd obj_files/Octopus/octo_t.jpg
 
 newmtl octo_bottom
   Ka 0 0 0
   Kd 0 0 0
   Ks 0 0 0
   illum 2
-  map_Kd images\octo_b.tif
+  map_Kd obj_files/Octopus/octo_b.jpg

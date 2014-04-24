@@ -14,7 +14,7 @@ ObjLoader::ObjLoader (std::string const& file, std::string const& basepath) : ob
 
     makeProgram();
 
-    //print();
+    print();
 }
 
 ObjLoader::~ObjLoader() {
@@ -44,7 +44,9 @@ void ObjLoader::makeProgram() {
     //this->uniformLocations = this->program->getUniformLocationsMap("modelMatrix viewMatrix projectionMatrix normalMatrix viewMatrixInv", true);
     this->uniformLocations = this->program->getUniformLocationsMap("modelMatrix viewMatrix projectionMatrix", true);
 
-    //this->program->bindTextures => object
+    //this->program->bindTextures
+    //
+    //TODO : tout => object
 }
 
 
@@ -55,29 +57,29 @@ void ObjLoader::print () {
     for (size_t i = 0; i < shapes.size(); i++) {
         printf("shape[%ld].name = %s\n", i, shapes[i].name.c_str());
         printf("shape[%ld].indices: %ld\n", i, shapes[i].mesh.indices.size());
-        assert((shapes[i].mesh.indices.size() % 3) == 0);
+        /*assert((shapes[i].mesh.indices.size() % 3) == 0);
         for (size_t f = 0; f < shapes[i].mesh.indices.size(); f++) {
             printf("  idx[%ld] = %d\n", f, shapes[i].mesh.indices[f]);
-        }
+        }*/
 
         printf("shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
-        assert((shapes[i].mesh.positions.size() % 3) == 0);
+        /*assert((shapes[i].mesh.positions.size() % 3) == 0);
         for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
             printf("  v[%ld] = (%f, %f, %f)\n", v,
                    shapes[i].mesh.positions[3*v+0],
                    shapes[i].mesh.positions[3*v+1],
                    shapes[i].mesh.positions[3*v+2]);
-        }
+        }*/
 
         printf("shape[%ld].normals: %ld\n", i, shapes[i].mesh.normals.size());
-        assert((shapes[i].mesh.normals.size() % 3) == 0);
+        /*assert((shapes[i].mesh.normals.size() % 3) == 0);
         for (size_t v = 0; v < shapes[i].mesh.normals.size() / 3; v++) {
             printf("  v[%ld] = (%f, %f, %f)\n", v,
                    shapes[i].mesh.normals[3*v+0],
                    shapes[i].mesh.normals[3*v+1],
                    shapes[i].mesh.normals[3*v+2]);
         }
-
+*/
         printf("shape[%ld].material.name = %s\n", i, shapes[i].material.name.c_str());
         printf("  material.Ka = (%f, %f ,%f)\n", shapes[i].material.ambient[0], shapes[i].material.ambient[1], shapes[i].material.ambient[2]);
         printf("  material.Kd = (%f, %f ,%f)\n", shapes[i].material.diffuse[0], shapes[i].material.diffuse[1], shapes[i].material.diffuse[2]);
@@ -94,9 +96,9 @@ void ObjLoader::print () {
         printf("  material.map_Ns = %s\n", shapes[i].material.normal_texname.c_str());
         std::map<std::string, std::string>::iterator it(shapes[i].material.unknown_parameter.begin());
         std::map<std::string, std::string>::iterator itEnd(shapes[i].material.unknown_parameter.end());
-        /*for (; it != itEnd; it++) {
+        for (; it != itEnd; it++) {
             printf("  material.%s = %s\n", it->first.c_str(), it->second.c_str());
-        }*/
+        }
         printf("\n");
     }
 }

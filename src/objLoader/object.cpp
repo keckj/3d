@@ -32,13 +32,20 @@ void Object::createUBOs() {
     //test
     Light_s lightsData[5];
     float lightPos[] = {-1.0f, -1.0f, 0.0f, 0.0f};
+    float lightPos2[] = {0.0f, 0.0f, 1.0f, 0.0f};
     float lightDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    float lightDiffuse2[] = {1.0f, 0.0f, 1.0f, 1.0f};
     float lightSpecular[] = {0.0f, 1.0f, 0.0f, 1.0f};
     memcpy(lightsData[0].position, lightPos, 4*sizeof(GLfloat));
     memcpy(lightsData[0].diffuse, lightDiffuse, 4*sizeof(GLfloat));
     memcpy(lightsData[0].specular, lightSpecular, 4*sizeof(GLfloat));
     lightsData[0].constantAttenuation = 1.0f;
     lightsData[0].isEnabled = 1.0f;
+    memcpy(lightsData[1].position, lightPos2, 4*sizeof(GLfloat));
+    memcpy(lightsData[1].diffuse, lightDiffuse2, 4*sizeof(GLfloat));
+    memcpy(lightsData[1].specular, lightSpecular, 4*sizeof(GLfloat));
+    lightsData[1].constantAttenuation = 1.0f;
+    lightsData[1].isEnabled = 1.0f;
 
     tinyobj::material_t mat = shape.material;
     Material_s materialData = {
@@ -56,7 +63,7 @@ void Object::createUBOs() {
                                 0.0f,
                                 mat.shininess,
                                 mat.dissolve,
-                                0.0f, // false for testing
+                                /*shape.material.diffuse_texname.c_str() ? 1.0f : */0.0f,
                                 0.0f
                                };
 
@@ -71,40 +78,30 @@ void Object::createUBOs() {
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-//only JPG textures supported for now
+//only JPG textures supported for now =====> TODO copier pgm ObjLoader 
 void inline Object::makeTextures() {
-/*
-    // We only use map_Ka and map_Kd in the shader
+
+    /*// We only use map_Kd in the shader
     nTextures = 0;
-    Texture2D *tex_a = NULL;
     Texture2D *tex_d = NULL;
 
-    if (shape.material.ambient_texname.c_str()) {
-        nTextures++;
-        tex_a = new Texture2D(shape.material.ambient_texname.c_str() ,"jpg");
-        tex_a->addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_REPEAT));
-		tex_a->addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_REPEAT));
-		tex_a->addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-		tex_a->addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-		tex_a->generateMipMap();
-    }
     if (shape.material.diffuse_texname.c_str()) {
+        std::cout << "**********************************" << shape.material.diffuse_texname.c_str() << std::endl;
         nTextures++;
-        tex_b = new Texture2D(shape.material.diffuse_texname.c_str(), "jpg");
-        tex_b->addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_REPEAT));
-		tex_b->addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_REPEAT));
-		tex_b->addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-		tex_b->addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-		tex_b->generateMipMap();
+        tex_d = new Texture2D(shape.material.diffuse_texname.c_str(), "jpg");
+        tex_d->addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_REPEAT));
+		tex_d->addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_REPEAT));
+		tex_d->addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+		tex_d->addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+		tex_d->generateMipMap();
     }
 
     if (nTextures > 0) {
         textures = new Texture*[nTextures];
-        textures[0] = tex_a;
-        textures[1] = tex_b;
-    }
+        textures[0] = tex_d;
+        program->bindTextures(textures, "diffuseTexture", true);
+    }*/
 
-    //TODO signaler au shader qu'on utilise que certaines ou pas de textures*/
 }
 
 void inline Object::sendToDevice() {
@@ -128,13 +125,11 @@ void inline Object::sendToDevice() {
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), NULL);
         glEnableVertexAttribArray(0);
         if (shape.mesh.normals.size() > 0) {
-            std::cout << "lol\n";
            glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), NULL);
            glEnableVertexAttribArray(1);
         }
         if (shape.mesh.texcoords.size() > 0) {
-            std::cout << "lolt\n";
             glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), NULL);
             glEnableVertexAttribArray(2);
@@ -148,7 +143,7 @@ void Object::drawDownwards(const float *currentTransformationMatrix) {
 	static float *proj = new float[16], *view = new float[16];
 
 	program->use();
-
+        
 	glGetFloatv(GL_MODELVIEW_MATRIX, view);
 	glGetFloatv(GL_PROJECTION_MATRIX, proj);
 	glUniformMatrix4fv(uniformLocs["projectionMatrix"], 1, GL_FALSE, proj);

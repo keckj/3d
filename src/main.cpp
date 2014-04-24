@@ -87,12 +87,22 @@ int main(int argc, char** argv) {
 	RenderRoot *root = new RenderRoot(); 
 
     //ObjLoader test
-    //ObjLoader *cube = new ObjLoader("obj_files/cube2");
-    //vector<Object*> vec = cube->getObjects();
-    //for (unsigned int i = 0; i < vec.size(); i++) {
-        //log_console.infoStream() << "Adding child: cube2_"+to_string(i);
-        //root->addChild("cube2_"+to_string(i), vec[i]);
-    //}
+    /*ObjLoader *cube = new ObjLoader("obj_files/cube2");
+    vector<Object*> vec = cube->getObjects();
+    for (unsigned int i = 0; i < vec.size(); i++) {
+        log_console.infoStream() << "Adding child: cube2_" << i;
+        stringstream s;
+        s << "cube2_" << i;
+        root->addChild(s.str(), vec[i]);
+    }*/
+    ObjLoader *mouette = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/");
+    vector<Object*> vec = mouette->getObjects();
+    for (unsigned int i = 0; i < vec.size(); i++) {
+        log_console.infoStream() << "Adding child: mouette_" << i;
+        stringstream s;
+        s << "mouette_" << i;
+        root->addChild(s.str(), vec[i]);
+    }
 
 	//Terrain
 	//Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); 
@@ -163,7 +173,7 @@ int main(int argc, char** argv) {
 	root->addChild("particules", p);
 */
 
-	root->addChild("test", new MarchingCubes());
+	//root->addChild("test", new MarchingCubes());
 
 	//Configure viwer
 	viewer->setSceneRadius(100.0f);
