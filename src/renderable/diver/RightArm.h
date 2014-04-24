@@ -1,14 +1,14 @@
-#ifndef RIGHTFOREARM_H
-#define RIGHTFOREARM_H
+#ifndef RIGHTARM_H
+#define RIGHTARM_H
 
 #include "Arm.h"
 
-class RightForeArm : public Arm {
+class RightArm : public Arm {
     public:
-        RightForeArm (float width, float height);
+        RightArm (float width, float height);
 
         void drawDownwards(const float *currentTransformationMatrix);
-        void animateDownwards();
+        void animateDownwards ();
 
     private:
         bool down;

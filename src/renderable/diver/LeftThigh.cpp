@@ -12,6 +12,12 @@ LeftThigh::LeftThigh (float width, float height) : Leg(width, height) {
     translateChild("leftLeg", 0, 0, -getHeight());
 }
 
+void LeftThigh::drawDownwards (const float * currentTransformationMatrix) {
+    glColor3ub(165, 93, 53);
+    Leg::drawDownwards(currentTransformationMatrix);
+    glColor3ub(255, 255, 255);
+}
+
 void LeftThigh::animateDownwards () {
     float pas = 0.05f;
 
@@ -23,9 +29,9 @@ void LeftThigh::animateDownwards () {
         theta += pas;
     }
 
-    if (theta > M_PI / 4) {
+    if (theta > M_PI / 6) {
         down = true;
-    } else if (theta < -M_PI / 4) {
+    } else if (theta < -M_PI / 6) {
         down = false;
     }
 }

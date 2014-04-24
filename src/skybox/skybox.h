@@ -10,7 +10,7 @@
 
 class Skybox : public Renderable {
     public:
-        Skybox ();
+        Skybox (float t = 1.0f);
         ~Skybox ();
 
         bool Initialize ();
@@ -20,6 +20,7 @@ class Skybox : public Renderable {
 
     private:
         void DrawSkyBox (float camera_yaw, float camera_pitch);
+        float t;
 
         GLuint cube_map_texture_ID;
 };

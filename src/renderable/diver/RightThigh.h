@@ -7,6 +7,7 @@ class RightThigh : public Leg {
     public:
         RightThigh (float width, float height);
 
+        void drawDownwards (const float * currentTransformationMatrix);
         void animateDownwards ();
 
     private:

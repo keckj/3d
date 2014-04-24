@@ -12,6 +12,12 @@ RightThigh::RightThigh (float width, float height) : Leg(width, height) {
     translateChild("rightLeg", 0, 0, -getHeight());
 }
 
+void RightThigh::drawDownwards (const float * currentTransformationMatrix) {
+    glColor3ub(165, 93, 53);
+    Leg::drawDownwards(currentTransformationMatrix);
+    glColor3ub(255, 255, 255);
+}
+
 void RightThigh::animateDownwards () {
     float pas = 0.05f;
 

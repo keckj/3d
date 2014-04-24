@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-Skybox::Skybox () {
+Skybox::Skybox (float t) : t(t) {
     if (!Initialize()) {
         std::cout << "error during skybox initialization" << std::endl;
         exit(EXIT_FAILURE);
@@ -117,9 +117,6 @@ void Skybox::Finalize () {
 }
 
 void Skybox::DrawSkyBox (float camera_yaw, float camera_pitch) {
-    // Taille du cube
-    float t = 1.0f;
-
     // Utilisation de la texture CubeMap
     glBindTexture(GL_TEXTURE_CUBE_MAP_ARB, cube_map_texture_ID);
 
