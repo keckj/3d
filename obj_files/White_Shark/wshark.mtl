@@ -24,7 +24,7 @@ newmtl WSHSKINM
 	Kd 0.7647 0.7412 0.6667
 	Ks 0.2700 0.2700 0.2700
 	Ke 0.0000 0.0000 0.0000
-	map_Ka maps\WSHSKIN.jpg
-	map_Kd maps\WSHSKIN.jpg
-	map_bump maps\WSHSKINM.jpg
-	bump maps\WSHSKINM.jpg
+	map_Ka obj_files/White_Shark/maps/WSHSKIN.jpg
+	map_Kd obj_files/White_Shark/maps/WSHSKIN.jpg
+	map_bump obj_files/White_Shark/maps/WSHSKINM.jpg
+	bump obj_files/White_Shark/maps/WSHSKINM.jpg

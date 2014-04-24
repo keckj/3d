@@ -23,9 +23,6 @@ class ObjLoader {
         std::string objFilename;
         std::string mtlFilename;
         std::vector<tinyobj::shape_t> shapes;
-
-        Program *program;
-        std::map<std::string,int> uniformLocations;
 };
 
 #endif

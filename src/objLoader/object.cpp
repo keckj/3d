@@ -7,14 +7,14 @@
 
 #include "object.h"
 
-Object::Object(tinyobj::shape_t shape, Program *program, std::map<std::string,int> uniformLocs) : 
-    shape(shape), program(program), uniformLocs(uniformLocs), textures(0), VAO(0), VBO(0)
+Object::Object(tinyobj::shape_t shape) : 
+    shape(shape), program(0), textures(0), uniformLocs(), VAO(0), VBO(0)
 {
     initializeRelativeModelMatrix();
 
     createUBOs();
 
-    makeTextures();
+    makeProgram();
    
     sendToDevice(); 
 }
@@ -63,7 +63,7 @@ void Object::createUBOs() {
                                 0.0f,
                                 mat.shininess,
                                 mat.dissolve,
-                                /*shape.material.diffuse_texname.c_str() ? 1.0f : */0.0f,
+                                shape.material.diffuse_texname.length() > 0 ? 1.0f : 0.0f,
                                 0.0f
                                };
 
@@ -78,29 +78,40 @@ void Object::createUBOs() {
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-//only JPG textures supported for now =====> TODO copier pgm ObjLoader 
-void inline Object::makeTextures() {
 
-    /*// We only use map_Kd in the shader
+void inline Object::makeProgram() {
+    
+    program = new Program("ObjLoader common");
+    program->bindAttribLocations("0 1 2", "vertexPosition vertexNormal vertexTexCoord");
+    program->bindFragDataLocation(0, "out_color");
+    program->bindUniformBufferLocations("0 1", "LightBuffer Material");
+
+    program->attachShader(Shader("shaders/common/common_lighting_vs.glsl", GL_VERTEX_SHADER));
+    program->attachShader(Shader("shaders/common/common_lighting_fs.glsl", GL_FRAGMENT_SHADER));
+
+    program->link();
+
+    //this->uniformLocs = this->program->getUniformLocationsMap("modelMatrix viewMatrix projectionMatrix normalMatrix viewMatrixInv", true);
+    uniformLocs = this->program->getUniformLocationsMap("modelMatrix viewMatrix projectionMatrix", true);
+
+    // We only use map_Kd in the shader
     nTextures = 0;
     Texture2D *tex_d = NULL;
 
-    if (shape.material.diffuse_texname.c_str()) {
-        std::cout << "**********************************" << shape.material.diffuse_texname.c_str() << std::endl;
+    if (shape.material.diffuse_texname.length() > 0) {
         nTextures++;
-        tex_d = new Texture2D(shape.material.diffuse_texname.c_str(), "jpg");
+        std::string texname_d = shape.material.diffuse_texname.substr(0, shape.material.diffuse_texname.size()-1); //last char shouldn't be there
+        tex_d = new Texture2D(texname_d, "jpg");
         tex_d->addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_REPEAT));
 		tex_d->addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_REPEAT));
 		tex_d->addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 		tex_d->addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 		tex_d->generateMipMap();
-    }
 
-    if (nTextures > 0) {
         textures = new Texture*[nTextures];
         textures[0] = tex_d;
         program->bindTextures(textures, "diffuseTexture", true);
-    }*/
+    }
 
 }
 

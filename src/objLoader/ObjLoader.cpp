@@ -12,8 +12,6 @@ ObjLoader::ObjLoader (std::string const& file, std::string const& basepath) : ob
         exit(EXIT_FAILURE);
     }
 
-    makeProgram();
-
     print();
 }
 
@@ -24,29 +22,9 @@ std::vector<Object*> ObjLoader::getObjects()
 {
     std::vector<Object*> vec;
     for (size_t i = 0; i < shapes.size(); i++) {
-        vec.push_back(new Object(shapes[i], this->program, this->uniformLocations));
+        vec.push_back(new Object(shapes[i]));
     } 
     return vec;
-}
-
-
-void ObjLoader::makeProgram() {
-    this->program = new Program("ObjLoader common");
-    this->program->bindAttribLocations("0 1 2", "vertexPosition vertexNormal vertexTexCoord");
-    this->program->bindFragDataLocation(0, "out_color");
-    this->program->bindUniformBufferLocations("0 1", "LightBuffer Material");
-
-    this->program->attachShader(Shader("shaders/common/common_lighting_vs.glsl", GL_VERTEX_SHADER));
-    this->program->attachShader(Shader("shaders/common/common_lighting_fs.glsl", GL_FRAGMENT_SHADER));
-
-    this->program->link();
-
-    //this->uniformLocations = this->program->getUniformLocationsMap("modelMatrix viewMatrix projectionMatrix normalMatrix viewMatrixInv", true);
-    this->uniformLocations = this->program->getUniformLocationsMap("modelMatrix viewMatrix projectionMatrix", true);
-
-    //this->program->bindTextures
-    //
-    //TODO : tout => object
 }
 
 

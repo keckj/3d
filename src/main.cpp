@@ -57,9 +57,6 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv);
     log_console.infoStream() << "[Glut Init] ";
 
-    // objs
-    ObjLoader *suzanne = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/");
-
     // Read command lines arguments.
     QApplication application(argc,argv);
     log_console.infoStream() << "[Qt Init] ";
@@ -87,26 +84,39 @@ int main(int argc, char** argv) {
     log_console.infoStream() << "Running with OpenGL " << Globals::glVersion << " and glsl version " << Globals::glShadingLanguageVersion << " !";
 	//FIN INIT//
 	RenderRoot *root = new RenderRoot(); 
-    viewer->addRenderable(suzanne);
 
     //ObjLoader test
-    /*ObjLoader *cube = new ObjLoader("obj_files/cube2");
-    vector<Object*> vec = cube->getObjects();
-    for (unsigned int i = 0; i < vec.size(); i++) {
+    ObjLoader *cube = new ObjLoader("obj_files/cube2");
+    vector<Object*> vecc = cube->getObjects();
+    for (unsigned int i = 0; i < vecc.size(); i++) {
         log_console.infoStream() << "Adding child: cube2_" << i;
         stringstream s;
         s << "cube2_" << i;
-        root->addChild(s.str(), vec[i]);
-    }*/
-    /* ObjLoader *mouette = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/"); */
-    /* vector<Object*> vec = mouette->getObjects(); */
-    /* for (unsigned int i = 0; i < vec.size(); i++) { */
-    /*     log_console.infoStream() << "Adding child: mouette_" << i; */
-    /*     stringstream s; */
-    /*     s << "mouette_" << i; */
-    /*     root->addChild(s.str(), vec[i]); */
-    /* } */
+        root->addChild(s.str(), vecc[i]);
+    }
+    ObjLoader *mouette = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/");
+    vector<Object*> vecm = mouette->getObjects();
+    for (unsigned int i = 0; i < vecm.size(); i++) {
+        log_console.infoStream() << "Adding child: mouette_" << i;
+        stringstream s;
+        s << "mouette_" << i;
+        root->addChild(s.str(), vecm[i]);
+        vecm[i]->scale(10.0);
+        vecm[i]->translate(0.0,50.0,0.0);
+    }
 
+    ObjLoader *shark = new ObjLoader("obj_files/White_Shark/wshark", "obj_files/White_Shark/");
+    vector<Object*> vecs = shark->getObjects();
+    for (unsigned int i = 0; i < vecs.size(); i++) {
+        log_console.infoStream() << "Adding child: shark_" << i;
+        stringstream s;
+        s << "shark_" << i;
+        root->addChild(s.str(), vecs[i]);
+        vecs[i]->scale(0.01);
+        vecs[i]->translate(20.0,0.0,0.0);
+    }
+
+	//Terrain
 	//Terrain
 	//Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); 
 	//terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2)); 
@@ -123,8 +133,8 @@ int main(int argc, char** argv) {
 	/* root->addChild("diver", diver); */
 	
 	//Skybox
-    Skybox *skybox = new Skybox(100);
-    root->addChild("skybox", skybox);
+    /*Skybox *skybox = new Skybox(100);
+    root->addChild("skybox", skybox);*/
 
     // Pipe
     // TODO : put this in Dimensions
@@ -177,8 +187,8 @@ int main(int argc, char** argv) {
 
 	//root->addChild("test", new MarchingCubes());
 
-	//Configure viwer
-	viewer->setSceneRadius(1000.0f);
+	//Configure viewer
+	viewer->setSceneRadius(100.0f);
 	viewer->addRenderable(root);
 	
 	//Run main loop.

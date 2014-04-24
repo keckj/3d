@@ -35,7 +35,7 @@ typedef struct Material {
 class Object : public RenderTree {
 
 	public:
-		Object(tinyobj::shape_t shape, Program *program, std::map<std::string, int> uniformLocs);
+		Object(tinyobj::shape_t shape);
 		~Object();
 		
 	private:
@@ -44,13 +44,13 @@ class Object : public RenderTree {
 		Program *program;
 		Texture **textures;
         unsigned int nTextures;
+		std::map<std::string,int> uniformLocs;
 		GLuint VAO;
         GLuint *VBO;
-		std::map<std::string,int> uniformLocs;
         GLuint lightsUBO, materialUBO;
 
         void inline createUBOs();
-		void inline makeTextures();
+		void inline makeProgram();
 		void inline sendToDevice();
 		
 		void drawDownwards(const float *currentTransformationMatrix = consts::identity4);

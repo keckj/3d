@@ -176,7 +176,7 @@ void Program::use() const {
 		exit(0);
 	}
 	
-	log_console.infoStream() << "Switching to program " << logProgramHead;
+	//log_console.infoStream() << "Switching to program " << logProgramHead;
 
 	glUseProgram(programId);
 
