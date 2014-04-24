@@ -58,11 +58,12 @@ int main(int argc, char** argv) {
     log_console.infoStream() << "[Glut Init] ";
 
     // objs
-    ObjLoader *suzanne = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/");
+    /* ObjLoader *suzanne = new ObjLoader("obj_files/Octopus/octopus2", "obj_files/Octopus/"); */
 
     // Read command lines arguments.
     QApplication application(argc,argv);
     log_console.infoStream() << "[Qt Init] ";
+    ObjLoader *seagul = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/");
 
     // Instantiate the viewer (mandatory)
     Viewer *viewer = new Viewer();
@@ -87,7 +88,7 @@ int main(int argc, char** argv) {
     log_console.infoStream() << "Running with OpenGL " << Globals::glVersion << " and glsl version " << Globals::glShadingLanguageVersion << " !";
 	//FIN INIT//
 	RenderRoot *root = new RenderRoot(); 
-    viewer->addRenderable(suzanne);
+    viewer->addRenderable(seagul);
 
     //ObjLoader test
     /*ObjLoader *cube = new ObjLoader("obj_files/cube2");
@@ -123,8 +124,8 @@ int main(int argc, char** argv) {
 	/* root->addChild("diver", diver); */
 	
 	//Skybox
-    Skybox *skybox = new Skybox(100);
-    root->addChild("skybox", skybox);
+    /* Skybox *skybox = new Skybox(100); */
+    /* root->addChild("skybox", skybox); */
 
     // Pipe
     // TODO : put this in Dimensions
