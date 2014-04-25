@@ -30,11 +30,11 @@ void Viewer::init()
 {
     //=== VIEWING PARAMETERS
     //restoreStateFromFile();   // Restore previous viewer state.
+    //help();                   // display help
 
     toogleWireframe = false;  // filled faces
     toogleLight = true;       // light on
     toggleRecord = false;     // recording off
-    //help();                   // display help
 
     if (toogleLight == true)
         glEnable(GL_LIGHTING);
@@ -45,9 +45,11 @@ void Viewer::init()
     setAddKeyFrameKeyboardModifiers(Qt::ControlModifier); // Alt ne marchait pas
 
     //setSceneRadius(5.0f);
-    setSceneRadius(1.0f);
+    setSceneRadius(100.0f);
+	this->camera()->setZNearCoefficient(0.00001);
+	this->camera()->setZClippingCoefficient(1000.0);
 
-    //Added
+	//TODO
     //setAnimationPeriod(20); // 50Hz
 
     list<Renderable *>::iterator it;

@@ -191,7 +191,6 @@ int main(int argc, char** argv) {
 	root->addChild("test", new MarchingCubes());
 
 	//Configure viewer
-	viewer->setSceneRadius(100.0f);
 	viewer->addRenderable(root);
 	
 	//Run main loop.
