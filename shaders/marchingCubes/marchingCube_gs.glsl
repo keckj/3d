@@ -11,7 +11,7 @@ in VS_GS_VERTEX {
 } vertex_in[];
 
 out GS_FS_VERTEX {
-	vec3 pos;
+	vec3 worldPos;
 } vertex_out;
 
 //Nombre de triangle par cas + info sur les 12 cotés
@@ -66,21 +66,21 @@ void main(void) {
 
 		ivec3 triangleData = triTable[tri_table_pos++];
 
-		vertex_out.pos = computeTriangleVertex(
+		vertex_out.worldPos = computeTriangleVertex(
 				vertex_in[0].uvw,
 				vertex_in[0].f0123, vertex_in[0].f4567,
 				triangleData.x
 				);
 		EmitVertex();	
 		
-		vertex_out.pos = computeTriangleVertex(
+		vertex_out.worldPos = computeTriangleVertex(
 				vertex_in[0].uvw,
 				vertex_in[0].f0123, vertex_in[0].f4567,
 				triangleData.y
 				);
 		EmitVertex();	
 		
-		vertex_out.pos = computeTriangleVertex(
+		vertex_out.worldPos = computeTriangleVertex(
 				vertex_in[0].uvw,
 				vertex_in[0].f0123, vertex_in[0].f4567,
 				triangleData.z

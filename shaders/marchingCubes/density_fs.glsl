@@ -12,6 +12,12 @@ uniform vec2 textureSize;
 
 uniform vec3 worldSize = vec3(100,100,100);
 
+//transition douce 
+float  smoothy(float  t) { return t*t*(3-2*t); }
+vec2 smoothy(vec2 t) { return t*t*(3-2*t); }
+vec3 smoothy(vec3 t) { return t*t*(3-2*t); }
+vec4 smoothy(vec4 t) { return t*t*(3-2*t); }
+
 float metaball(vec3 xyz, vec3 center) {
 	vec3 v = xyz - center;
 	return 1/dot(v,v);

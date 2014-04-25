@@ -5,6 +5,7 @@
 #include "mc_utils.h"
 #include "perlinTexture3D.h"
 #include "perlin.h"
+#include "utils.h"
 
 unsigned int MarchingCubes::_triTableUBO = 0;
 unsigned int MarchingCubes::_lookupTableUBO = 0;
@@ -16,7 +17,7 @@ MarchingCubes::MarchingCubes(unsigned int width, unsigned int height, unsigned i
         _voxelWidth(voxelSize), _voxelHeight(voxelSize), _voxelLength(voxelSize),
         _drawProgram(0), _densityProgram(0), _normalOcclusionProgram(0), _marchingCubesProgram(0),
 		_vertexVBO(0), _fullscreenQuadVBO(0), _marchingCubesLowerLeftXY_VBO(0),           
-		_marchingCubesFeedbackVertexTBO(0), _marchingCubesFeedbackNormalsTBO(0), _nTriangles(0),
+		_marchingCubesFeedbackVertexTBO(0), _nTriangles(0),
 		_generalDataUBO(0)
 {
 
@@ -46,7 +47,7 @@ MarchingCubes::MarchingCubes(unsigned int width, unsigned int height, unsigned i
         _density->addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
         _density->bindAndApplyParameters(0); //create texture and apply parameters
 
-        _normals_occlusion = new Texture3D(_textureWidth, _textureHeight,_textureLength, GL_RGBA8, 0, GL_RGBA, GL_UNSIGNED_INT);
+        _normals_occlusion = new Texture3D(_textureWidth, _textureHeight,_textureLength, GL_RGBA32F, 0, GL_RGBA, GL_FLOAT);
         _normals_occlusion->addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_CLAMP));
         _normals_occlusion->addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_CLAMP));
         _normals_occlusion->addParameter(Parameter(GL_TEXTURE_WRAP_R, GL_CLAMP));
@@ -54,25 +55,14 @@ MarchingCubes::MarchingCubes(unsigned int width, unsigned int height, unsigned i
         _normals_occlusion->addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
         _normals_occlusion->bindAndApplyParameters(1); //create texture and apply parameters
 
-        //double seed[] = {1,2,3};
-        //_random = new PerlinTexture3D(_textureWidth, _textureHeight, _textureLength, seed);
-        //_random->addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_REPEAT));
-        //_random->addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_REPEAT));
-        //_random->addParameter(Parameter(GL_TEXTURE_WRAP_R, GL_REPEAT));
-        //_random->addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-        //_random->addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-        //_random->generateMipMap();
-
         generateQuads();
-        makeDrawProgram();
-
         generateFullScreenQuad();
-        makeDensityProgram();
-
-        makeNormalOcclusionProgram();
-
         generateMarchingCubesPoints();
+
+        makeDensityProgram();
+        makeNormalOcclusionProgram();
         makeMarchingCubesProgram();
+        makeDrawProgram();
 
 		computeDensitiesAndNormals();
 		marchCubes();
@@ -113,40 +103,14 @@ void MarchingCubes::computeDensitiesAndNormals() {
 
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _density->getTextureId(), 0); //level 0 
 
-        // Set the list of draw buffers.
         static const GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-        glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
+        glDrawBuffers(1, DrawBuffers); 
 
-        //Always check that our framebuffer is ok
-        switch(glCheckFramebufferStatus(GL_FRAMEBUFFER))  {
-                case GL_FRAMEBUFFER_COMPLETE:
-                        log_console.infoStream() << "Framebuffer complete !";
-                        break;
-                case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
-                        log_console.errorStream() << "Framebuffer incomplete layer targets !";
-                        exit(1);
-                        break;
-                case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-                        log_console.errorStream() << "Framebuffer incomplete attachement !";
-                        exit(1);
-                        break;
-                case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-                        log_console.errorStream() << "Framebuffer missing attachment !";
-                        exit(1);
-                        break;
-                case GL_FRAMEBUFFER_UNSUPPORTED:
-                        log_console.errorStream() << "Framebuffer unsupported !";
-                        exit(1);
-                        break;
-                default:
-                        log_console.errorStream() << "Something went wrong when configuring the framebuffer !";
-                        exit(1);
-        }
+		Utils::checkFrameBufferStatus();
 
         // Render on the whole framebuffer, complete from the lower left corner to the upper right
         glPushAttrib(GL_VIEWPORT_BIT);
         glViewport(0,0,_textureWidth,_textureHeight); 
-
 
         _densityProgram->use();
         glUniform1i(_densityUniformLocs["totalLayers"], _textureLength);
@@ -162,7 +126,10 @@ void MarchingCubes::computeDensitiesAndNormals() {
         //Render full screen triangle to generate normals and occlusion texture
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _normals_occlusion->getTextureId(), 0); 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        _normalOcclusionProgram->use();
+		
+		Utils::checkFrameBufferStatus();
+        
+		_normalOcclusionProgram->use();
 
         glBindBufferBase(GL_UNIFORM_BUFFER, 0 , _poissonDistributionsUBO);
         glBindBufferBase(GL_UNIFORM_BUFFER, 1 , _generalDataUBO);
@@ -213,7 +180,7 @@ void MarchingCubes::marchCubes() {
         glBindBuffer(GL_ARRAY_BUFFER, _marchingCubesFeedbackVertexTBO);
         glBufferData(GL_ARRAY_BUFFER, primitivesGenerated*4*3*sizeof(GLfloat), 0, GL_STATIC_READ);
 
-        const GLchar* feedbackVaryings[] = { "GS_FS_VERTEX.pos" };
+        const GLchar* feedbackVaryings[] = { "GS_FS_VERTEX.worldPos" };
         
         glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, _marchingCubesFeedbackVertexTBO);
         glTransformFeedbackVaryings(_marchingCubesProgram->getProgramId(), 1, feedbackVaryings, GL_SEPARATE_ATTRIBS);
@@ -317,7 +284,7 @@ void MarchingCubes::generateMarchingCubesPoints() {
 
 void MarchingCubes::makeDrawProgram() {
         _drawProgram = new Program("MC Draw");
-        _drawProgram->bindAttribLocations("0", "vertex_position");
+        _drawProgram->bindAttribLocation(0, "vertex_position");
         _drawProgram->bindFragDataLocation(0, "out_colour");
         _drawProgram->bindUniformBufferLocations("0", "generalData");
 
@@ -326,6 +293,7 @@ void MarchingCubes::makeDrawProgram() {
 
         _drawProgram->link();
         _drawUniformLocs = _drawProgram->getUniformLocationsMap("projectionMatrix viewMatrix", true);
+		_drawProgram->bindTextures(&_normals_occlusion, "normals_occlusion");
 }
 
 void MarchingCubes::makeDensityProgram() {
@@ -367,8 +335,8 @@ void MarchingCubes::makeMarchingCubesProgram() {
 
         _marchingCubesProgram->link();
 
-        Texture *tex[] = {_density, _normals_occlusion};
-        _marchingCubesProgram->bindTextures(tex, "density normals_occlusion", false);
+        Texture *tex[] = {_density};
+        _marchingCubesProgram->bindTextures(tex, "density");
 }
 
 void MarchingCubes::generateUniformBlockBuffers() {

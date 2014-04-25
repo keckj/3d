@@ -38,6 +38,8 @@ namespace Utils {
 		}
 
 	const std::string toStringMemory(unsigned long bytes);
+
+	void checkFrameBufferStatus();
 }
 
 

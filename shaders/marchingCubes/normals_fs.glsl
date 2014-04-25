@@ -6,7 +6,6 @@ in GS_FS_VERTEX {
 	flat int instanceID;
 } vertex_in;
 
-
 layout(std140) uniform generalData {
 	vec3 textureSize;
 	vec3 voxelGridSize;
@@ -28,8 +27,8 @@ float computeAmbiantOcclusion(vec3 pos);
 
 void main(void)
 {
-	vec3 pos = vec3(gl_FragCoord.xy/textureSize.xy, (vertex_in.instanceID+0.5)/textureSize.z);
 	vec4 step = vec4(1/voxelGridSize,0);
+	vec3 pos = vec3(gl_FragCoord.xy/textureSize.xy, vertex_in.instanceID/textureSize.z) + step.xyz/2;
 
 	vec3 normal = normalize(- computeGradient(pos, step));
 	float occlusion = computeAmbiantOcclusion(pos); 
@@ -41,11 +40,10 @@ void main(void)
 //calcul du gradient de la densité au point pos
 vec3 computeGradient(vec3 pos, vec4 step) {
 	
-	vec3 gradient = vec3(
-					(texture(density, pos + step.xww) - texture(density, pos - step.xww)).x,
-				    (texture(density, pos + step.wyw) - texture(density, pos - step.wyw)).x,
-				    (texture(density, pos + step.wwz) - texture(density, pos - step.wwz)).x
-				 );
+	vec3 gradient;
+	gradient.x = (texture(density, pos + step.xww) - texture(density, pos - step.xww)).x;
+	gradient.y = (texture(density, pos + step.wyw) - texture(density, pos - step.wyw)).x;
+	gradient.z = (texture(density, pos + step.wwz) - texture(density, pos - step.wwz)).x;
 
 	return gradient;
 }
@@ -58,9 +56,10 @@ float computeAmbiantOcclusion(vec3 pos) {
 	
 	int ray, step;
 
-	float factor = 0.2; //20% of map
-	float shortStep = factor/32;
-	float longStep = factor/4;
+	int nVoxel = 20;
+	float factor = float(nVoxel)/float(voxelGridSize);
+	float shortStep = factor/16;
+	float longStep = factor;
 
 	float visibility = 0.0f;
 	
@@ -78,7 +77,7 @@ float computeAmbiantOcclusion(vec3 pos) {
 		//sample longue portée
 		for(step = 1; step <= 4; step++) {
 			float d = texture(density, pos + step * longStep * dir);	
-			ray_visibility *= clamp(d * 9999,0,1);  
+			ray_visibility *= clamp(d * 9999,0,1); 
 		}
 
 		visibility += ray_visibility;
