@@ -7,11 +7,13 @@
 #include "perlin.h"
 #include "utils.h"
 
+bool MarchingCubes::_init = false;
 unsigned int MarchingCubes::_triTableUBO = 0;
 unsigned int MarchingCubes::_lookupTableUBO = 0;
 unsigned int MarchingCubes::_poissonDistributionsUBO = 0;
 
 MarchingCubes::MarchingCubes(unsigned int width, unsigned int height, unsigned int length, float voxelSize) :
+		_density(0), _normals_occlusion(0), _terrain_texture(0),
         _textureWidth(width), _textureHeight(height), _textureLength(length),
         _voxelGridWidth(width-1), _voxelGridHeight(height-1), _voxelGridLength(length-1), 
         _voxelWidth(voxelSize), _voxelHeight(voxelSize), _voxelLength(voxelSize),
@@ -21,7 +23,7 @@ MarchingCubes::MarchingCubes(unsigned int width, unsigned int height, unsigned i
 		_generalDataUBO(0)
 {
 
-        if(_triTableUBO == 0 && _lookupTableUBO == 0) {
+        if(!_init) {
                 generateUniformBlockBuffers();
         }
 
@@ -45,7 +47,7 @@ MarchingCubes::MarchingCubes(unsigned int width, unsigned int height, unsigned i
         _density->addParameter(Parameter(GL_TEXTURE_WRAP_R, GL_CLAMP));
         _density->addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
         _density->addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-        _density->bindAndApplyParameters(0); //create texture and apply parameters
+        _density->bindAndApplyParameters(0); //allocate texture and apply parameters
 
         _normals_occlusion = new Texture3D(_textureWidth, _textureHeight,_textureLength, GL_RGBA32F, 0, GL_RGBA, GL_FLOAT);
         _normals_occlusion->addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_CLAMP));
@@ -53,7 +55,15 @@ MarchingCubes::MarchingCubes(unsigned int width, unsigned int height, unsigned i
         _normals_occlusion->addParameter(Parameter(GL_TEXTURE_WRAP_R, GL_CLAMP));
         _normals_occlusion->addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
         _normals_occlusion->addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-        _normals_occlusion->bindAndApplyParameters(1); //create texture and apply parameters
+        _normals_occlusion->bindAndApplyParameters(1); //allocate texture and apply parameters
+
+		_terrain_texture = new Texture2D("textures/terrain/striation.png", "png");
+        _terrain_texture->addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_REPEAT));
+        _terrain_texture->addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_REPEAT));
+        _terrain_texture->addParameter(Parameter(GL_TEXTURE_WRAP_R, GL_REPEAT));
+        _terrain_texture->addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+        _terrain_texture->addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+
 
         generateQuads();
         generateFullScreenQuad();
@@ -69,6 +79,22 @@ MarchingCubes::MarchingCubes(unsigned int width, unsigned int height, unsigned i
 }
 
 MarchingCubes::~MarchingCubes() {
+		Texture *textures[] = {_density, _normals_occlusion, _terrain_texture};
+		Program *programs[] = {_drawProgram, _densityProgram, _normalOcclusionProgram, _marchingCubesProgram};
+		unsigned int buffers[] = {_vertexVBO, _fullscreenQuadVBO, _marchingCubesLowerLeftXY_VBO, _marchingCubesFeedbackVertexTBO, _generalDataUBO};
+
+		for (int i = 0; i < 3; i++) {
+			delete textures[i];
+		}
+		
+		for (int i = 0; i < 4; i++) {
+			delete programs[i];
+		}
+
+		for (int i = 0; i < 5; i++) {
+			if(glIsBuffer(buffers[i]))
+				glDeleteBuffers(1, &buffers[i]);
+		}
 }
 
 void MarchingCubes::drawDownwards(const float *currentTransformationMatrix) {
@@ -293,7 +319,9 @@ void MarchingCubes::makeDrawProgram() {
 
         _drawProgram->link();
         _drawUniformLocs = _drawProgram->getUniformLocationsMap("projectionMatrix viewMatrix", true);
-		_drawProgram->bindTextures(&_normals_occlusion, "normals_occlusion");
+        
+		Texture *tex[] = {_terrain_texture, _normals_occlusion};
+		_drawProgram->bindTextures(tex, "terrain_texture normals_occlusion", false);
 }
 
 void MarchingCubes::makeDensityProgram() {
@@ -335,8 +363,7 @@ void MarchingCubes::makeMarchingCubesProgram() {
 
         _marchingCubesProgram->link();
 
-        Texture *tex[] = {_density};
-        _marchingCubesProgram->bindTextures(tex, "density");
+        _marchingCubesProgram->bindTextures(&_density, "density");
 }
 
 void MarchingCubes::generateUniformBlockBuffers() {

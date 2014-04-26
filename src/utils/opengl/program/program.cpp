@@ -179,7 +179,8 @@ void Program::use() const {
 	log_console.debugStream() << "Switching to program " << logProgramHead;
 
 	glUseProgram(programId);
-
+	
+	std::cout << "NB TEXTURES " << linkedTextures.size() << std::endl;
 	std::vector<unsigned int> availableTextureLocations = Texture::requestTextures(linkedTextures.size());
 	std::vector<unsigned int>::iterator av_loc_it = availableTextureLocations.begin();
 
@@ -308,7 +309,7 @@ void Program::bindUniformBlocks(bool assert) {
 			std::cout << "\t\t\tBlock data size : " << Utils::toStringMemory(varCount) << std::endl;
 	
 			if(varCount >= Globals::glMaxUniformBlockSize) {
-				log_console.critStream() << "MAX_UNIFORM_BLOCK_SIZE is " 
+				log_console.errorStream() << "MAX_UNIFORM_BLOCK_SIZE is " 
 					<< Utils::toStringMemory(Globals::glMaxUniformBlockSize) << " !";
 				exit(1);
 			}
@@ -372,8 +373,10 @@ void Program::bindTextures(Texture **textures, std::string uniformNames, bool as
 	std::vector<int>::iterator it = locations.begin();
 	int i = 0;
 	for (; it != locations.end(); ++it) {
-		if(*it == -1)
+		if(*it == -1) {
+			i++;
 			continue;
+		}
 
 		linkedTextures.push_back(std::pair<int, Texture*>(*it, textures[i++]));
 	}

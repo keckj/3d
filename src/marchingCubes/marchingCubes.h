@@ -5,6 +5,7 @@
 #include "renderTree.h"
 #include "program.h"
 #include "consts.h"
+#include "texture2D.h"
 #include "texture3D.h"
 
 //Les struct à envoyer en uniform
@@ -59,6 +60,7 @@ class MarchingCubes : public RenderTree {
 	private:
 		Texture *_density;
 		Texture *_normals_occlusion;
+		Texture *_terrain_texture;
 
 		unsigned int _textureWidth, _textureHeight, _textureLength;
 		unsigned int _voxelGridWidth, _voxelGridHeight, _voxelGridLength;
@@ -86,8 +88,9 @@ class MarchingCubes : public RenderTree {
 		void generateQuads();
 		void generateFullScreenQuad();
 		void generateMarchingCubesPoints();
-	
+		
 		static void generateUniformBlockBuffers();
+		static bool _init;
 		static unsigned int _triTableUBO, _lookupTableUBO, _poissonDistributionsUBO;
 };
 

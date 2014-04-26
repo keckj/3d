@@ -17,7 +17,9 @@ Texture2D::Texture2D(std::string const &src, std::string const &type) :
 		exit(1);
 	}
 
-	log_console.infoStream() << logTextureHead << "Created 2D TEXTURE from '" << src << "' with type '" << type << "'.";
+	log_console.infoStream() << logTextureHead << "Created 2D TEXTURE from '" << src
+		<< "' with type '" << type 
+		<< "' and size " << image.width() << "x" << image.height() <<" !";
 }
 
 Texture2D::~Texture2D() {
