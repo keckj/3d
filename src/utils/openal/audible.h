@@ -36,13 +36,16 @@ class Audible {
 		static void setListenerOrientation(const qglviewer::Vec &v1, const qglviewer::Vec &v2);
 		
 		static void initOpenALContext();
+		static void closeOpenALContext();
 
 	private:
 		std::string _sourcePath;
 		unsigned int _source;
 		unsigned int _buffer;
-		
+
 		static bool _init;
+		static ALCdevice* _devices;
+		static ALCcontext* _context;
 };
 
 

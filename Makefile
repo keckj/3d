@@ -23,7 +23,7 @@ VIEWER_LIBS = -framework Glut -framework OpenGL -framework AGL -framework QtXml 
 VIEWER_DEFINES = -D_REENTRANT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 
 CUDA_INCLUDEPATH = -I/Developer/NVIDIA/CUDA-5.5/include
-CUDA_LIBPATH = -L/Developer/NVIDIA/CUDA-5.5/lib
+CUDA_LIBPATH = -L/Developer/NVIDIA/CUDA-5.5/lib 
 CUDA_LIBS = -lcudart
 
 OPENAL_INCLUDEPATH =
@@ -41,8 +41,8 @@ VIEWER_INCLUDEPATH = -I/usr/include/Qt -I/usr/include/QtCore -I/usr/include/QtGu
 VIEWER_LIBS = -lGLU -lglut -lGL -lQtXml -lQtOpenGL -lQtGui -lQtCore -lpthread -lGLEW
 VIEWER_DEFINES = -D_REENTRANT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 
-CUDA_INCLUDEPATH = -I/usr/local/cuda-5.5/include #-I/usr/local/cuda-6.0/include
-CUDA_LIBPATH = -L/usr/local/cuda-5.5/lib64 -L/usr/lib/nvidia-331 #-L/usr/local/cuda-6.0/lib64
+CUDA_INCLUDEPATH = -I/usr/local/cuda-5.5/include -I/usr/local/cuda-6.0/include
+CUDA_LIBPATH = -L/usr/local/cuda-5.5/lib64 -L/usr/lib/nvidia-331 -L/usr/local/cuda-6.0/lib64
 CUDA_LIBS = -lcuda -lcudart
 
 OPENAL_INCLUDEPATH =

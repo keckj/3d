@@ -1,6 +1,7 @@
 #ifndef _CUSTOM_HEADERS_H
 #define _CUSTOM_HEADERS_H
 
+//always first !
 #include <GL/glew.h>
 
 #ifndef __APPLE__

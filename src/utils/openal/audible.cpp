@@ -1,5 +1,9 @@
 
 #include "audible.h"
+		
+bool Audible::_init = false;
+ALCdevice* Audible::_devices = 0;
+ALCcontext* Audible::_context = 0;
 
 Audible::Audible(std::string const &sourcePath, 
 		const qglviewer::Vec &initialSourcePosition,
@@ -83,8 +87,8 @@ void Audible::initOpenALContext() {
 		printf("\t\t\t----------\n");
 	}
 	
-	ALCdevice *devices = alcOpenDevice(NULL);
-	if(!devices) {
+	_devices = alcOpenDevice(NULL);
+	if(!_devices) {
 		log_console.errorStream() << "\tFailed to open openAL devices !";
 		exit(1);
 	}
@@ -92,12 +96,18 @@ void Audible::initOpenALContext() {
 		log_console.infoStream() << "\tInitialized OpenAL devices !";
 	}
 
-	ALCcontext *context = alcCreateContext(devices, NULL);
-	if (!alcMakeContextCurrent(context)) {
+	_context = alcCreateContext(_devices, NULL);
+	if (!alcMakeContextCurrent(_context)) {
 		log_console.errorStream() << "\tFailed to initialize openAL context !";
 		exit(1);
 	}
 	else {
 		log_console.infoStream() << "\tInitialized an OpenAL context !";
 	}
+}
+		
+void Audible::closeOpenALContext() {
+	alcMakeContextCurrent(NULL);
+    alcDestroyContext(_context);
+    alcCloseDevice(_devices);
 }

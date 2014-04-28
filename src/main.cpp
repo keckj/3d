@@ -125,17 +125,16 @@ int main(int argc, char** argv) {
 
 
 	//Waves
-	/*Waves *waves = new Waves(0.0,0.0,100.0,100.0,10.0);
+	Waves *waves = new Waves(0.0,0.0,100.0,100.0,10.0);
 	root->addChild("vagues", waves);
-    */
     
 	// Diver
-	/* SeaDiver *diver = new SeaDiver(); */
-	/* root->addChild("diver", diver); */
+	//SeaDiver *diver = new SeaDiver(); 
+	//root->addChild("diver", diver); 
 	
 	//Skybox
-    /*Skybox *skybox = new Skybox(100);
-    root->addChild("skybox", skybox);*/
+	Skybox *skybox = new Skybox(100);
+    root->addChild("skybox", skybox);
 
     // Pipe
     // TODO : put this in Dimensions
@@ -150,7 +149,7 @@ int main(int argc, char** argv) {
     /* viewer.addRenderable(pipe); */
 
     
-/*	unsigned int nParticles = 1000;
+	unsigned int nParticles = 1000;
 	unsigned int nLevel = 8;
 	ParticleGroup *p = new ParticleGroup(nLevel*nParticles,(nLevel-1)*nParticles);
 
@@ -184,7 +183,6 @@ int main(int argc, char** argv) {
 	p->scale(10);
 	p->translate(0,10,0);
 	root->addChild("particules", p);
-*/
 
 	//root->addChild("test", new MarchingCubes());
 
@@ -194,6 +192,7 @@ int main(int argc, char** argv) {
 	//Run main loop.
 	application.exec();
 	
+	Audible::closeOpenALContext();
 	alutExit();
 
 	return EXIT_SUCCESS;
