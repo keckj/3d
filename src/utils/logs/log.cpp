@@ -19,8 +19,8 @@ Category& log_file = Category::getInstance(std::string("log_file"));
 
 namespace log4cpp {
 
-	Priority::PriorityLevel priority = Priority::DEBUG;
-	//Priority::PriorityLevel priority = Priority::INFO;
+	//Priority::PriorityLevel priority = Priority::DEBUG;
+	Priority::PriorityLevel priority = Priority::INFO;
 
 	void initLogs() {
 

@@ -84,7 +84,7 @@ void main()
                 specular = vec3(0.0);
             } else {
                 specular = attenuation * vec3(lights[i].specular) * vec3(mat.specular);
-                specular *= pow(max(0.0, dot(reflect(-lightDir, normalDir), viewDir)), mat.shininess);
+                specular *= pow(max(0.0, dot(reflect(-lightDir, normalDir), viewDir)), max(mat.shininess,0.000001)); // pow(x,0) = NaN :(
             }
 
             totalLight += diffuse + specular;

@@ -12,7 +12,7 @@ ObjLoader::ObjLoader (std::string const& file, std::string const& basepath) : ob
         exit(EXIT_FAILURE);
     }
 
-    print();
+    //print();
 }
 
 ObjLoader::~ObjLoader() {

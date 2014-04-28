@@ -180,7 +180,7 @@ void Program::use() const {
 
 	glUseProgram(programId);
 	
-	std::cout << "NB TEXTURES " << linkedTextures.size() << std::endl;
+	//SPAM std::cout << "NB TEXTURES " << linkedTextures.size() << std::endl;
 	std::vector<unsigned int> availableTextureLocations = Texture::requestTextures(linkedTextures.size());
 	std::vector<unsigned int>::iterator av_loc_it = availableTextureLocations.begin();
 

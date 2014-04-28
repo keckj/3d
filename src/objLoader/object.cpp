@@ -63,7 +63,7 @@ void Object::createUBOs() {
                                 0.0f,
                                 mat.shininess,
                                 mat.dissolve,
-                                shape.material.diffuse_texname.length() > 0 ? 1.0f : 0.0f,
+                                shape.material.diffuse_texname.empty() ? 0.0f : 1.0f,
                                 0.0f
                                };
 
