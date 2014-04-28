@@ -98,9 +98,13 @@ void inline Object::makeProgram() {
     nTextures = 0;
     Texture2D *tex_d = NULL;
 
-    if (shape.material.diffuse_texname.length() > 0) {
+    if (!shape.material.diffuse_texname.empty()) {
         nTextures++;
-        std::string texname_d = shape.material.diffuse_texname.substr(0, shape.material.diffuse_texname.size()-1); //last char shouldn't be there
+        // Remove CR if there is one
+        std::string texname_d = shape.material.diffuse_texname;
+        if (texname_d[texname_d.size() - 1] == '\r')
+            texname_d.erase(texname_d.size() - 1);
+
         tex_d = new Texture2D(texname_d, "jpg");
         tex_d->addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_REPEAT));
 		tex_d->addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_REPEAT));
