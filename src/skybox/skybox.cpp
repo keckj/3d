@@ -24,9 +24,10 @@
 
 #include "textureCube.h"
 
-Skybox::Skybox (float t) : t(t), textureCube() {
+Skybox::Skybox (float t) : t(t) {
     // Utilisation de la texture CubeMap
-    textureCube.bindAndApplyParameters(0);
+    textureCube = new TextureCube();
+    textureCube->bindAndApplyParameters(0);
 }
 
 Skybox::~Skybox () {
@@ -105,5 +106,9 @@ void Skybox::DrawSkyBox (float camera_yaw, float camera_pitch) {
     glTexCoord3f(t,-t,t); glVertex3f(t,-t,t);
     glTexCoord3f(t,t,t); glVertex3f(t,t,t);
     glEnd();
+}
+
+TextureCube* Skybox::getCubeMap() {
+    return textureCube; 
 }
 

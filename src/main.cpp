@@ -27,6 +27,7 @@
 #include "audible.h"
 #include "splines/CardinalSpline.h"
 #include "skybox.h"
+#include "textureCube.h"
 #include "ObjLoader.h"
 #include "object.h"
 #include "marchingCubes.h"
@@ -58,9 +59,9 @@ int main(int argc, char** argv) {
     log_console.infoStream() << "[Glut Init] ";
 
     // ObjLoader
-    ObjLoader *cube = new ObjLoader("obj_files/cube2");
+    /*ObjLoader *cube = new ObjLoader("obj_files/cube2");
     ObjLoader *mouette = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/");
-    ObjLoader *shark = new ObjLoader("obj_files/White_Shark/wshark", "obj_files/White_Shark/");
+    ObjLoader *shark = new ObjLoader("obj_files/White_Shark/wshark", "obj_files/White_Shark/");*/
 
     // Read command lines arguments.
     QApplication application(argc,argv);
@@ -92,7 +93,7 @@ int main(int argc, char** argv) {
 	RenderRoot *root = new RenderRoot(); 
 
     //ObjLoader test
-    vector<Object*> vecc = cube->getObjects();
+    /*vector<Object*> vecc = cube->getObjects();
     for (unsigned int i = 0; i < vecc.size(); i++) {
         log_console.infoStream() << "Adding child: cube2_" << i;
         stringstream s;
@@ -116,18 +117,13 @@ int main(int argc, char** argv) {
         root->addChild(s.str(), vecs[i]);
         vecs[i]->scale(0.01);
         vecs[i]->translate(20.0,0.0,0.0);
-    }
+    }*/
 
 	//Terrain
 	//Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); 
 	//terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2)); 
 	//root->addChild("terrain", terrain);
-
-
-	//Waves
-	Waves *waves = new Waves(0.0,0.0,100.0,100.0,10.0);
-	root->addChild("vagues", waves);
-    
+	    
 	// Diver
 	//SeaDiver *diver = new SeaDiver(); 
 	//root->addChild("diver", diver); 
@@ -135,6 +131,11 @@ int main(int argc, char** argv) {
 	//Skybox
 	Skybox *skybox = new Skybox(100);
     root->addChild("skybox", skybox);
+
+    //Waves
+    TextureCube *cubeMapTexture = skybox->getCubeMap();
+	Waves *waves = new Waves(0.0,0.0,100.0,100.0,10.0, cubeMapTexture);
+	root->addChild("vagues", waves);
 
     // Pipe
     // TODO : put this in Dimensions
@@ -149,7 +150,7 @@ int main(int argc, char** argv) {
     /* viewer.addRenderable(pipe); */
 
     
-	unsigned int nParticles = 1000;
+	/*unsigned int nParticles = 1000;
 	unsigned int nLevel = 8;
 	ParticleGroup *p = new ParticleGroup(nLevel*nParticles,(nLevel-1)*nParticles);
 
@@ -182,7 +183,7 @@ int main(int argc, char** argv) {
 	p->releaseParticles();
 	p->scale(10);
 	p->translate(0,10,0);
-	root->addChild("particules", p);
+	root->addChild("particules", p);*/
 
 	//root->addChild("test", new MarchingCubes());
 

@@ -19,12 +19,13 @@ class Skybox : public RenderTree {
         void Render (float camera_yaw, float camera_pitch);
         void Finalize();
 		void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
+        TextureCube* getCubeMap();
 
     private:
         void DrawSkyBox (float camera_yaw, float camera_pitch);
         float t;
 
-        TextureCube textureCube;
+        TextureCube *textureCube;
         GLuint cube_map_texture_ID;
 };
 
