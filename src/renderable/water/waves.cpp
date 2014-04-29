@@ -11,10 +11,10 @@
 #include "viewer.h"
 #include "waves.h"
 #include "consts.h"
+#include "matrix.h"
 
+using namespace Matrix;
 
-//static const int N_MOBILES_X = 256;
-//static const int N_MOBILES_Z = 256;
 #define N_MOBILES_X 512
 #define N_MOBILES_Z 512
 
@@ -86,7 +86,7 @@ program("Waves") {
 	program.link();
 
     // -- uniforms --
-	uniforms_vec = program.getUniformLocations("modelMatrix viewMatrix projectionMatrix time deltaX deltaZ", true);
+	uniformLocs = program.getUniformLocationsMap("modelMatrix viewMatrix projectionMatrix invView time deltaX deltaZ", false);
 
     // -- cube map --
     if (cubeMapTexture == NULL) {
@@ -121,17 +121,22 @@ program("Waves") {
 
 void Waves::drawDownwards(const float *currentTransformationMatrix) {
         
-    static float *proj = new float[16], *view = new float[16];
+    float *proj = new float[16], *view = new float[16];
 
 	program.use();
+
 	glGetFloatv(GL_MODELVIEW_MATRIX, view);
 	glGetFloatv(GL_PROJECTION_MATRIX, proj);
-	glUniformMatrix4fv(uniforms_vec[0], 1, GL_TRUE, currentTransformationMatrix);
-	glUniformMatrix4fv(uniforms_vec[1], 1, GL_FALSE, view);
-	glUniformMatrix4fv(uniforms_vec[2], 1, GL_FALSE, proj);
-    glUniform1f(uniforms_vec[3], time);
-    glUniform1f(uniforms_vec[4], deltaX);
-    glUniform1f(uniforms_vec[5], deltaZ);
+    float *viewInv = inverseMat4f(view);
+    //std::cout << viewInv[0] << "/" << viewInv[1] << "/" << viewInv[2] << "/" << viewInv[3] << "\n" << viewInv[4] << "/" << viewInv[5] << "/" << viewInv[6] << "/" << viewInv[7] << "\n" << viewInv[8] << "/" << viewInv[9] << "/" << viewInv[10] << "/" << viewInv[11] << "\n" << viewInv[12] << "/" << viewInv[13] << "/" << viewInv[14] << "/" << viewInv[15] << "\n\n"; 
+
+	glUniformMatrix4fv(uniformLocs["modelMatrix"], 1, GL_TRUE, currentTransformationMatrix);
+	glUniformMatrix4fv(uniformLocs["viewMatrix"], 1, GL_FALSE, view);
+	glUniformMatrix4fv(uniformLocs["projectionMatrix"], 1, GL_FALSE, proj);
+    glUniformMatrix4fv(uniformLocs["invView"], 1, GL_FALSE, viewInv);
+    glUniform1f(uniformLocs["time"], time);
+    glUniform1f(uniformLocs["deltaX"], deltaX);
+    glUniform1f(uniformLocs["deltaZ"], deltaZ);
 
     glBindVertexArray(vertexArray);    
 

@@ -7,6 +7,8 @@
 
 #include "object.h"
 
+using namespace Matrix;
+
 Object::Object(tinyobj::shape_t shape) : 
     shape(shape), program(0), textures(0), uniformLocs(), VAO(0), VBO(0)
 {
@@ -91,8 +93,7 @@ void inline Object::makeProgram() {
 
     program->link();
 
-    //this->uniformLocs = this->program->getUniformLocationsMap("modelMatrix viewMatrix projectionMatrix normalMatrix viewMatrixInv", true);
-    uniformLocs = this->program->getUniformLocationsMap("modelMatrix viewMatrix projectionMatrix", true);
+    uniformLocs = program->getUniformLocationsMap("modelMatrix viewMatrix projectionMatrix normalMatrix viewMatrixInv", false);
 
     // We only use map_Kd in the shader
     nTextures = 0;
@@ -155,15 +156,21 @@ void inline Object::sendToDevice() {
 }
 
 void Object::drawDownwards(const float *currentTransformationMatrix) {
-	static float *proj = new float[16], *view = new float[16];
+	float *proj = new float[16], *view = new float[16];
 
 	program->use();
         
 	glGetFloatv(GL_MODELVIEW_MATRIX, view);
 	glGetFloatv(GL_PROJECTION_MATRIX, proj);
+    float *normalMatrix = transpose(inverseMat3f(mat3f(multMat4f(view, transpose(currentTransformationMatrix)))), 3);
+    //float *viewInv = inverseMat4f(view);
+
 	glUniformMatrix4fv(uniformLocs["projectionMatrix"], 1, GL_FALSE, proj);
 	glUniformMatrix4fv(uniformLocs["viewMatrix"], 1, GL_FALSE, view);
 	glUniformMatrix4fv(uniformLocs["modelMatrix"], 1, GL_TRUE, currentTransformationMatrix);
+    glUniformMatrix3fv(uniformLocs["normalMatrix"], 1, GL_FALSE, normalMatrix);
+    //glUniformMatrix4fv(uniformLocs["viewInv"], 1, GL_FALSE, viewInv);
+
 
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, lightsUBO);
     glBindBufferBase(GL_UNIFORM_BUFFER, 1, materialUBO);

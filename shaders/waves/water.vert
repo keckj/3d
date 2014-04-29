@@ -1,17 +1,19 @@
 #version 150
 
-in vec3 position;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
+uniform mat4 invView;
+
 uniform float time;
 uniform float deltaX;
 uniform float deltaZ;
 
 uniform	float fogDensity = 0.05;
 uniform	float underWaterFogEnd = 30.0;
-uniform float waterHeight = 10.0;
 uniform vec3 sunDir = vec3(100.0,100.0,0.0);
+
+in vec3 position;
 
 out vec3 fPosition;
 out vec3 fNormal;
@@ -22,6 +24,7 @@ out float fogFactor;
 
 vec3 underWaterFogColor = vec3(57.0/256.0,88.0/256.0,121.0/256.0);
 vec3 cameraPos;
+float waterHeight = modelMatrix[3][1];
 float waveHeight = 0.6;
 
 
@@ -92,10 +95,9 @@ void computeFogColor(in vec4 position) {
 
     vec3 rayDir = normalize(cameraPos - position.xyz);
     float distance = length(cameraPos - position.xyz);
-    float hc = cameraPos.y - position.y;//waterHeight * (1.-waveHeight);
-    float hp = position.y - position.y;//waterHeight * (1.-waveHeight);
-    
-    // On évite les if imbriqués pour des raisons de performances
+    float hc = cameraPos.y - position.y;    
+    float hp = position.y - position.y;    
+
     if (hc >= 0 && hp >= 0) {
         // Brouillard exponentiel au dessus de l'eau (soleil de la skybox pris en compte)
         fogFactor = exp( -distance*fogDensity );
@@ -155,12 +157,12 @@ vec3 calcNormals(in vec3 pos) {
 
 void main()
 {
-    mat4 invView = inverse(viewMatrix);
     // Dernière colonne
-    cameraPos = vec3(invView[3][0],invView[3][1],invView[3][2]);
+    //cameraPos = vec3(invView[3]);
+    cameraPos = -viewMatrix[3].xyz * mat3(viewMatrix);
 
     vec4 worldPos = modelMatrix * vec4(position, 1.0);
-    worldPos.g += applyNoise(vec2(worldPos.x, worldPos.z));
+    worldPos.y += applyNoise(vec2(worldPos.x, worldPos.z));
     fPosition = worldPos.xyz;
     fNormal = calcNormals(fPosition);
     computeFogColor(worldPos);
