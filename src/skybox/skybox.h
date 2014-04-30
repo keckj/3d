@@ -13,6 +13,7 @@ class Skybox : public RenderTree {
         ~Skybox ();
 
 		void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
+        Texture* getCubeMap();
 
     private:
         Texture *_cubeMap;

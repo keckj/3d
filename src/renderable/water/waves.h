@@ -5,7 +5,6 @@
 #include "viewer.h"
 #include "program.h"
 
-
 struct Mobile {
     GLfloat x,y,z; // coordinates
 };
@@ -15,7 +14,7 @@ class Waves : public RenderTree
 {
     public:
         ~Waves();
-        Waves(float xPos, float zPos, float xWidth, float zWidth, float meanHeight);
+        Waves(float xPos, float zPos, float xWidth, float zWidth, float meanHeight, Texture *cubeMapTexture);
         
     private:
         float xPos, zPos, xWidth, zWidth, meanHeight, deltaX, deltaZ;
@@ -27,6 +26,7 @@ class Waves : public RenderTree
 
         GLuint *indices;
         int nIndices;
+        GLuint vertexArray;
         GLuint *vertexBuffers;
         Program program;
         std::vector<int> uniforms_vec;

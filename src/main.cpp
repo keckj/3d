@@ -62,9 +62,9 @@ int main(int argc, char** argv) {
     log_console.infoStream() << "[Glut Init] ";
 
     // ObjLoader
-    ObjLoader *cube = new ObjLoader("obj_files/cube2");
+    /*ObjLoader *cube = new ObjLoader("obj_files/cube2");
     ObjLoader *mouette = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/");
-    ObjLoader *shark = new ObjLoader("obj_files/White_Shark/wshark", "obj_files/White_Shark/");
+    ObjLoader *shark = new ObjLoader("obj_files/White_Shark/wshark", "obj_files/White_Shark/");*/
 
     // Read command lines arguments.
     QApplication application(argc,argv);
@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
     root->addChild("skybox", skybox);
 	
 	//Waves
-	Waves *waves = new Waves(0.0,0.0,100.0,100.0,10.0);
+	Waves *waves = new Waves(0.0,0.0,100.0,100.0, 10.0, skybox->getCubeMap());
 	waves->translate(0,0,0);
 	root->addChild("vagues", waves);
 	
@@ -201,12 +201,10 @@ int main(int argc, char** argv) {
     //}
 
 
-
 	// Diver
 	//SeaDiver *diver = new SeaDiver(); 
 	//root->addChild("diver", diver); 
 	
-
 	//Configure viewer
 	viewer->addRenderable(root);
 	

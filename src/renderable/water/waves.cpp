@@ -24,7 +24,7 @@ Waves::~Waves() {
 }
 
 // The drawn square will be centered on (xPos,zPos).
-Waves::Waves(float xPos, float zPos, float xWidth, float zWidth, float meanHeight) :
+Waves::Waves(float xPos, float zPos, float xWidth, float zWidth, float meanHeight, Texture *cubeMapTexture) :
 program("Waves") { 
 
     if (xWidth <= 0.0f || zWidth <= 0.0f || meanHeight <= 0.0f) {
@@ -88,8 +88,15 @@ program("Waves") {
     // -- uniforms --
 	uniforms_vec = program.getUniformLocations("modelMatrix viewMatrix projectionMatrix time deltaX deltaZ", true);
 
-	program.use();
-    
+    // -- cube map --
+    if (cubeMapTexture == NULL) {
+        log_console.errorStream() << "[WAVES.CPP] cubeMapTexture == NULL !";
+        exit(1);
+    }
+    Texture* textures[1];
+    textures[0] = cubeMapTexture;
+    program.bindTextures(textures, "cubeMapTexture", "true");
+
     // -- VBOs --
     vertexBuffers = new GLuint[2];
     glGenBuffers(2, vertexBuffers);
@@ -97,6 +104,18 @@ program("Waves") {
     glBufferData(GL_ARRAY_BUFFER, nMobiles*sizeof(Mobile), mobiles, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffers[1]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, nIndices*sizeof(GLuint), indices, GL_STATIC_DRAW);
+
+    // -- VAO --
+    glGenVertexArrays(1, &vertexArray);
+    glBindVertexArray(vertexArray);
+    {   
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0); // position
+        glEnableVertexAttribArray(0); // 0 <=> position
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffers[1]);
+    }
+    glBindVertexArray(0);
 }
 
 
@@ -114,27 +133,11 @@ void Waves::drawDownwards(const float *currentTransformationMatrix) {
     glUniform1f(uniforms_vec[4], deltaX);
     glUniform1f(uniforms_vec[5], deltaZ);
 
-    /*//Enable the vertex array functionality
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(	3,
-            GL_FLOAT,
-            sizeof(Mobile),
-            mobiles);
-
-    glDrawElements(GL_TRIANGLES, nIndices, GL_UNSIGNED_INT, indices);
-    glDisableClientState(GL_VERTEX_ARRAY);*/
-
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0); // position
-    glEnableVertexAttribArray(0); // 0 <=> position
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffers[1]);
+    glBindVertexArray(vertexArray);    
 
     glDrawElements(GL_TRIANGLES, nIndices, GL_UNSIGNED_INT, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-    //glDisableVertexAttribArray(0); // position
-
+    glBindVertexArray(0);
 	glUseProgram(0);
 }
 

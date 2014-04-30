@@ -133,3 +133,8 @@ void Skybox::makeProgram() {
 	
 		_program->bindTextures(&_cubeMap, "cubemap", true);
 }
+
+Texture* Skybox::getCubeMap() {
+    return _cubeMap; 
+}
+
