@@ -2,31 +2,35 @@
 #define __SKYBOX_H__
 
 #include "renderTree.h"
-#ifndef __APPLE__
-#include <GL/glut.h>
-#else
-#include <GLUT/glut.h>
-#endif
-
-#include "textureCube.h"
+#include "cubeMap.h"
+#include "program.h"
+#include <string>
 
 class Skybox : public RenderTree {
     public:
-        Skybox (float t = 1.0f);
+		//files order : POS_X NEG_X POS_Y NEG_Y POS_Z NEG_Z
+        Skybox (const std::string &folder, const std::string &fileNames, const std::string &format);
         ~Skybox ();
 
-        bool Initialize ();
-        void Render (float camera_yaw, float camera_pitch);
-        void Finalize();
 		void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
 
     private:
-        void DrawSkyBox (float camera_yaw, float camera_pitch);
-        float t;
+        Texture *_cubeMap;
+		Program *_program;
 
-        TextureCube textureCube;
-        GLuint cube_map_texture_ID;
+		std::map<std::string, int> _uniformLocations;
+
+		void makeProgram();
+
+		static void initVBOs();
+
+		static float _vertexCoords[];
+	
+		static bool _init;
+		static unsigned int _vertexVBO;
+		static unsigned int _targetsVBO;
 };
+		
 
 #endif
 

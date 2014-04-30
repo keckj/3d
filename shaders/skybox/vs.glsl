@@ -1,10 +1,6 @@
-#version 330
+#version 150 
 
 in vec3 vertex_position;
-
-out VS_FS_VERTEX {
-	vec3 pos;
-} vertex_out;
 
 uniform mat4 modelMatrix = mat4(1,0,0,0,
 				0,1,0,0,
@@ -20,10 +16,13 @@ layout(std140) uniform projectionView {
 	vec3 cameraRight;
 };
 
+out vec3 viewDir;
 
-void main (void)
-{	
-	vertex_out.pos = vertex_position;
-	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vertex_position,1);
+void main(void)
+{
+	vec4 worldPos = modelMatrix*vec4(vertex_position,1);
+
+	gl_Position = projectionMatrix * viewMatrix * worldPos;
+	viewDir = worldPos.xyz - cameraPos;
 }
 

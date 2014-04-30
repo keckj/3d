@@ -22,6 +22,7 @@ const unsigned char *Globals::glVersion = 0;
 const unsigned char *Globals::glShadingLanguageVersion = 0;
 		
 Viewer *Globals::viewer = 0;
+unsigned int Globals::projectionViewUniformBlock = 0;
 
 void Globals::init() {
 
@@ -45,10 +46,16 @@ void Globals::init() {
 	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &glPointSizeGranularity);
     glGetFloatv(GL_POINT_SIZE, &glPointSize);
 
+	glGenBuffers(1, &projectionViewUniformBlock);
+    glBindBuffer(GL_UNIFORM_BUFFER, Globals::projectionViewUniformBlock);
+	glBufferData(GL_UNIFORM_BUFFER, (16+16+4+4+4+4)*sizeof(GLfloat), 0, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
 	log_console.infoStream() << "[Global Vars Init]";
 }
 
 void Globals::check() {
+	assert(projectionViewUniformBlock != 0);
 }
 
 void Globals::print(std::ostream &out) {

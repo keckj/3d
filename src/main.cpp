@@ -44,10 +44,14 @@ using namespace std;
 using namespace log4cpp;
 
 int main(int argc, char** argv) {
-    srand(time(NULL));
+   
+	//random
+	srand(time(NULL));
 
+	//logs
     log4cpp::initLogs();
-
+	
+	//cuda
     CudaUtils::logCudaDevices(log_console);
 
     log_console.infoStream() << "[Rand Init] ";
@@ -80,18 +84,95 @@ int main(int argc, char** argv) {
 	alutInit(&argc, argv);
 	log_console.infoStream() << "[Alut Init] ";
 
+	//global vars
     Globals::init();
     Globals::print(std::cout);
     Globals::check();
-
+	
+	//texture manager
     Texture::init();
 
     log_console.infoStream() << "Running with OpenGL " << Globals::glVersion << " and glsl version " << Globals::glShadingLanguageVersion << " !";
 	//FIN INIT//
 	
-	RenderRoot *root = new RenderRoot(); 
 
-    //ObjLoader test
+	RenderRoot *root = new RenderRoot(); 
+	
+	//Skybox
+	//Note sur la pack 'SkyboxSet1' il faut retourner les textures selon l'horizontale a cause du convertToGLFormat
+	Skybox *skybox = new Skybox("textures/skybox/SkyboxSet1/SunSet/", 
+			"SunSetRight2048.png SunSetLeft2048.png SunSetUp2048.png SunSetDown2048.png SunSetBack2048.png SunSetFront2048.png",
+			"png");
+	skybox->scale(50);
+    root->addChild("skybox", skybox);
+	
+	//Waves
+	Waves *waves = new Waves(0.0,0.0,100.0,100.0,10.0);
+	waves->translate(0,0,0);
+	root->addChild("vagues", waves);
+	
+	//Terrain
+	MarchingCubes *terrain = new MarchingCubes(256,256,256,100.0f/255);
+	terrain->translate(-50,-65,-50);
+	root->addChild("terrain", terrain);
+
+	
+	//Terrain
+	//Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); 
+	//terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2)); 
+	//root->addChild("terrain", terrain);
+    
+
+    // Pipe
+    // TODO : put this in Dimensions
+    /* std::vector<Vec> tmp; */
+    /* tmp.push_back(Vec(PIPE_FIXED_PART_X, PIPE_FIXED_PART_Y, PIPE_FIXED_PART_Z)); */
+    /* tmp.push_back(Vec(0, 2, 4)); */
+    /* tmp.push_back(Vec(0, 1, 1)); */
+    /* tmp.push_back(Vec(0, 0, 0)); */
+
+    /* Pipe *pipe = new Pipe(tmp); */
+    /* tmp.clear(); */
+    /* viewer.addRenderable(pipe); */
+
+    
+	//unsigned int nParticles = 1000;
+	//unsigned int nLevel = 8;
+	//ParticleGroup *p = new ParticleGroup(nLevel*nParticles,(nLevel-1)*nParticles);
+
+	//qglviewer::Vec g = 0.002*Vec(0,+9.81,0);
+	//ParticleGroupKernel *archimede = new ConstantForce(g);
+	//ParticleGroupKernel *dynamicScheme = new DynamicScheme();
+	//ParticleGroupKernel *springsSystem = new SpringsSystem(true);
+
+	//stringstream name;
+
+
+	//for (unsigned int i = 0; i < nParticles; i++) {
+		//float r1 = Random::randf(0,5), r2 = Random::randf(0,5);
+		//for (unsigned int j = 0; j < nLevel; j++) {
+			//qglviewer::Vec pos = Vec(r1,0.002*j,r2);
+			//qglviewer::Vec  vel = Vec(Random::randf()*5,0,Random::randf()*5);
+			//float m = 0.001;
+			//p->addParticle(new Particule(pos, vel, m, 0.01, j==0));	
+		//}
+	//}
+	//for (unsigned int i = 0; i < nParticles; i++) {
+		//for (unsigned int j = 0; j < nLevel-1; j++) {
+			//p->addSpring(nLevel*i+j,nLevel*i+j+1,2,0.1,0.01,0.1);
+		//}
+	//}
+
+	//p->addKernel(archimede);
+	//p->addKernel(springsSystem);
+	//p->addKernel(dynamicScheme);
+	//p->releaseParticles();
+	//p->scale(10);
+	//p->translate(0,10,0);
+	//root->addChild("particules", p);
+
+    
+	//ObjLoader test
     //vector<Object*> vecc = cube->getObjects();
     //for (unsigned int i = 0; i < vecc.size(); i++) {
         //log_console.infoStream() << "Adding child: cube2_" << i;
@@ -119,82 +200,22 @@ int main(int argc, char** argv) {
         //vecs[i]->translate(20.0,0.0,0.0);
     //}
 
-	//Terrain
-	//Terrain
-	//Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); 
-	//terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2)); 
-	//root->addChild("terrain", terrain);
 
 
-	//Waves
-	Waves *waves = new Waves(0.0,0.0,100.0,100.0,10.0);
-	root->addChild("vagues", waves);
-    
 	// Diver
 	//SeaDiver *diver = new SeaDiver(); 
 	//root->addChild("diver", diver); 
 	
-	//Skybox
-	Skybox *skybox = new Skybox(100);
-    root->addChild("skybox", skybox);
-
-    // Pipe
-    // TODO : put this in Dimensions
-    /* std::vector<Vec> tmp; */
-    /* tmp.push_back(Vec(PIPE_FIXED_PART_X, PIPE_FIXED_PART_Y, PIPE_FIXED_PART_Z)); */
-    /* tmp.push_back(Vec(0, 2, 4)); */
-    /* tmp.push_back(Vec(0, 1, 1)); */
-    /* tmp.push_back(Vec(0, 0, 0)); */
-
-    /* Pipe *pipe = new Pipe(tmp); */
-    /* tmp.clear(); */
-    /* viewer.addRenderable(pipe); */
-
-    
-	unsigned int nParticles = 1000;
-	unsigned int nLevel = 8;
-	ParticleGroup *p = new ParticleGroup(nLevel*nParticles,(nLevel-1)*nParticles);
-
-	qglviewer::Vec g = 0.002*Vec(0,+9.81,0);
-	ParticleGroupKernel *archimede = new ConstantForce(g);
-	ParticleGroupKernel *dynamicScheme = new DynamicScheme();
-	ParticleGroupKernel *springsSystem = new SpringsSystem(true);
-
-	stringstream name;
-
-
-	for (unsigned int i = 0; i < nParticles; i++) {
-		float r1 = Random::randf(0,5), r2 = Random::randf(0,5);
-		for (unsigned int j = 0; j < nLevel; j++) {
-			qglviewer::Vec pos = Vec(r1,0.002*j,r2);
-			qglviewer::Vec  vel = Vec(Random::randf()*5,0,Random::randf()*5);
-			float m = 0.001;
-			p->addParticle(new Particule(pos, vel, m, 0.01, j==0));	
-		}
-	}
-	for (unsigned int i = 0; i < nParticles; i++) {
-		for (unsigned int j = 0; j < nLevel-1; j++) {
-			p->addSpring(nLevel*i+j,nLevel*i+j+1,2,0.1,0.01,0.1);
-		}
-	}
-
-	p->addKernel(archimede);
-	p->addKernel(springsSystem);
-	p->addKernel(dynamicScheme);
-	p->releaseParticles();
-	p->scale(10);
-	p->translate(0,10,0);
-	root->addChild("particules", p);
-
-	root->addChild("test", new MarchingCubes());
 
 	//Configure viewer
 	viewer->addRenderable(root);
 	
 	//Run main loop.
 	application.exec();
-	
+
+	//Exit
 	Audible::closeOpenALContext();
+	
 	alutExit();
 
 	return EXIT_SUCCESS;

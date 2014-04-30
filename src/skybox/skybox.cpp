@@ -1,109 +1,135 @@
+#include "headers.h"
 #include "skybox.h"
+#include "globals.h"
+	
+bool Skybox::_init = false;
+unsigned int Skybox::_vertexVBO = 0;
 
-#include <stdio.h>
-#include <stdlib.h>
+float Skybox::_vertexCoords[] {
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
 
-#ifndef __APPLE__
-#include <GL/glut.h>
-#else
-#include <GLUT/glut.h>
-#endif
 
-#include <QImage>
-#include <QGLWidget>
+		-1.0f,  1.0f, -1.0f,
+		1.0f,  1.0f, -1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+		
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		1.0f, -1.0f,  1.0f,
+		
+		
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+		
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f
+};
+		
+void Skybox::initVBOs() {
+	glGenBuffers(1, &_vertexVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _vertexVBO);	
+	glBufferData(GL_ARRAY_BUFFER, 6*2*3*3*sizeof(float), _vertexCoords, GL_STATIC_DRAW);
 
-#define GL_TEXTURE_CUBE_MAP_ARB             0x8513
-#define GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB  0x8515
-#define GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB  0x8516
-#define GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB  0x8517
-#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB  0x8518
-#define GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB  0x8519
-#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB  0x851A
+	glBindBuffer(GL_ARRAY_BUFFER, 0);	
+	
+	_init = true;
+}
 
-#include <iostream>
+Skybox::Skybox(const std::string &folder, const std::string &fileNames, const std::string &format) {
 
-#include "textureCube.h"
+	if(!_init)
+		initVBOs();
 
-Skybox::Skybox (float t) : t(t), textureCube() {
-    // Utilisation de la texture CubeMap
-    textureCube.bindAndApplyParameters(0);
+	_cubeMap = new CubeMap(folder, fileNames, format);
+	_cubeMap->addParameter(Parameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	_cubeMap->addParameter(Parameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	_cubeMap->addParameter(Parameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
+	_cubeMap->addParameter(Parameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	_cubeMap->addParameter(Parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	_cubeMap->generateMipMap();
+
+	makeProgram();
+
+	log_console.infoStream() << "Created skybox from folder " << folder << " with files " 
+		<< fileNames << " !";
 }
 
 Skybox::~Skybox () {
+	delete _cubeMap;
+	delete _program;
 }
 
 void Skybox::drawDownwards(const float *currentTransformationMatrix) {
-    Render(0.0f, 0.0f);
+
+	_program->use();
+	
+	glPushAttrib(GL_DEPTH_BUFFER_BIT);
+	glPushAttrib(GL_POLYGON_BIT);
+
+	glCullFace(GL_BACK);
+	glDisable(GL_DEPTH_TEST);
+	
+	glEnable(GL_TEXTURE_CUBE_MAP);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+	glBindBufferBase(GL_UNIFORM_BUFFER, 0,  Globals::projectionViewUniformBlock);
+	glUniformMatrix4fv(_uniformLocations["modelMatrix"], 1, GL_TRUE, currentTransformationMatrix);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _vertexVBO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
+	
+	glDrawArrays(GL_TRIANGLES, 0, 6*2*3);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glUseProgram(0);
+
+	glDisable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	glDisable(GL_TEXTURE_CUBE_MAP);
+
+	glPopAttrib();
+	glPopAttrib();
 }
 
-void Skybox::Render( float camera_yaw, float camera_pitch ) {
-    // Configuration des états OpenGL
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_CUBE_MAP_ARB);
-    glDisable(GL_LIGHTING);
+void Skybox::makeProgram() {
+        _program = new Program("Skybox");
 
-    // Désactivation de l'écriture dans le DepthBuffer
-    glDepthMask(GL_FALSE);
+        _program->bindAttribLocations("0", "vertex_position");
+        _program->bindFragDataLocation(0, "out_colour");
+        _program->bindUniformBufferLocations("0", "projectionView");
 
-    // Rendu de la SkyBox
-    DrawSkyBox( camera_yaw, camera_pitch );
+        _program->attachShader(Shader("shaders/skybox/vs.glsl", GL_VERTEX_SHADER));
+        _program->attachShader(Shader("shaders/skybox/fs.glsl", GL_FRAGMENT_SHADER));
 
-    // Réactivation de l'écriture dans le DepthBuffer
-    glDepthMask(GL_TRUE);
-
-    // Réinitialisation des états OpenGL
-    glDisable(GL_TEXTURE_CUBE_MAP_ARB);
-    glEnable(GL_LIGHTING);
+        _program->link();
+		
+        _uniformLocations = _program->getUniformLocationsMap("modelMatrix", true);
+	
+		_program->bindTextures(&_cubeMap, "cubemap", true);
 }
-
-void Skybox::Finalize () {
-    // Suppression de la skybox
-    glDeleteTextures( 1, &cube_map_texture_ID );
-}
-
-void Skybox::DrawSkyBox (float camera_yaw, float camera_pitch) {
-
-    // Rendu de la géométrie
-    glBegin(GL_TRIANGLE_STRIP); // X Négatif
-    glTexCoord3f(-t,-t,-t); glVertex3f(-t,-t,-t);
-    glTexCoord3f(-t,t,-t); glVertex3f(-t,t,-t);
-    glTexCoord3f(-t,-t,t); glVertex3f(-t,-t,t);
-    glTexCoord3f(-t,t,t); glVertex3f(-t,t,t);
-    glEnd();
-
-    glBegin(GL_TRIANGLE_STRIP); // X Positif
-    glTexCoord3f(t, -t,-t); glVertex3f(t,-t,-t);
-    glTexCoord3f(t,-t,t); glVertex3f(t,-t,t);
-    glTexCoord3f(t,t,-t); glVertex3f(t,t,-t);
-    glTexCoord3f(t,t,t); glVertex3f(t,t,t);
-    glEnd();
-
-    glBegin(GL_TRIANGLE_STRIP); // Y Négatif
-    glTexCoord3f(-t,-t,-t); glVertex3f(-t,-t,-t);
-    glTexCoord3f(-t,-t,t); glVertex3f(-t,-t,t);
-    glTexCoord3f(t, -t,-t); glVertex3f(t,-t,-t);
-    glTexCoord3f(t,-t,t); glVertex3f(t,-t,t);
-    glEnd();
-
-    glBegin(GL_TRIANGLE_STRIP); // Y Positif
-    glTexCoord3f(-t,t,-t); glVertex3f(-t,t,-t);
-    glTexCoord3f(t,t,-t); glVertex3f(t,t,-t);
-    glTexCoord3f(-t,t,t); glVertex3f(-t,t,t);
-    glTexCoord3f(t,t,t); glVertex3f(t,t,t);
-    glEnd();
-
-    glBegin(GL_TRIANGLE_STRIP); // Z Négatif
-    glTexCoord3f(-t,-t,-t); glVertex3f(-t,-t,-t);
-    glTexCoord3f(t, -t,-t); glVertex3f(t,-t,-t);
-    glTexCoord3f(-t,t,-t); glVertex3f(-t,t,-t);
-    glTexCoord3f(t,t,-t); glVertex3f(t,t,-t);
-    glEnd();
-
-    glBegin(GL_TRIANGLE_STRIP); // Z Positif
-    glTexCoord3f(-t,-t,t); glVertex3f(-t,-t,t);
-    glTexCoord3f(-t,t,t); glVertex3f(-t,t,t);
-    glTexCoord3f(t,-t,t); glVertex3f(t,-t,t);
-    glTexCoord3f(t,t,t); glVertex3f(t,t,t);
-    glEnd();
-}
-

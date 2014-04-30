@@ -54,7 +54,7 @@ namespace MarchingCube {
 class MarchingCubes : public RenderTree {
 
 	public:
-		MarchingCubes(unsigned int width=256, unsigned int height=256, unsigned int length=256, float voxelSize = 0.3f);	
+		MarchingCubes(unsigned int width, unsigned int height, unsigned int length, float voxelSize);	
 		~MarchingCubes();	
 
 	private:

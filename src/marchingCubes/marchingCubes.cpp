@@ -100,13 +100,10 @@ MarchingCubes::~MarchingCubes() {
 void MarchingCubes::drawDownwards(const float *currentTransformationMatrix) {
 	_drawProgram->use();
         
-	static float *proj = new float[16], *view = new float[16];
-	glGetFloatv(GL_MODELVIEW_MATRIX, view);
-	glGetFloatv(GL_PROJECTION_MATRIX, proj);
-	glUniformMatrix4fv(_drawUniformLocs["projectionMatrix"], 1, GL_FALSE, proj);
-	glUniformMatrix4fv(_drawUniformLocs["viewMatrix"], 1, GL_FALSE, view);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 0,  Globals::projectionViewUniformBlock);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 1, _generalDataUBO);
+	glUniformMatrix4fv(_drawUniformLocs["modelMatrix"], 1, GL_TRUE, currentTransformationMatrix);
 	
-	glBindBufferBase(GL_UNIFORM_BUFFER, 0, _generalDataUBO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _marchingCubesFeedbackVertexTBO);           
 	glEnableVertexAttribArray(0);
@@ -265,21 +262,12 @@ void MarchingCubes::generateFullScreenQuad() {
                 -1.0f, 1.0f, 0.0f,
                 -1.0f, -1.0f, 0.0f,
                 1.0f, 1.0f, 0.0f,
-
-                //0.0f, 0.0f,
-                //1.0f, 0.0f,
-                //1.0f, 1.0f,
-
-                //0.0f, 1.0f,
-                //0.0f, 0.0f,
-                //1.0f, 1.0f
         };
 
         glGenBuffers(1, &_fullscreenQuadVBO);
         glBindBuffer(GL_ARRAY_BUFFER, _fullscreenQuadVBO);
         glBufferData(GL_ARRAY_BUFFER, 6*3*sizeof(float), buffer, GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 }
 
 void MarchingCubes::generateMarchingCubesPoints() {
@@ -312,13 +300,13 @@ void MarchingCubes::makeDrawProgram() {
         _drawProgram = new Program("MC Draw");
         _drawProgram->bindAttribLocation(0, "vertex_position");
         _drawProgram->bindFragDataLocation(0, "out_colour");
-        _drawProgram->bindUniformBufferLocations("0", "generalData");
+        _drawProgram->bindUniformBufferLocations("0 1", "projectionView generalData");
 
         _drawProgram->attachShader(Shader("shaders/marchingCubes/draw_vs.glsl", GL_VERTEX_SHADER));
         _drawProgram->attachShader(Shader("shaders/marchingCubes/draw_fs.glsl", GL_FRAGMENT_SHADER));
 
         _drawProgram->link();
-        _drawUniformLocs = _drawProgram->getUniformLocationsMap("projectionMatrix viewMatrix", true);
+        _drawUniformLocs = _drawProgram->getUniformLocationsMap("modelMatrix", true);
         
 		Texture *tex[] = {_terrain_texture, _normals_occlusion};
 		_drawProgram->bindTextures(tex, "terrain_texture normals_occlusion", false);

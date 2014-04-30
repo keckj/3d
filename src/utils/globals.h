@@ -7,6 +7,15 @@
 #include <ostream>
 #include <string>
 
+struct modelViewUniformBlock {
+	GLfloat projectionMatrix[16];
+	GLfloat viewMatrix[16];
+	GLfloat cameraPosition[4];
+	GLfloat cameraDirection[4];
+	GLfloat cameraUp[4];
+	GLfloat cameraRight[4];
+};
+
 class Globals {
 
 	public:
@@ -33,6 +42,7 @@ class Globals {
 		static float glPointSize;
 		
 		static Viewer *viewer;
+		static unsigned int projectionViewUniformBlock;
 };
 	
 #endif /* end of include guard: GLOBALS_H */
