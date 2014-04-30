@@ -6,7 +6,7 @@ in float z;
 in float r;
 in int kill;
 
-out float r2;
+flat out float r2;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
@@ -14,12 +14,9 @@ uniform mat4 modelMatrix;
 
 void main(void) {
 	
-	
-	vec4 cameraPos = viewMatrix*modelMatrix*vec4(x,y,z,1);
-
-	float d = -cameraPos.z;
-	gl_PointSize = 1000.0*r/d;
-	gl_Position = projectionMatrix * cameraPos;
+	vec4 pos = projectionMatrix * viewMatrix * modelMatrix * vec4(x,y,z,1);
+	gl_PointSize = (1.0-pos.z/pos.w)* r * 1000.0;
+	gl_Position = pos;
 
 	r2=r;
 }

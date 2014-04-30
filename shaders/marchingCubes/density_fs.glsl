@@ -12,12 +12,6 @@ uniform vec2 textureSize;
 
 uniform vec3 worldSize = vec3(100,100,100);
 
-//transition douce 
-float  smoothy(float  t) { return t*t*(3-2*t); }
-vec2 smoothy(vec2 t) { return t*t*(3-2*t); }
-vec3 smoothy(vec3 t) { return t*t*(3-2*t); }
-vec4 smoothy(vec4 t) { return t*t*(3-2*t); }
-
 float metaball(vec3 xyz, vec3 center) {
 	vec3 v = xyz - center;
 	return 1/dot(v,v);
@@ -28,16 +22,20 @@ float sphere(vec3 xyz, vec3 center, float r) {
 	return r*r-dot(v,v);
 }
 
-float pillarXZ(vec3 xyz, vec2 center, float r) {
-	vec2 v = xyz.xz - center;	
-	vec2 v2 =  vec2(v.x/r, v.y/r);
-	return 1-dot(v2,v2);
+float ellipsoide(vec3 xyz, vec3 center, vec3 r) {
+	vec3 v = xyz - center;	
+	return 1-dot(v/r,v/r);
 }
 
-float pillar(vec3 xyz, vec3 axe, vec3 origin, float r) {
-	float d =  length(cross(xyz - origin, axe))/length(axe);
-
-	return 1-d*d/(r*r);
+float pillar(vec3 xyz, vec3 axe, vec3 origin, float r, float zmin, float zmax) {
+	vec3 BA = xyz-origin;
+	float dr =  length(cross(BA, axe))/length(axe);
+	float dz = dot(BA,axe)/length(axe);
+	
+	if(dr < r && dz >= zmin && dz <= zmax)
+		return 1-dr*dr/(r*r);
+	else
+		return -10;
 }
 
 float snoise(vec3 v);
@@ -80,15 +78,14 @@ void main (void)
 		freq*=2;
 	}
 
-
-	/*float hard_floor_y = -13;  */
 	density += clamp(-0.1 - oldcoord.y,0,1)*10; 
 
-	density = min(density, -sphere(oldcoord, vec3(0,-0.25,-0.3), 0.2));
-	density = min(density, -0.1*pillar(oldcoord, vec3(0,-0.5,-1), vec3(0,-0.05,0), 0.025) + 0.1*snoise(10*oldcoord) + 0.05*snoise(20*oldcoord) + 0.025*snoise(40*oldcoord)+0.01*snoise(100*oldcoord));
-	density += clamp(-0.4 - oldcoord.y,0,1)*10; 
+	float n1 = 0.1*snoise(10*oldcoord) + 0.05*snoise(20*oldcoord) + 0.025*snoise(40*oldcoord)+0.01*snoise(100*oldcoord);
+	float n2 = 0.2*snoise(5*oldcoord) + n1;
 
-
+	density = min(density, -ellipsoide(oldcoord, vec3(0,-0.2,-0.25), vec3(0.45,0.2,0.2)) + n2);
+	density = min(density, -0.2*pillar(oldcoord, vec3(0,-0.5,-1), vec3(0,-0.05,0), 0.025, -0.1, 0.3) + n1);
+	density += clamp(-0.3 - oldcoord.y,0,1)*10; 
 }
 
 

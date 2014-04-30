@@ -5,7 +5,6 @@
 
 // NOTE: Possibilité de #if charette pour illuminer en calculant sur les vertex au lieu des fragments
 
-
 /***********************************************************************************/
 // Vertex Shader 
 /***********************************************************************************/

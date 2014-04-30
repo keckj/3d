@@ -95,7 +95,6 @@ int main(int argc, char** argv) {
     log_console.infoStream() << "Running with OpenGL " << Globals::glVersion << " and glsl version " << Globals::glShadingLanguageVersion << " !";
 	//FIN INIT//
 	
-
 	RenderRoot *root = new RenderRoot(); 
 	
 	//Skybox
@@ -104,7 +103,7 @@ int main(int argc, char** argv) {
 			"SunSetRight2048.png SunSetLeft2048.png SunSetUp2048.png SunSetDown2048.png SunSetBack2048.png SunSetFront2048.png",
 			"png");
 	skybox->scale(50);
-    root->addChild("skybox", skybox);
+	root->addChild("skybox", skybox);
 	
 	//Waves
 	Waves *waves = new Waves(0.0,0.0,100.0,100.0, 10.0, skybox->getCubeMap());
@@ -112,12 +111,12 @@ int main(int argc, char** argv) {
 	root->addChild("vagues", waves);
 	
 	//Terrain
-	MarchingCubes *terrain = new MarchingCubes(256,256,256,100.0f/255);
+	MarchingCubes *terrain = new MarchingCubes(128,128,128,100.0f/127);
 	terrain->translate(-50,-65,-50);
 	root->addChild("terrain", terrain);
 
 	
-	//Terrain
+	//Terrain2
 	//Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); 
 	//terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2)); 
 	//root->addChild("terrain", terrain);
@@ -165,41 +164,27 @@ int main(int argc, char** argv) {
     /* tmp.clear(); */
     /* viewer.addRenderable(pipe); */
 
-    
-	//unsigned int nParticles = 1000;
-	//unsigned int nLevel = 8;
-	//ParticleGroup *p = new ParticleGroup(nLevel*nParticles,(nLevel-1)*nParticles);
+	unsigned int nParticles = 1000;
 
-	//qglviewer::Vec g = 0.002*Vec(0,+9.81,0);
-	//ParticleGroupKernel *archimede = new ConstantForce(g);
-	//ParticleGroupKernel *dynamicScheme = new DynamicScheme();
-	//ParticleGroupKernel *springsSystem = new SpringsSystem(true);
+	qglviewer::Vec g = 0.00002*Vec(0,+9.81,0);
+	ParticleGroup *p = new ParticleGroup(nParticles, 1);
+	ParticleGroupKernel *archimede = new ConstantForce(g);
+	ParticleGroupKernel *dynamicScheme = new DynamicScheme();
 
-	//stringstream name;
+	stringstream name;
+	for (unsigned int i = 0; i < nParticles; i++) {
+			qglviewer::Vec pos = Vec(Random::randf(), Random::randf(), Random::randf());
+			qglviewer::Vec  vel = Vec(0,0,0);
+			float r = Random::randf(0.02,0.1);
+			float m = 4.0f/3.0f*3.1415f*r*r*r;
+			p->addParticle(new Particule(pos, vel, m, r, false));	
+	}
+	
+	p->addKernel(archimede);
+	p->addKernel(dynamicScheme);
+	p->releaseParticles();
 
-
-	//for (unsigned int i = 0; i < nParticles; i++) {
-		//float r1 = Random::randf(0,5), r2 = Random::randf(0,5);
-		//for (unsigned int j = 0; j < nLevel; j++) {
-			//qglviewer::Vec pos = Vec(r1,0.002*j,r2);
-			//qglviewer::Vec  vel = Vec(Random::randf()*5,0,Random::randf()*5);
-			//float m = 0.001;
-			//p->addParticle(new Particule(pos, vel, m, 0.01, j==0));	
-		//}
-	//}
-	//for (unsigned int i = 0; i < nParticles; i++) {
-		//for (unsigned int j = 0; j < nLevel-1; j++) {
-			//p->addSpring(nLevel*i+j,nLevel*i+j+1,2,0.1,0.01,0.1);
-		//}
-	//}
-
-	//p->addKernel(archimede);
-	//p->addKernel(springsSystem);
-	//p->addKernel(dynamicScheme);
-	//p->releaseParticles();
-	//p->scale(10);
-	//p->translate(0,10,0);
-	//root->addChild("particules", p);
+	root->addChild("zzparticules", p);
 
     
 	//ObjLoader test

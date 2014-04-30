@@ -198,7 +198,6 @@ void ParticleGroup::addKernel(ParticleGroupKernel *kernel) {
 	kernels.push_back(kernel);
 }
 	
-//TODO VAO
 void ParticleGroup::drawDownwards(const float *modelMatrix) {
 
 	static float *proj = new float[16], *view = new float[16];
@@ -210,15 +209,24 @@ void ParticleGroup::drawDownwards(const float *modelMatrix) {
 	
 	_particlesDebugProgram->use();
 
+	glEnable(GL_POINT_SPRITE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_POINT_SMOOTH);
 	glEnable (GL_LINE_SMOOTH);
+	glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);
+                    
+
+	glEnable (GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glGetFloatv(GL_MODELVIEW_MATRIX, view);
 	glGetFloatv(GL_PROJECTION_MATRIX, proj);
 	glUniformMatrix4fv(_particleUniformLocs["projectionMatrix"], 1, GL_FALSE, proj);
 	glUniformMatrix4fv(_particleUniformLocs["viewMatrix"], 1, GL_FALSE, view);
 	glUniformMatrix4fv(_particleUniformLocs["modelMatrix"], 1, GL_TRUE, modelMatrix);
+	
+	glUniform1f(_particleUniformLocs["rmin"], 0.02);
+	glUniform1f(_particleUniformLocs["rmax"], 0.08);
 
 	glBindBuffer(GL_ARRAY_BUFFER, x_b);
 	glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 0, 0);
@@ -270,6 +278,7 @@ void ParticleGroup::drawDownwards(const float *modelMatrix) {
 	glDisable(GL_PROGRAM_POINT_SIZE);
 	glDisable(GL_POINT_SMOOTH);
 	glDisable(GL_LINE_SMOOTH);
+	glDisable(GL_BLEND);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glUseProgram(0);
@@ -520,7 +529,7 @@ void ParticleGroup::makeDebugPrograms() {
 	_particlesDebugProgram->attachShader(Shader("shaders/particle/particle_fs.glsl", GL_FRAGMENT_SHADER));
 
 	_particlesDebugProgram->link();
-	_particleUniformLocs = _particlesDebugProgram->getUniformLocationsMap("modelMatrix projectionMatrix viewMatrix", true);
+	_particleUniformLocs = _particlesDebugProgram->getUniformLocationsMap("modelMatrix projectionMatrix viewMatrix rmin rmax", true);
 	
 	_springsDebugProgram = new Program("Spring");
 	_springsDebugProgram->bindAttribLocations("0 1 2", "pos intensity alive");
