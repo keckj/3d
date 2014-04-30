@@ -11,7 +11,7 @@ uniform float deltaZ;
 
 uniform	float fogDensity = 0.05;
 uniform	float underWaterFogEnd = 30.0;
-uniform vec3 sunDir = vec3(100.0,100.0,0.0);
+uniform vec3 sunDir = vec3(100.0,40.0,-50.0);
 
 in vec3 position;
 

@@ -30,3 +30,5 @@
 #define WIDTH_LEG 0.2
 #define HEIGHT_LEG 0.7
 
+// JOINT
+#define RADIUS_JOINT 0.1

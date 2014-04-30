@@ -1,15 +1,15 @@
 #include "RightForeArm.h"
-#include "RightArm.h"
 #include "Dimensions.h"
+#include "JointRightArm.h"
 
 #include <cmath>
 #include <QGLViewer/vec.h>
 using namespace qglviewer;
 
 RightForeArm::RightForeArm (float width, float height) : Arm(width, height), down(true) {
-    RightArm *rightArm = new RightArm(WIDTH_ARM, HEIGHT_ARM);
-    addChild("rightArm", rightArm);
-    translateChild("rightArm", 0, 0, -getHeight());
+    JointRightArm *jointRightArm = new JointRightArm(RADIUS_JOINT);
+    addChild("jointRightArm", jointRightArm);
+    translateChild("jointRightArm", 0, 0, 0);
 }
 
 void RightForeArm::drawDownwards (const float *currentTransformationMatrix) {
