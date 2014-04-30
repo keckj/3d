@@ -4,6 +4,8 @@
 #include <QGLViewer/vec.h>
 using namespace qglviewer;
 
+#include <iostream>
+
 LeftLeg::LeftLeg (float width, float height) : Leg(width, height) {
 }
 

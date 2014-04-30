@@ -2,10 +2,10 @@
 
 #include "Head.h"
 #include "Dimensions.h"
-#include "LeftForeArm.h"
-#include "RightForeArm.h"
-#include "LeftThigh.h"
-#include "RightThigh.h"
+#include "JointLeftTrunk.h"
+#include "JointRightTrunk.h"
+#include "JointLeftUpTrunk.h"
+#include "JointRightUpTrunk.h"
 
 #include <iostream>
 #include <QGLViewer/vec.h>
@@ -16,21 +16,21 @@ Trunk::Trunk (float width, float height, float depth) : RenderTree(), rect(width
     addChild("head", head);
     translateChild("head", 0, 0, HEIGHT_NECK + getHeight() / 2);
 
-    LeftForeArm *leftForearm = new LeftForeArm(WIDTH_FOREARM, HEIGHT_FOREARM);
-    addChild("leftForearm", leftForearm);
-    translateChild("leftForearm", 0, leftForearm->getWidth() / 2 + getWidth() / 2, -getHeight() + leftForearm->getHeight());
+    JointLeftUpTrunk *jointLeftUpTrunk = new JointLeftUpTrunk(RADIUS_JOINT);
+    addChild("jointLeftUpTrunk", jointLeftUpTrunk);
+    translateChild("jointLeftUpTrunk", 0, getWidth() / 2 + jointLeftUpTrunk->getRadius() / 2, getHeight() / 2 - jointLeftUpTrunk->getRadius());
 
-    RightForeArm *rightForearm = new RightForeArm(WIDTH_FOREARM, HEIGHT_FOREARM);
-    addChild("rightForearm", rightForearm);
-    translateChild("rightForearm", 0, -rightForearm->getWidth() / 2 - getWidth() / 2, -getHeight() + rightForearm->getHeight());
+    JointRightUpTrunk *jointRightUpTrunk = new JointRightUpTrunk(RADIUS_JOINT);
+    addChild("jointRightUpTrunk", jointRightUpTrunk);
+    translateChild("jointRightUpTrunk", 0, -getWidth() / 2 - jointRightUpTrunk->getRadius() / 2, getHeight() / 2 - jointRightUpTrunk->getRadius());
 
-    LeftThigh *leftThigh = new LeftThigh(WIDTH_THIGH, HEIGHT_THIGH);
-    addChild("leftThigh", leftThigh);
-    translateChild("leftThigh", 0, (getWidth() - leftThigh->getWidth()) / 2, -getHeight() / 2 - leftThigh->getHeight());
+    JointLeftTrunk *jointLeftTrunk = new JointLeftTrunk(RADIUS_JOINT);
+    addChild("jointLeftTrunk", jointLeftTrunk);
+    translateChild("jointLeftTrunk", 0, getWidth() / 2 - jointLeftTrunk->getRadius(), -getHeight() / 2);
 
-    RightThigh *rightThigh = new RightThigh(WIDTH_THIGH, HEIGHT_THIGH);
-    addChild("rightThigh", rightThigh);
-    translateChild("rightThigh", 0, (-getWidth() + rightThigh->getWidth()) / 2, -getHeight() / 2 - rightThigh->getHeight());
+    JointRightTrunk *jointRightTrunk = new JointRightTrunk(RADIUS_JOINT);
+    addChild("jointRightTrunk", jointRightTrunk);
+    translateChild("jointRightTrunk", 0, -(getWidth() / 2 - jointRightTrunk->getRadius()), -getHeight() / 2);
 }
 
 void Trunk::drawDownwards(const float *currentTransformationMatrix) {

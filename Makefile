@@ -28,7 +28,7 @@ CUDA_LIBS = -lcudart
 
 OPENAL_INCLUDEPATH =
 OPENAL_LIBPATH =
-OPENAL_LIBS = -lopenal -lalut
+OPENAL_LIBS = -framework OpenAL -lalut
 
 endif
 ################################################################
@@ -59,18 +59,18 @@ endif
 ###############################################################
 
 #Compilateurs
-LINK= g++
+LINK= g++-4.8
 LINKFLAGS= -W -Wall -Wextra -pedantic -std=c++0x
-LDFLAGS= $(VIEWER_LIBS) $(L_QGLVIEWER) -ltinyobjloader -llog4cpp $(CUDA_LIBS) $(OPENAL_LIBS)
+LDFLAGS= -Llocal/lib -ltinyobjloader $(VIEWER_LIBS) $(L_QGLVIEWER) -llog4cpp $(CUDA_LIBS) -F/usr/local/Cellar/qt/4.8.5/lib -L/Developer/NVIDIA/CUDA-5.5/lib $(OPENAL_LIBS)
 INCLUDE = -Ilocal/include/ -I$(SRCDIR) $(foreach dir, $(call subdirs, $(SRCDIR)), -I$(dir)) $(VIEWER_INCLUDEPATH) $(CUDA_INCLUDEPATH) $(OPENAl_INCLUDEPATH)
 LIBS = -Llocal/lib/ $(VIEWER_LIBPATH) $(CUDA_LIBPATH) $(OPENAL_LIBPATH)
 DEFINES= $(VIEWER_DEFINES) $(OPT)
 
 
-CC=gcc
+CC=gcc-4.8
 CFLAGS= -W -Wall -Wextra -pedantic -std=c99 -m64
 
-CXX=g++
+CXX=g++-4.8
 CXXFLAGS= -W -Wall -Wextra -Wno-unused-parameter -pedantic -std=c++0x -m64
 #-Wshadow -Wstrict-aliasing -Weffc++ -Werror
 
@@ -78,7 +78,7 @@ CXXFLAGS= -W -Wall -Wextra -Wno-unused-parameter -pedantic -std=c++0x -m64
 MOC=moc
 MOCFLAGS=
 
-NVCC=nvcc
+NVCC=/Developer/NVIDIA/CUDA-5.5/bin/nvcc -ccbin /usr/bin/clang
 NVCCFLAGS= -Xcompiler -Wall -m64 -arch sm_$(NARCH) -O3
 
 AS = nasm

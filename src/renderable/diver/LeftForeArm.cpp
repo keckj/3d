@@ -1,15 +1,15 @@
 #include "LeftForeArm.h"
-#include "LeftArm.h"
 #include "Dimensions.h"
+#include "JointLeftArm.h"
 
 #include <cmath>
 #include <QGLViewer/vec.h>
 using namespace qglviewer;
 
 LeftForeArm::LeftForeArm (float width, float height) : Arm(width, height) {
-    LeftArm *leftArm = new LeftArm(WIDTH_ARM, HEIGHT_ARM);
-    addChild("leftArm", leftArm);
-    translateChild("leftArm", 0, 0, -getHeight());
+    JointLeftArm *jointLeftArm = new JointLeftArm(RADIUS_JOINT);
+    addChild("jointLeftArm", jointLeftArm);
+    translateChild("jointLeftArm", 0, 0, 0);
 }
 
 void LeftForeArm::drawDownwards (const float *currentTransformationMatrix) {

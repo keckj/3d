@@ -1,15 +1,15 @@
 #include "RightThigh.h"
-#include "RightLeg.h"
 #include "Dimensions.h"
+#include "JointRightThigh.h"
 
 #include <cmath>
 #include <QGLViewer/vec.h>
 using namespace qglviewer;
 
 RightThigh::RightThigh (float width, float height) : Leg(width, height) {
-    RightLeg *rightLeg = new RightLeg(WIDTH_LEG, HEIGHT_LEG);
-    addChild("rightLeg", rightLeg);
-    translateChild("rightLeg", 0, 0, -getHeight());
+    JointRightThigh *jointRightThigh = new JointRightThigh(RADIUS_JOINT);
+    addChild("jointRightThigh", jointRightThigh);
+    translateChild("jointRightThigh", 0, 0, 0);
 }
 
 void RightThigh::drawDownwards (const float * currentTransformationMatrix) {
