@@ -3,7 +3,7 @@
 uniform mat4 viewMatrix;
 
 uniform float time;
-uniform vec3 sunDir = vec3(100.0,100.0,0.0);
+uniform vec3 sunDir = vec3(100.0,40.0,-50.0);
 uniform samplerCube cubeMapTexture;
 
 in vec3 fPosition;
