@@ -15,9 +15,9 @@ out vec2 fTexCoord;
 
 void main()
 {
-    mat3 normalMatrix1 = transpose(inverse(mat3(viewMatrix * modelMatrix)));
-    //fNormal = normalize(normalMatrix * vertexNormal);
-    fNormal = normalize(normalMatrix1 * vertexNormal);
+    //mat3 normalMatrix1 = transpose(inverse(mat3(viewMatrix * modelMatrix)));
+    //fNormal = normalize(normalMatrix1 * vertexNormal);
+    fNormal = normalize(normalMatrix * vertexNormal);
     fTexCoord = vertexTexCoord;
     fPosition = viewMatrix * modelMatrix * vertexPosition;
     gl_Position = projectionMatrix * fPosition;

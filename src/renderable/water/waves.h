@@ -29,7 +29,7 @@ class Waves : public RenderTree
         GLuint vertexArray;
         GLuint *vertexBuffers;
         Program program;
-        std::vector<int> uniforms_vec;
+		std::map<std::string,int> uniformLocs;
 
         bool stopAnimating;
 

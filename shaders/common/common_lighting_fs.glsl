@@ -40,9 +40,10 @@ out vec4 out_color;
 void main()
 {
     vec3 normalDir = normalize(fNormal);
-    mat4 invView = inverse(viewMatrix);
-    //vec4 cameraPos = viewMatrixInv * vec4(0.0,0.0,0.0,1.0); // extract last column
-    vec4 cameraPos = invView * vec4(0.0,0.0,0.0,1.0); // extract last column
+    //mat4 invView = inverse(viewMatrix);
+    //vec4 cameraPos = invView * vec4(0.0,0.0,0.0,1.0); // extract last column
+    //vec4 cameraPos = viewMatrixInv[3];
+    vec4 cameraPos = -viewMatrix[3] * viewMatrix;
     vec3 viewDir = normalize(vec3(cameraPos - fPosition));
     vec3 lightDir;
     float attenuation;
