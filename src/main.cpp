@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
     // ObjLoader
     //ObjLoader *cube = new ObjLoader("obj_files/cube2");
     //ObjLoader *mouette = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/");
-    //ObjLoader *shark = new ObjLoader("obj_files/White_Shark/wshark", "obj_files/White_Shark/");
+    ObjLoader *shark = new ObjLoader("obj_files/White_Shark/wshark", "obj_files/White_Shark/");
 
     // Read command lines arguments.
     QApplication application(argc,argv);
@@ -109,12 +109,11 @@ int main(int argc, char** argv) {
 	Waves *waves = new Waves(0.0,0.0,100.0,100.0, 10.0, skybox->getCubeMap());
 	waves->translate(0,0,0);
 	root->addChild("vagues", waves);
-	
+    	
 	//Terrain
 	MarchingCubes *terrain = new MarchingCubes(128,128,128,100.0f/127);
 	terrain->translate(-50,-65,-50);
 	root->addChild("terrain", terrain);
-
 	
 	//Terrain2
 	//Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); 
@@ -125,7 +124,7 @@ int main(int argc, char** argv) {
 	//SeaDiver *diver = new SeaDiver(); 
 	//root->addChild("diver", diver); 
 	
-    //ObjLoader test
+    //ObjLoader
     /*vector<Object*> vecc = cube->getObjects();
     for (unsigned int i = 0; i < vecc.size(); i++) {
         log_console.infoStream() << "Adding child: cube2_" << i;
@@ -133,24 +132,24 @@ int main(int argc, char** argv) {
         s << "cube2_" << i;
         root->addChild(s.str(), vecc[i]);
     }*/
-    //vector<Object*> vecm = mouette->getObjects();
-    //for (unsigned int i = 0; i < vecm.size(); i++) {
-        //log_console.infoStream() << "Adding child: mouette_" << i;
-        //stringstream s;
-        //s << "mouette_" << i;
-        //root->addChild(s.str(), vecm[i]);
-        //vecm[i]->scale(10.0);
-        //vecm[i]->translate(0.0,50.0,0.0);
-    //}
-    /*vector<Object*> vecs = shark->getObjects();
+    /*vector<Object*> vecm = mouette->getObjects();
+    for (unsigned int i = 0; i < vecm.size(); i++) {
+        log_console.infoStream() << "Adding child: mouette_" << i;
+        stringstream s;
+        s << "mouette_" << i;
+        root->addChild(s.str(), vecm[i]);
+        vecm[i]->scale(10.0);
+        vecm[i]->translate(0.0,50.0,0.0);
+    }*/
+    vector<Object*> vecs = shark->getObjects();
     for (unsigned int i = 0; i < vecs.size(); i++) {
         log_console.infoStream() << "Adding child: shark_" << i;
         stringstream s;
         s << "shark_" << i;
         root->addChild(s.str(), vecs[i]);
-        vecs[i]->scale(0.01);
-        vecs[i]->translate(20.0,0.0,0.0);
-    }*/
+        vecs[i]->scale(0.0005);
+        vecs[i]->translate(20.0,-10.0,0.0);
+    }
     
     // Pipe
     // TODO : put this in Dimensions

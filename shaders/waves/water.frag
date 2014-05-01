@@ -15,10 +15,11 @@ in float fogFactor;
 out vec4 out_color;
 
 // init 
+float waterAlpha = 0.8;
 vec3 l = normalize(sunDir);
-vec4 specular = vec4(0.05,0.05,0.05,1.0);
-vec4 diffuse = vec4(57.0/256.0,88.0/256.0,121.0/256.0,.5);
-vec4 ambient = diffuse/4.0;
+vec4 specular = vec4(0.05,0.05,0.05,waterAlpha);
+vec4 diffuse = vec4(57.0/256.0,88.0/256.0,121.0/256.0,waterAlpha);
+vec4 ambient = vec4(vec3(diffuse)/4.0,waterAlpha);
 float shininess = 100.0;
 
 
