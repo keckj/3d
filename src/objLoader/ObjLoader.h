@@ -10,13 +10,12 @@
 #include "tiny_obj_loader.h"
 
 
-class ObjLoader : public Renderable {
+class ObjLoader {
     public:
         ObjLoader (std::string const& file, std::string const& basepath = "obj_files/");
         ~ObjLoader();
         std::vector<Object*> getObjects();
         void print();
-        void draw ();
 
     private:
         void makeProgram();
