@@ -1,10 +1,17 @@
 #include "RightArm.h"
+#include "RightHand.h"
 
 #include <cmath>
 #include <QGLViewer/vec.h>
 using namespace qglviewer;
 
 RightArm::RightArm (float width, float height) : Arm(width, height) {
+    RightHand *rightHand = new RightHand();
+    addChild("rightHand", rightHand);
+    translateChild("rightHand", -0.04, -getWidth() / 2, getHeight() / (4.5));
+    rotateChild("rightHand", Quaternion(Vec(0, 1, 0), M_PI));
+    rotateChild("rightHand", Quaternion(Vec(0, 0, 1), M_PI));
+    scaleChild("rightHand", 0.8, 0.8, 0.5);
 }
 
 void RightArm::drawDownwards(const float *currentTransformationMatrix) {
