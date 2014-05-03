@@ -2,7 +2,7 @@
 #ifndef _CUDA_UTILS_
 #define _CUDA_UTILS_
 
-#include <ostream>
+#include <iostream>
 #include <log4cpp/Category.hh>
 #include "cuda.h"
 #include "cuda_runtime.h"

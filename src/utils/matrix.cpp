@@ -89,7 +89,7 @@ namespace Matrix {
                     M[1] * (M[3] * M[8] - M[5] * M[6]) +
                     M[2] * (M[3] * M[7] - M[4] * M[6]);
 
-        if (fabs(det) < 0.000000001) {
+        if (fabs(det) < 0.000000000001) {
             std::cout << "[Matrix] inverseMat3f: det = 0 !" << std::endl;
             exit(1);
         }
@@ -126,7 +126,7 @@ namespace Matrix {
         float c0 = M[8] * M[12] - M[12] * M[9];
 
         float det = (s0 * c5 - s1 * c4 + s2 * c3 + s3 * c2 - s4 * c1 + s5 * c0);
-        if (fabs(det) < 0.000000001) {
+        if (fabs(det) < 0.000000000001) {
             std::cout << "[Matrix] inverseMat4f: det = 0 !" << std::endl;
             exit(1);
         }

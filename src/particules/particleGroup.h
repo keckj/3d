@@ -48,7 +48,7 @@ class ParticleGroup : public RenderTree {
 		
 		struct mappedParticlePointers *getMappedRessources() const;
 
-	private:
+	protected:
 		unsigned int maxParticles, nParticles, nWaitingParticles;
 		unsigned int maxSprings, nSprings, nWaitingSprings;
 		

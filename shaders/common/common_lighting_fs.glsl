@@ -35,7 +35,16 @@ in vec4 fPosition;
 in vec3 fNormal;
 in vec2 fTexCoord;
 
+in vec3 fogColor;
+in float fogFactor;
+
 out vec4 out_color;
+
+
+vec4 applyFog(in vec4 fragColor) {
+    return mix( vec4(fogColor,1.0), fragColor, fogFactor );
+}
+
 
 void main()
 {
@@ -93,4 +102,7 @@ void main()
     }
 
     out_color = vec4(totalLight, mat.transparency);
+
+    // apply fog
+    out_color = applyFog(out_color);
 }

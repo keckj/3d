@@ -86,17 +86,10 @@ Skybox::~Skybox () {
 }
 
 void Skybox::drawDownwards(const float *currentTransformationMatrix) {
-
-	_program->use();
-	
-	glPushAttrib(GL_DEPTH_BUFFER_BIT);
-	glPushAttrib(GL_POLYGON_BIT);
-
-	glCullFace(GL_BACK);
-	glDisable(GL_DEPTH_TEST);
-	
 	glEnable(GL_TEXTURE_CUBE_MAP);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	
+	_program->use();
 
 	glBindBufferBase(GL_UNIFORM_BUFFER, 0,  Globals::projectionViewUniformBlock);
 	glUniformMatrix4fv(_uniformLocations["modelMatrix"], 1, GL_TRUE, currentTransformationMatrix);
@@ -112,9 +105,6 @@ void Skybox::drawDownwards(const float *currentTransformationMatrix) {
 
 	glDisable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	glDisable(GL_TEXTURE_CUBE_MAP);
-
-	glPopAttrib();
-	glPopAttrib();
 }
 
 void Skybox::makeProgram() {

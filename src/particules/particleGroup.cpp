@@ -208,6 +208,8 @@ void ParticleGroup::drawDownwards(const float *modelMatrix) {
 		makeDebugPrograms();
 	
 	_particlesDebugProgram->use();
+	
+	glPushAttrib(GL_COLOR_BUFFER_BIT);
 
 	glEnable(GL_POINT_SPRITE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
@@ -278,7 +280,8 @@ void ParticleGroup::drawDownwards(const float *modelMatrix) {
 	glDisable(GL_PROGRAM_POINT_SIZE);
 	glDisable(GL_POINT_SMOOTH);
 	glDisable(GL_LINE_SMOOTH);
-	glDisable(GL_BLEND);
+
+	glPopAttrib();
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glUseProgram(0);

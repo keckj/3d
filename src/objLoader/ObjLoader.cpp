@@ -33,9 +33,9 @@ void ObjLoader::print () {
     std::cout << "# of shapes : " << shapes.size() << std::endl;
 
     for (size_t i = 0; i < shapes.size(); i++) {
-        /*printf("shape[%ld].name = %s\n", i, shapes[i].name.c_str());
+        printf("shape[%ld].name = %s\n", i, shapes[i].name.c_str());
         printf("shape[%ld].indices: %ld\n", i, shapes[i].mesh.indices.size());
-        assert((shapes[i].mesh.indices.size() % 3) == 0);
+        /*assert((shapes[i].mesh.indices.size() % 3) == 0);
         for (size_t f = 0; f < shapes[i].mesh.indices.size(); f++) {
             printf("  idx[%ld] = %d\n", f, shapes[i].mesh.indices[f]);
         }*/
@@ -81,11 +81,7 @@ void ObjLoader::print () {
     }
 }
 
-void ObjLoader::draw() {
-    
-    //TODO
-
-    // TODO : use vbos and add normals
+void ObjLoader::drawDownwards (const float * curretnTransformationMatrix) {
     glBegin(GL_TRIANGLES);
 
     for (size_t i = 0; i < shapes.size(); i++) {
@@ -107,6 +103,5 @@ void ObjLoader::draw() {
     }
 
     glEnd();
-
 }
 
