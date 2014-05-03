@@ -185,8 +185,13 @@ int main(int argc, char** argv) {
 	//p->releaseParticles();
 	//root->addChild("zparticules", p);
 
-	SeeweedGroup *seeweeds = new SeeweedGroup(100,10,1.0f);
-	seeweeds->spawnGroup(qglviewer::Vec(0,0,0), 100, NULL, NULL);
+	SeeweedGroup *seeweeds = new SeeweedGroup(10000,10,1.0f);
+	//seeweeds->spawnGroup(qglviewer::Vec(0,-22,3), 100, NULL, NULL);
+	//seeweeds->spawnGroup(qglviewer::Vec(0,-22,10), 100, NULL, NULL);
+	for (int i = 0; i < 10; i++) {
+		seeweeds->spawnGroup(qglviewer::Vec(Random::randf(-40,40),-26,Random::randf(10,40)), 100, NULL, NULL);
+	}
+	seeweeds->releaseParticles();
 	root->addChild("seeweeds", seeweeds);
     
 	//ObjLoader test

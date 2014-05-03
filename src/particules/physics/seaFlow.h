@@ -7,13 +7,15 @@
 class SeaFlow : public ParticleGroupKernel {
 
 	public:
-		SeaFlow(qglviewer::Vec flowDir);
+		SeaFlow(qglviewer::Vec flowDir, float force, float deltaT);
 		~SeaFlow();
 
-		void operator ()(const ParticleGroup *particleGroup);
+		void operator()(const ParticleGroup *particleGroup);
 
 	private:
 		qglviewer::Vec flowDir;
+		float force;
+		float deltaT;
 };
 
 #endif /* end of include guard: SEAFLOW_H */
