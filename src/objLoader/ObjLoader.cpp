@@ -81,11 +81,7 @@ void ObjLoader::print () {
     }
 }
 
-//void ObjLoader::drawDownwards() {
-    
-    //TODO
-
-    /*// TODO : use vbos and add normals
+void ObjLoader::drawDownwards (const float * curretnTransformationMatrix) {
     glBegin(GL_TRIANGLES);
 
     for (size_t i = 0; i < shapes.size(); i++) {
@@ -106,7 +102,6 @@ void ObjLoader::print () {
         }
     }
 
-    glEnd();*/
-
-//}
+    glEnd();
+}
 
