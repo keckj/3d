@@ -26,6 +26,8 @@ CUDA_INCLUDEPATH = -I/Developer/NVIDIA/CUDA-5.5/include
 CUDA_LIBPATH = -L/Developer/NVIDIA/CUDA-5.5/lib 
 CUDA_LIBS = -lcudart
 
+NVCC=/Developer/NVIDIA/CUDA-5.5/bin/nvcc -ccbin /usr/bin/clang
+
 OPENAL_INCLUDEPATH =
 OPENAL_LIBPATH =
 OPENAL_LIBS = -framework OpenAL -lalut
@@ -44,6 +46,8 @@ VIEWER_DEFINES = -D_REENTRANT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GU
 CUDA_INCLUDEPATH = -I/usr/local/cuda-5.5/include -I/usr/local/cuda-6.0/include
 CUDA_LIBPATH = -L/usr/local/cuda-5.5/lib64 -L/usr/lib/nvidia-331 -L/usr/local/cuda-6.0/lib64
 CUDA_LIBS = -lcuda -lcudart
+
+NVCC=nvcc
 
 OPENAL_INCLUDEPATH =
 OPENAL_LIBPATH =
@@ -78,7 +82,6 @@ CXXFLAGS= -W -Wall -Wextra -Wno-unused-parameter -pedantic -std=c++0x -m64
 MOC=moc
 MOCFLAGS=
 
-NVCC=/Developer/NVIDIA/CUDA-5.5/bin/nvcc -ccbin /usr/bin/clang
 NVCCFLAGS= -Xcompiler -Wall -m64 -arch sm_$(NARCH) -O3
 
 AS = nasm
