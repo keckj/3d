@@ -3,6 +3,7 @@
 
 #include "Dimensions.h"
 #include "renderTree.h"
+#include "CardinalSpline.h"
 
 class SeaDiver : public RenderTree {
     public:
@@ -14,8 +15,14 @@ class SeaDiver : public RenderTree {
 
     protected:
         void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
+        void drawUpwards(const float *currentTransformationMatrix = consts::identity4);
+        void animateDownwards();
 
     private:
+        float t;
+        float dt;
+        CardinalSpline *cs;
+        Vec pos;
 };
 
 #endif

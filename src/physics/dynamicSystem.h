@@ -1,6 +1,8 @@
 #ifndef _DYNAMIC_SYSTEM_H_
 #define _DYNAMIC_SYSTEM_H_
 
+#include "renderTree.h"
+
 #include <QGLViewer/vec.h>
 #include <QGLViewer/manipulatedFrame.h>
 using namespace qglviewer;
@@ -10,7 +12,6 @@ using namespace std;
 
 #include "spring.h"
 #include "particle.h"
-#include "renderable.h"
 
 /*
  * This class represents a dynamic system made of particles
@@ -20,13 +21,12 @@ using namespace std;
  * The initial scene is composed of a fixed plane, a static particle
  * that can be controlled by the mouse, and a dynamic particle.
  */
-class DynamicSystem : public Renderable
-{
+class DynamicSystem : public RenderTree {
     protected:
         // system
         vector<Particle *> particles;
         vector<Spring *> springs;
-        vector<Particle *> fixed;
+        vector<Particle *> fixe;
 
         // System parameters (common)
         int numberParticles;
@@ -105,7 +105,7 @@ class DynamicSystem : public Renderable
         void init(Viewer &);
 
         // Draw the particle-spring system
-        void draw();
+		void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
 
         // Update positions and velocities of dynamic objects
         void animate();

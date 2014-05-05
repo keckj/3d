@@ -19,6 +19,12 @@ Vec CardinalSpline::operator() (unsigned int n, float t) {
     return (points[n] * h00(t) + tangents[n] * h10(t) + points[n+1] * h01(t) + tangents[n+1] * h11(t));
 }
 
+Vec CardinalSpline::operator() (float t) {
+    int n = floor(t);
+
+    return operator()(n, t - n);
+}
+
 // Hermite Basis functions
 float CardinalSpline::h00 (float t) {
     return ((1 + 2 * t) * (1 - t) * (1 - t));

@@ -15,6 +15,7 @@ Trunk::Trunk (float width, float height, float depth) : RenderTree(), rect(width
     Head *head = new Head(RADIUS_HEAD);
     addChild("head", head);
     translateChild("head", 0, 0, HEIGHT_NECK + getHeight() / 2);
+    scaleChild("head", 1, 1, 1.2);
 
     JointLeftUpTrunk *jointLeftUpTrunk = new JointLeftUpTrunk(RADIUS_JOINT);
     addChild("jointLeftUpTrunk", jointLeftUpTrunk);
