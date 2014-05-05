@@ -24,6 +24,8 @@ const unsigned char *Globals::glShadingLanguageVersion = 0;
 Viewer *Globals::viewer = 0;
 unsigned int Globals::projectionViewUniformBlock = 0;
 
+float Globals::dt = 0.1;
+
 void Globals::init() {
 
 

@@ -9,9 +9,10 @@ class SeaDiver : public RenderTree {
     public:
         SeaDiver ();
 
-        // Events
         void keyPressEvent(QKeyEvent* e);
         void mouseMoveEvent(QMouseEvent* e);
+
+        ~SeaDiver ();
 
     protected:
         void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
@@ -20,7 +21,6 @@ class SeaDiver : public RenderTree {
 
     private:
         float t;
-        float dt;
         CardinalSpline *cs;
         Vec pos;
 };
