@@ -1,5 +1,6 @@
 #include "Pipe.h"
 #include "Dimensions.h"
+#include "SeaDiver.h"
 
 #include <iostream>
 
