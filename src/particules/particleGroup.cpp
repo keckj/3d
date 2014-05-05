@@ -44,26 +44,26 @@ ParticleGroup::ParticleGroup(unsigned int maxParticles, unsigned int maxSprings)
 	y_b = buffers[1]; //float
 	z_b = buffers[2]; //float
 	r_b = buffers[3]; //float
-	kill_b = buffers[4]; //bool
+	kill_b = buffers[4]; //unsigned char
 
 	for (int i = 0; i < 4; i++) {
 		glBindBuffer(GL_ARRAY_BUFFER, buffers[i]);
 		glBufferData(GL_ARRAY_BUFFER, maxParticles*sizeof(float), 0, GL_DYNAMIC_DRAW);
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, buffers[4]);
-	glBufferData(GL_ARRAY_BUFFER, maxParticles*sizeof(bool), 0, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, maxParticles*sizeof(unsigned char), 0, GL_DYNAMIC_DRAW);
 
 	//springs//
 	springs_intensity_b = buffers[5]; //float
 	springs_lines_b = buffers[6]; //float*6	(two points) XYZ X'Y'Z'
-	springs_kill_b = buffers[7]; //bool
+	springs_kill_b = buffers[7]; //unsigned char
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffers[5]);
 	glBufferData(GL_ARRAY_BUFFER, 2*maxSprings*sizeof(float), 0, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, buffers[6]);
 	glBufferData(GL_ARRAY_BUFFER, 6*maxSprings*sizeof(float), 0, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, buffers[7]);
-	glBufferData(GL_ARRAY_BUFFER, maxSprings*sizeof(bool), 0, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, maxSprings*sizeof(unsigned char), 0, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
 	//CUDA MEMORY (CAN'T BE SHARED WITH OPENGL)
@@ -76,7 +76,7 @@ ParticleGroup::ParticleGroup(unsigned int maxParticles, unsigned int maxSprings)
 	CHECK_CUDA_ERRORS(cudaMalloc((void**) &fz_d, maxParticles*sizeof(float)));
 	CHECK_CUDA_ERRORS(cudaMalloc((void**) &m_d, maxParticles*sizeof(float)));
 	CHECK_CUDA_ERRORS(cudaMalloc((void**) &im_d, maxParticles*sizeof(float)));
-	CHECK_CUDA_ERRORS(cudaMalloc((void**) &fixed_d, maxParticles*sizeof(bool)));
+	CHECK_CUDA_ERRORS(cudaMalloc((void**) &fixed_d, maxParticles*sizeof(unsigned char)));
 	
 	//springs//
 	CHECK_CUDA_ERRORS(cudaMalloc((void**) &springs_id1_d, maxSprings*sizeof(unsigned int)));
@@ -211,13 +211,13 @@ void ParticleGroup::drawDownwards(const float *modelMatrix) {
 	
 	glPushAttrib(GL_COLOR_BUFFER_BIT);
         
-        //glDisable(GL_DEPTH_TEST);
-	glEnable(GL_POINT_SPRITE);
+    //glDisable(GL_DEPTH_TEST);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_POINT_SMOOTH);
-	glEnable (GL_LINE_SMOOTH);
+	glEnable(GL_POINT_SPRITE);
 	glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);
-                    
+	
+	glEnable(GL_LINE_SMOOTH);
 
 	glEnable (GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -252,7 +252,7 @@ void ParticleGroup::drawDownwards(const float *modelMatrix) {
 	glEnableVertexAttribArray(3);
 
 	glBindBuffer(GL_ARRAY_BUFFER, kill_b);
-	glVertexAttribPointer(4, 1, GL_BYTE, GL_FALSE, 0, 0);
+	glVertexAttribIPointer(4, 1, GL_UNSIGNED_BYTE, 0, 0);
 	glVertexAttribDivisor(4, 1);
 	glEnableVertexAttribArray(4);
 
@@ -305,20 +305,20 @@ void ParticleGroup::fromDevice() {
 	
 	float *x_h=0, *y_h=0, *z_h=0, *vx_h=0, *vy_h=0, *vz_h=0, *m_h=0, *r_h=0; //8
 	float *springs_k_h=0, *springs_Lo_h=0, *springs_d_h=0, *springs_Fmax_h=0; //4
-	unsigned int *springs_id1_h, *springs_id2_h; //2
-	bool *kill_h=0, *fixed_h=0, *springs_kill_h=0; //3
+	unsigned int *springs_id1_h=0, *springs_id2_h=0; //2
+	unsigned char *kill_h=0, *fixed_h=0, *springs_kill_h=0; //3
 
 	unsigned int nRessources = 17;
 	void **data_p_h[17] = {
 						(void**)&x_h, (void**)&y_h, (void**)&z_h, 
 						(void**)&vx_h, (void**)&vy_h, (void**)&vz_h, (void**)&m_h, (void**)&r_h, //particles float
-						(void**)&kill_h, (void**)&fixed_h, //particles bool
+						(void**)&kill_h, (void**)&fixed_h, //particles unsigned char
 						(void**)&springs_k_h, (void**)&springs_Lo_h, (void**)&springs_d_h, (void**)&springs_Fmax_h, //springs float
 						(void**)&springs_id1_h, (void**)&springs_id2_h, //springs unsigned int
-						(void**)&springs_kill_h //springs bool
+						(void**)&springs_kill_h //springs unsigned char
 						};
 	
-	size_t fs = sizeof(float), bs = sizeof(bool), is = sizeof(unsigned int);
+	size_t fs = sizeof(float), bs = sizeof(unsigned char), is = sizeof(unsigned int);
 	size_t ps = nParticles, ss = nSprings;
 	size_t dataSize[17] = {
 						ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs,
@@ -337,13 +337,13 @@ void ParticleGroup::fromDevice() {
 		void *data_d[17] = {
 						x_d, y_d, z_d, 
 						vx_d, vy_d, vz_d, m_d, r_d, //particles float
-						kill_d, fixed_d, //particles bool
+						kill_d, fixed_d, //particles unsigned char
 						springs_k_d, springs_Lo_d, springs_d_d, springs_Fmax_d, //springs float
 						springs_id1_d, springs_id2_d, //springs unsigned int
-						springs_kill_d //springs bool
+						springs_kill_d //springs unsigned char
 						};
 
-		for (unsigned int i = 0; i < nRessources - 1; i++) {
+		for (unsigned int i = 0; i < nRessources; i++) {
 			CHECK_CUDA_ERRORS(cudaMemcpy(data_p_h[i][0], data_d[i], dataSize[i], cudaMemcpyDeviceToHost));
 		}
 	}
@@ -365,7 +365,7 @@ void ParticleGroup::fromDevice() {
 	//}
 
 	for (unsigned int i = 0; i < nRessources; i++) {
-		CHECK_CUDA_ERRORS(cudaFreeHost(data_p_h[i][0]));
+		CHECK_CUDA_ERRORS(cudaFreeHost(*(data_p_h[i])));
 	}
 	
 	nParticles = 0;
@@ -377,7 +377,7 @@ void ParticleGroup::toDevice() {
 
 	//Alloc CPU arrays
 	float *x_h=0, *y_h=0, *z_h=0, *vx_h=0, *vy_h=0, *vz_h=0, *m_h=0, *im_h, *r_h=0; //9
-	bool *fixed_h=0; //1
+	unsigned char *fixed_h=0; //1
 	float *springs_k_h=0, *springs_Lo_h=0, *springs_d_h=0, *springs_Fmax_h=0; //4
 	unsigned int *springs_id1_h=0, *springs_id2_h=0; //2
 
@@ -386,13 +386,13 @@ void ParticleGroup::toDevice() {
 						(void**)&x_h, (void**)&y_h, (void**)&z_h, 
 						(void**)&vx_h, (void**)&vy_h, (void**)&vz_h, 
 						(void**)&m_h, (void**)&im_h, (void**)&r_h, //particles float
-						(void**)&fixed_h, //particle bools
+						(void**)&fixed_h, //particle unsigned chars
 						(void**)&springs_k_h, (void**)&springs_Lo_h, 
 						(void**)&springs_d_h, (void**)&springs_Fmax_h, //springs float
 						(void**)&springs_id1_h, (void**)&springs_id2_h, //springs unsigned int
 						};
 	
-	size_t fs = sizeof(float), is = sizeof(unsigned int), bs = sizeof(bool);
+	size_t fs = sizeof(float), is = sizeof(unsigned int), bs = sizeof(unsigned char);
 	size_t ps = nWaitingParticles, ss = nWaitingSprings;
 	size_t dataSize[16] = {
 						ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs, ps*fs,
@@ -464,7 +464,7 @@ void ParticleGroup::toDevice() {
 		void *data_d[16] = {
 						x_d, y_d, z_d, 
 						vx_d, vy_d, vz_d, m_d, im_d, r_d, //particles float
-						fixed_d, //particle bools
+						fixed_d, //particle unsigned chars
 						springs_k_d, springs_Lo_d, springs_d_d, springs_Fmax_d, //springs float
 						springs_id1_d, springs_id2_d, //springs unsigned int
 						};
@@ -474,14 +474,14 @@ void ParticleGroup::toDevice() {
 		}
 
 		//set memory to 0
-		CHECK_CUDA_ERRORS(cudaMemset(kill_d, 0, nParticles*sizeof(bool)));
+		CHECK_CUDA_ERRORS(cudaMemset(kill_d, 0, nParticles*sizeof(unsigned char)));
 		CHECK_CUDA_ERRORS(cudaMemset(fx_d, 0, nParticles*sizeof(float)));
 		CHECK_CUDA_ERRORS(cudaMemset(fy_d, 0, nParticles*sizeof(float)));
 		CHECK_CUDA_ERRORS(cudaMemset(fz_d, 0, nParticles*sizeof(float)));
 		
 		CHECK_CUDA_ERRORS(cudaMemset(springs_lines_d, 0, 6*nSprings*sizeof(float)));
 		CHECK_CUDA_ERRORS(cudaMemset(springs_intensity_d, 0, nSprings*sizeof(float)));
-		CHECK_CUDA_ERRORS(cudaMemset(springs_kill_d, 0, nSprings*sizeof(bool)));
+		CHECK_CUDA_ERRORS(cudaMemset(springs_kill_d, 0, nSprings*sizeof(unsigned char)));
 	}
 	unmapRessources();
 
@@ -531,6 +531,7 @@ void ParticleGroup::makeDebugPrograms() {
 	_particlesDebugProgram->bindFragDataLocation(0, "out_colour");
 
 	_particlesDebugProgram->attachShader(Shader("shaders/particle/particle_vs.glsl", GL_VERTEX_SHADER));
+	_particlesDebugProgram->attachShader(Shader("shaders/particle/particle_gs.glsl", GL_GEOMETRY_SHADER));
 	_particlesDebugProgram->attachShader(Shader("shaders/particle/particle_fs.glsl", GL_FRAGMENT_SHADER));
 
 	_particlesDebugProgram->link();
@@ -548,7 +549,7 @@ void ParticleGroup::makeDebugPrograms() {
 }
 
 void ParticleGroup::releaseParticles() {
-	//fromDevice();
+	fromDevice();
 	toDevice();
 }
 

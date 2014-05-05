@@ -16,6 +16,7 @@ class SeaFlow : public ParticleGroupKernel {
 		qglviewer::Vec flowDir;
 		float force;
 		float deltaT;
+		float t;
 };
 
 #endif /* end of include guard: SEAFLOW_H */

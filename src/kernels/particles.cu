@@ -11,11 +11,11 @@ extern void checkKernelExecution();
 struct mappedParticlePointers {
 	//particules
 	float *x, *y, *z, *vx, *vy, *vz, *fx, *fy, *fz, *m, *im, *r;
-	bool *kill, *fixed;
+	unsigned char *kill, *fixed;
 	//ressorts
 	float *k, *Lo, *d, *Fmax, *lines, *intensity;
 	unsigned int *id1, *id2;
-	bool *killSpring;
+	unsigned char *killSpring;
 };
 
 __global__ void forceConstante(
@@ -175,7 +175,7 @@ __global__ void attractors(
 				float *vx, float *vy, float *vz,
 				float *fx, float *fy, float *fz,
 				float *k, float *Lo, float *d, float *Fmax,
-				bool *kill, float *intensity, float *outputLines,
+				unsigned char *kill, float *intensity, float *outputLines,
 				const bool handleDumping, 
 				const unsigned int nSprings) {
 
@@ -235,7 +235,7 @@ __global__ void attractors(
 	//total force
 	dF = dFs + dFd;
 	/*if(dF > _Fmax)*/
-		/*kill[id] = true;*/
+		/*kill[id] = 1;*/
 
 	dF /= N;
 	dfx = dF*dx;
@@ -275,13 +275,27 @@ __global__ void attractors(
 }
 
 				
+__global__ void killParticle(
+				float *x, float *y, float *z,
+				unsigned char *kill, 
+				const float vx, const float vy, const float vz,
+				const unsigned int nParticles, const float max_val) {
+	
+	int id = blockIdx.x*blockDim.x + threadIdx.x;
+
+	if(id >= nParticles)
+		return;
+	
+	if(x[id]*vx + y[id]*vy + z[id]*vz > max_val)
+		kill[id] = 1;
+}
 	
 __global__ void dynamicScheme(
 		float *x, float *y, float *z,
 		float *vx, float *vy, float *vz,
 		float *fx, float *fy, float *fz,
 		float *im,
-		bool *fixed,
+		unsigned char *fixed,
 		float dt,
 		unsigned int nParticles) {
 
@@ -452,6 +466,24 @@ void springKernel(const struct mappedParticlePointers *pt,
 				pt->killSpring, pt->intensity, pt->lines,
 				handleDumping, 
 				nSprings);
+	
+	cudaDeviceSynchronize();
+	checkKernelExecution();
+}
+
+
+void killParticleKernel(const struct mappedParticlePointers *pt,
+				const float vx, const float vy, const float vz,
+				const unsigned int nParticles, const float maxVal) {
+	
+	dim3 blockDim(512,1,1);
+	dim3 gridDim(ceil((float)nParticles/512),1,1);
+				
+	killParticle<<<gridDim,blockDim,0,0>>>(
+				pt->x, pt->y, pt->z,
+				pt->kill,
+				vx, vy, vz,
+				nParticles, maxVal);
 	
 	cudaDeviceSynchronize();
 	checkKernelExecution();
