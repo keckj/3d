@@ -15,7 +15,7 @@ in float fogFactor;
 out vec4 out_color;
 
 // init 
-float waterAlpha = 0.8;
+float waterAlpha = 0.5;
 vec3 l = normalize(sunDir);
 vec4 specular = vec4(0.05,0.05,0.05,waterAlpha);
 vec4 diffuse = vec4(57.0/256.0,88.0/256.0,121.0/256.0,waterAlpha);
