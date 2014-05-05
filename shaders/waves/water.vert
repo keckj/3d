@@ -102,8 +102,8 @@ void computeFogColor(in vec4 position) {
         // Brouillard exponentiel au dessus de l'eau (soleil de la skybox pris en compte)
         fogFactor = exp( -distance*fogDensity );
         float sunFactor = max( dot( rayDir, normalize(sunDir) ), 0.0 );
-        fogColor = mix( vec3(0.5,0.6,0.7),// vec3(0.8,0.8,0.8), // bluish
-                        vec3(1.0,0.9,0.7), // yellowish
+        fogColor = mix( vec3(0.26,0.26,0.26), // fog
+                        vec3(1.0,0.9,0.7), // sun
                         pow(sunFactor,8.0) );
         //fogColor = vec3(0.8,0.8,0.8);
     } else if (hc < 0 && hp < 0) {

@@ -2,11 +2,18 @@
 
 in vec2 text2D;
 in float height;
+
+in vec3 fogColor;
+in float fogFactor;
+
 out vec4 out_colour;
 
 uniform sampler2D texture_1, texture_2, texture_3, texture_4, texture_5;
 
 vec4 interp(float thres1, float thres2, sampler2D text1, sampler2D text2);
+
+vec4 applyFog(in vec4 fragColor);
+
 
 void main (void)
 {	
@@ -24,6 +31,8 @@ void main (void)
 		out_colour = texture2D(texture_4, text2D);
 	else
 		out_colour = interp(0.75, 1.0, texture_4, texture_5);
+
+    out_colour = applyFog(out_colour);
 }
 
 vec4 interp(float thres1, float thres2, sampler2D text1, sampler2D text2) {
@@ -33,4 +42,9 @@ vec4 interp(float thres1, float thres2, sampler2D text1, sampler2D text2) {
 
 	return color;
 }
+
+vec4 applyFog(in vec4 fragColor) {
+    return mix( vec4(fogColor,1.0), fragColor, fogFactor );
+}
+
 

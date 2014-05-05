@@ -6,7 +6,7 @@ uniform mat4 projectionMatrix;
 uniform mat3 normalMatrix;
 
 uniform	float fogDensity = 0.05;
-uniform	float underWaterFogEnd = 30.0;
+uniform	float underWaterFogEnd = 50.0;
 uniform vec3 sunDir = vec3(100.0,40.0,-50.0);
 
 in vec4 vertexPosition;
