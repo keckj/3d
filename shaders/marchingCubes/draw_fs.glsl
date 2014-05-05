@@ -15,11 +15,15 @@ uniform sampler3D normals_occlusion;
 
 vec3 sourcePos = vec3(0.5,1,1);
 
+in vec3 fogColor;
+in float fogFactor;
+
 out vec3 out_colour;
 
 float snoise(vec3 v);
 float turbulence(vec3 pos);
 vec3 marble(vec3 pos);
+vec3 applyFog(in vec3 fragColor);
 
 void main (void)
 {	
@@ -38,8 +42,14 @@ void main (void)
 	//out_colour = mix(out_colour, marble(texCoord), 0.3);
 	//out_colour = mix(out_colour,texture(terrain_texture, vec2(texCoord.y*4+turbulence(texCoord)/2, texCoord.x)).xyz,0.2);
 	out_colour = clamp(out_colour*(max(0.3,0.3+dot(normal, normalize(sourcePos - texCoord)))),0,1);
+
+    out_colour = applyFog(out_colour);
 }
 
+
+vec3 applyFog(in vec3 fragColor) {
+    return mix( fogColor, fragColor, fogFactor );
+}
 
 float turbulence(vec3 pos) {
 	float turb=0;

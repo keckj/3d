@@ -33,21 +33,21 @@ void Object::createUBOs() {
 
     //test
     Light_s lightsData[5];
-    float lightPos[] = {-1.0f, -1.0f, 0.0f, 0.0f};
-    float lightPos2[] = {0.0f, 0.0f, 1.0f, 0.0f};
+    float lightPos[] = {-100.0f, -40.0f, +50.0f, 0.0f};
+    //float lightPos2[] = {0.0f, 0.0f, 1.0f, 0.0f};
     float lightDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
-    float lightDiffuse2[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    //float lightDiffuse2[] = {1.0f, 1.0f, 1.0f, 1.0f};
     float lightSpecular[] = {0.2f, 0.2f, 0.2f, 1.0f};
     memcpy(lightsData[0].position, lightPos, 4*sizeof(GLfloat));
     memcpy(lightsData[0].diffuse, lightDiffuse, 4*sizeof(GLfloat));
     memcpy(lightsData[0].specular, lightSpecular, 4*sizeof(GLfloat));
     lightsData[0].constantAttenuation = 1.0f;
     lightsData[0].isEnabled = 1.0f;
-    memcpy(lightsData[1].position, lightPos2, 4*sizeof(GLfloat));
+    /*memcpy(lightsData[1].position, lightPos2, 4*sizeof(GLfloat));
     memcpy(lightsData[1].diffuse, lightDiffuse2, 4*sizeof(GLfloat));
     memcpy(lightsData[1].specular, lightSpecular, 4*sizeof(GLfloat));
     lightsData[1].constantAttenuation = 1.0f;
-    lightsData[1].isEnabled = 1.0f;
+    lightsData[1].isEnabled = 1.0f;*/
 
     tinyobj::material_t mat = shape.material;
     Material_s materialData = {
