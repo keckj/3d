@@ -210,7 +210,8 @@ void ParticleGroup::drawDownwards(const float *modelMatrix) {
 	_particlesDebugProgram->use();
 	
 	glPushAttrib(GL_COLOR_BUFFER_BIT);
-
+        
+        //glDisable(GL_DEPTH_TEST);
 	glEnable(GL_POINT_SPRITE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_POINT_SMOOTH);
@@ -227,8 +228,8 @@ void ParticleGroup::drawDownwards(const float *modelMatrix) {
 	glUniformMatrix4fv(_particleUniformLocs["viewMatrix"], 1, GL_FALSE, view);
 	glUniformMatrix4fv(_particleUniformLocs["modelMatrix"], 1, GL_TRUE, modelMatrix);
 	
-	glUniform1f(_particleUniformLocs["rmin"], 0.02);
-	glUniform1f(_particleUniformLocs["rmax"], 0.08);
+	glUniform1f(_particleUniformLocs["rmin"], 0.04);
+	glUniform1f(_particleUniformLocs["rmax"], 0.2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, x_b);
 	glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 0, 0);
@@ -280,6 +281,7 @@ void ParticleGroup::drawDownwards(const float *modelMatrix) {
 	glDisable(GL_PROGRAM_POINT_SIZE);
 	glDisable(GL_POINT_SMOOTH);
 	glDisable(GL_LINE_SMOOTH);
+        //glEnable(GL_DEPTH_TEST);
 
 	glPopAttrib();
 

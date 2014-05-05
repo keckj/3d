@@ -5,6 +5,7 @@ in float intensity;
 
 out VS_FS_VERTEX 
 {
+        vec3 pos;
 	float intensity;
 } vertex_out;
 
@@ -21,5 +22,6 @@ uniform mat4 modelMatrix;
 
 void main(void) {
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1.0);
+        vertex_out.pos = pos;
 	vertex_out.intensity = intensity;
 }

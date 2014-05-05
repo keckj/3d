@@ -164,32 +164,48 @@ int main(int argc, char** argv) {
     /* tmp.clear(); */
     /* viewer.addRenderable(pipe); */
 
-	//unsigned int nParticles = 1000;
+        unsigned int nParticles = 100;
+        unsigned int nGroups = 100;
 
-	//qglviewer::Vec g = 0.00002*Vec(0,+9.81,0);
-	//ParticleGroup *p = new ParticleGroup(nParticles, 1);
-	//ParticleGroupKernel *archimede = new ConstantForce(g);
-	//ParticleGroupKernel *dynamicScheme = new DynamicScheme();
+        qglviewer::Vec g = 0.0002*Vec(0,+9.81,0);
+        
+        ParticleGroup **groups = new ParticleGroup*[nGroups];
+        for (unsigned int i = 0; i < nGroups; i++) {
+                groups[i] = new ParticleGroup(nParticles, 1);
+        }
 
-	//stringstream name;
-	//for (unsigned int i = 0; i < nParticles; i++) {
-			//qglviewer::Vec pos = Vec(Random::randf(), Random::randf(), Random::randf());
-			//qglviewer::Vec  vel = Vec(0,0,0);
-			//float r = Random::randf(0.02,0.1);
-			//float m = 4.0f/3.0f*3.1415f*r*r*r;
-			//p->addParticle(new Particule(pos, vel, m, r, false));	
-	//}
+        ParticleGroupKernel *archimede = new ConstantForce(g);
+        ParticleGroupKernel *dynamicScheme = new DynamicScheme();
+	ParticleGroupKernel *seaflow = new SeaFlow(qglviewer::Vec(1,0,0), 0.1, 0.1);
+
+        stringstream name;
+        for (unsigned j = 0; j < nGroups; j++) {
+                ParticleGroup *p = groups[j];
+                qglviewer::Vec pos = Vec(Random::randf(-45,40), -30, Random::randf(0,25));
+                for (unsigned int i = 0; i < nParticles; i++) {
+                                qglviewer::Vec  vel = Vec(0,0,0);
+                                float r = Random::randf(0.04,0.2);
+                                float m = 4.0f/3.0f*3.1415f*r*r*r;
+                                p->addParticle(new Particule(pos + qglviewer::Vec(Random::randf(), Random::randf(), Random::randf()), vel, m, r, false));	
+                }
+                
+                p->addKernel(archimede);
+                p->addKernel(seaflow);
+                p->addKernel(dynamicScheme);
+                p->releaseParticles();
+                name.clear();
+                name << "zparticles";
+                name << j;
+                root->addChild(name.str(), p);
+        }
+
 	
-	//p->addKernel(archimede);
-	//p->addKernel(dynamicScheme);
-	//p->releaseParticles();
-	//root->addChild("zparticules", p);
-
-	SeeweedGroup *seeweeds = new SeeweedGroup(10000,10,1.0f);
-	//seeweeds->spawnGroup(qglviewer::Vec(0,-22,3), 100, NULL, NULL);
-	//seeweeds->spawnGroup(qglviewer::Vec(0,-22,10), 100, NULL, NULL);
-	for (int i = 0; i < 10; i++) {
-		seeweeds->spawnGroup(qglviewer::Vec(Random::randf(-40,40),-26,Random::randf(10,40)), 100, NULL, NULL);
+        
+        SeeweedGroup *seeweeds = new SeeweedGroup(20000,10,1.0f);
+        seeweeds->spawnGroup(qglviewer::Vec(0,-22,3), 100, NULL, NULL);
+	
+        for (int i = 0; i < 30; i++) {
+		seeweeds->spawnGroup(qglviewer::Vec(Random::randf(-45,40),-26,Random::randf(0,25)), 100, NULL, NULL);
 	}
 	seeweeds->releaseParticles();
         root->addChild("seeweeds", seeweeds);
