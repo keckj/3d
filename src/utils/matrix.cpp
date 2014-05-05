@@ -48,6 +48,30 @@ namespace Matrix {
 		M[7]+=v.y;
 		M[11]+=v.z;
 	}
+		
+	void setOffsetMat4f(float *M, float x, float y, float z) {
+		M[3]=x;
+		M[7]=y;
+		M[11]=z;
+	}
+
+	void setOffsetMat4f(float *M, qglviewer::Vec &v) {
+		M[3]=v.x;
+		M[7]=v.y;
+		M[11]=v.z;
+	}
+		
+	void setRotationMat4f(float *M, qglviewer::Quaternion rot) {
+
+		float R[3][3];
+		rot.getRotationMatrix(R);
+
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				M[4*i+j] = R[i][j];
+			}
+		}
+	}
 
 	void rotateMat4f(float* M, qglviewer::Quaternion const &quat) {
 

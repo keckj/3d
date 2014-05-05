@@ -2,7 +2,7 @@
 #define BOAT_H
 
 #include "headers.h"
-#include "RenderTree.h"
+#include "renderTree.h"
 #include "ObjLoader.h"
 
 class Boat : public RenderTree {

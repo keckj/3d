@@ -15,6 +15,7 @@ class Shark : public RenderTree {
 
 	private:
 		CardinalSpline *trajectory;
-		std::vector<qglviewer::Vec> axes;
-		std::vector<float> angles;
+		
+		std::vector<qglviewer::Vec> points;
+		std::vector<qglviewer::Quaternion> quat;
 };
