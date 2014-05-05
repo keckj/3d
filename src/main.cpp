@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
 	root->addChild("vagues", waves);
     	
 	//Terrain
-	MarchingCubes *terrain = new MarchingCubes(128,128,128,100.0f/127);
+	MarchingCubes *terrain = new MarchingCubes(128,128,128,100.0f/128);
 	terrain->translate(-50,-65,-50);
 	root->addChild("terrain", terrain);
 	
@@ -192,7 +192,7 @@ int main(int argc, char** argv) {
 		seeweeds->spawnGroup(qglviewer::Vec(Random::randf(-40,40),-26,Random::randf(10,40)), 100, NULL, NULL);
 	}
 	seeweeds->releaseParticles();
-	root->addChild("seeweeds", seeweeds);
+        root->addChild("seeweeds", seeweeds);
     
 	//ObjLoader test
     //vector<Object*> vecc = cube->getObjects();

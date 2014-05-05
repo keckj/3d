@@ -15,8 +15,8 @@
 
 using namespace Matrix;
 
-#define N_MOBILES_X 512
-#define N_MOBILES_Z 512
+#define N_MOBILES_X 256
+#define N_MOBILES_Z 256
 
 Waves::~Waves() {
     delete[] mobiles;

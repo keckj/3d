@@ -35,8 +35,8 @@ void main (void)
 	/*else*/
 	
 	out_colour = vec3(0.88,0.66,0.37);
-	out_colour = mix(out_colour, marble(texCoord), 0.3);
-	out_colour = mix(out_colour,texture(terrain_texture, vec2(texCoord.y*4+turbulence(texCoord)/2, texCoord.x)).xyz,0.2);
+	//out_colour = mix(out_colour, marble(texCoord), 0.3);
+	//out_colour = mix(out_colour,texture(terrain_texture, vec2(texCoord.y*4+turbulence(texCoord)/2, texCoord.x)).xyz,0.2);
 	out_colour = clamp(out_colour*(max(0.3,0.3+dot(normal, normalize(sourcePos - texCoord)))),0,1);
 }
 
