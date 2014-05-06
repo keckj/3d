@@ -46,8 +46,8 @@ program("Waves") {
 	initializeRelativeModelMatrix();
 
     // Ambient sounds
-    this->underwaterSound = new Audible("sound/ambiant/UnderWater_Pool.wav", qglviewer::Vec(0,0,0));
-    this-> underwaterSoundPlaying = false;
+    this->underwaterSound = new Audible("sounds/ambiant/Underwater_Pool_converted.wav", qglviewer::Vec(0,0,0));
+    this->underwaterSoundPlaying = false;
 
     // Indices used for drawing
     nIndices = 6*(N_MOBILES_X-1)*(N_MOBILES_Z-1);
@@ -170,6 +170,7 @@ void Waves::animateDownwards() {
     // Ambient sounds
     if (Globals::viewer->camera()->position()[1] < meanHeight) {
         if (!underwaterSoundPlaying) {
+            underwaterSound->setGain(max(Globals::viewer->camera()->position().squaredNorm(), 1.0f));
             underwaterSound->playSource();
             underwaterSoundPlaying = true;
         }
