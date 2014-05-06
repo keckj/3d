@@ -6,22 +6,25 @@ using namespace qglviewer;
 
 #define THETAMAX (0.1)
 
-Boat::Boat () {
-    boat = new ObjLoader("obj_files/boat/boat", "obj_files/boat/");
+Boat::Boat(const std::vector<Object*> &objs) {
+	this->addChild("boat0",objs[0]);
+	this->addChild("boat1",objs[1]);
+	this->addChild("boat2",objs[2]);
+	this->addChild("boat3",objs[3]);
+	this->addChild("boat4",objs[4]);
+	this->addChild("boat5",objs[5]);
+	this->addChild("boat6",objs[6]);
+	this->addChild("boat7",objs[7]);
+	this->addChild("boat8",objs[8]);
+	this->addChild("boat9",objs[9]);
+	this->addChild("boat10",objs[10]);
+	this->addChild("boat11",objs[11]);
+
     scale(0.01);
-    rotate(Quaternion(Vec(1, 0, 0), -M_PI / 2));
-    translate(0, 0, 10);
+    translate(0, 11, 0);
 }
 
 void Boat::drawDownwards(const float *currentTransformationMatrix) {
-    glPushMatrix();
-
-    glMultTransposeMatrixf(relativeModelMatrix);
-    boat->drawDownwards(currentTransformationMatrix);
-}
-
-void Boat::drawUpwards(const float *currentTransformationMatrix) {
-    glPopMatrix();
 }
 
 void Boat::animateDownwards () {

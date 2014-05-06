@@ -4,6 +4,8 @@
 #include "terrain.h"
 #include "SeaDiver.h"
 #include "Pipe.h"
+#include "Boat.h"
+#include "octopus.h"
 #include "Rectangle.h"
 #include "log.h"
 #include "program.h"
@@ -66,9 +68,11 @@ int main(int argc, char** argv) {
 	log_console.infoStream() << "[Glut Init] ";
 
 	// ObjLoader
-	//ObjLoader *cube = new ObjLoader("obj_files/cube2");
 	//ObjLoader *mouette = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/");
+    ObjLoader *octopusObj = new ObjLoader("obj_files/octopus/OCTOPUS_", "obj_files/octopus/");
 	ObjLoader *sharkObj = new ObjLoader("obj_files/White_Shark/wshark", "obj_files/White_Shark/");
+    ObjLoader *boatObj = new ObjLoader("obj_files/boat/boat", "obj_files/boat/");
+	SeaDiver *diver = new SeaDiver(); 
 
 	// Read command lines arguments.
 	QApplication application(argc,argv);
@@ -129,8 +133,15 @@ int main(int argc, char** argv) {
 	//root->addChild("terrain", terrain);
 
 	// Diver
-	//SeaDiver *diver = new SeaDiver(); 
-	//root->addChild("diver", diver); 
+	root->addChild("diver", diver); 
+
+    // Boat
+    Boat *boat = new Boat(boatObj->getObjects());
+    root->addChild("boat", boat);
+
+    // Octopus
+    Octopus *octopus = new Octopus(octopusObj->getObjects());
+    root->addChild("octopus", octopus);
 
 	//ObjLoader
 	/*vector<Object*> vecc = cube->getObjects();
@@ -150,21 +161,9 @@ int main(int argc, char** argv) {
 	  vecm[i]->translate(0.0,50.0,0.0);
 	  }*/
 	
-	Shark *shark = new Shark(sharkObj->getObjects());
-	shark->scale(0.001);
-	root->addChild("shark", shark);
-
-	// Pipe
-	// TODO : put this in Dimensions
-	/* std::vector<Vec> tmp; */
-	/* tmp.push_back(Vec(PIPE_FIXED_PART_X, PIPE_FIXED_PART_Y, PIPE_FIXED_PART_Z)); */
-	/* tmp.push_back(Vec(0, 2, 4)); */
-	/* tmp.push_back(Vec(0, 1, 1)); */
-	/* tmp.push_back(Vec(0, 0, 0)); */
-
-	/* Pipe *pipe = new Pipe(tmp); */
-	/* tmp.clear(); */
-	/* viewer.addRenderable(pipe); */
+	/* Shark *shark = new Shark(sharkObj->getObjects()); */
+	/* shark->scale(0.001); */
+	/* root->addChild("shark", shark); */
 
 	SeeweedGroup *seeweeds = new SeeweedGroup(20000,10,1.0f);
 	//seeweeds->spawnGroup(qglviewer::Vec(0,-22,3), 100, NULL, NULL);
