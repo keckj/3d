@@ -7,7 +7,7 @@ extern void forceConstanteKernel(
 		const float Fx, const float Fy, const float Fz);
 
 SeaFlow::SeaFlow(qglviewer::Vec flowDir, float force, float deltaT) :
-	flowDir(flowDir), force(force), deltaT(deltaT)
+	flowDir(flowDir), force(force), deltaT(deltaT), t(0.0f)
 {
 }
 
@@ -15,8 +15,6 @@ SeaFlow::~SeaFlow() {
 }
 
 void SeaFlow::operator()(const ParticleGroup *particleGroup) {
-	
-	static float t = 0.0f;
 	qglviewer::Vec flow = force*flowDir*sin(t);
 
 	forceConstanteKernel(
@@ -24,5 +22,4 @@ void SeaFlow::operator()(const ParticleGroup *particleGroup) {
 			flow.x, flow.y, flow.z);
 	
 	t+= deltaT;
-	
 }

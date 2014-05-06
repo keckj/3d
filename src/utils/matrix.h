@@ -16,6 +16,11 @@ namespace Matrix {
 		void translateMat4f(float *M, float x, float y, float z);
 		void translateMat4f(float *M, qglviewer::Vec &v);
 
+		void setOffsetMat4f(float *M, float x, float y, float z);
+		void setOffsetMat4f(float *M, qglviewer::Vec &v);
+
+		void setRotationMat4f(float *M, qglviewer::Quaternion rot, float scale = 1.0f);
+
 		void rotateMat4f(float *M, qglviewer::Quaternion const &quat);
 
         float *transpose(const float *M, const unsigned int dim = 4);

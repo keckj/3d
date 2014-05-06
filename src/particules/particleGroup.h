@@ -14,11 +14,11 @@
 struct mappedParticlePointers {
 	//particules
 	float *x, *y, *z, *vx, *vy, *vz, *fx, *fy, *fz, *m, *im, *r;
-	bool *kill, *fixed;
+	unsigned char *kill, *fixed;
 	//ressorts
 	float *k, *Lo, *d, *Fmax, *lines, *intensity;
 	unsigned int *id1, *id2;
-	bool *killSpring;
+	unsigned char *killSpring;
 };
 
 class ParticleGroupKernel;
@@ -78,7 +78,7 @@ class ParticleGroup : public RenderTree {
 			  *springs_lines_d, *springs_intensity_d;
 
 		unsigned int *springs_id1_d, *springs_id2_d;
-		bool *kill_d, *fixed_d, *springs_kill_d;
+		unsigned char *kill_d, *fixed_d, *springs_kill_d;
 		
 		//funcs
 		bool _mapped;

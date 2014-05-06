@@ -43,6 +43,9 @@ class Globals {
 		
 		static Viewer *viewer;
 		static unsigned int projectionViewUniformBlock;
+
+        // Diver
+        static float dt;
 };
 	
 #endif /* end of include guard: GLOBALS_H */

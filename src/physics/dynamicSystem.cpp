@@ -2,10 +2,10 @@
 #include <iostream>
 #include <map>
 
-using namespace std;
+#include <vector>
 
-#include "viewer.h"
 #include "dynamicSystem.h"
+#include "viewer.h"
 
 DynamicSystem::DynamicSystem()
 {
@@ -22,7 +22,7 @@ DynamicSystem::DynamicSystem()
     rebound = 0.5;
     // parameters shared by all particles
     particleMass = 1.0;
-    particleRadius = 0.25;
+    particleRadius = 0.01;
     distanceBetweenParticles = 4.0 * particleRadius;
     // parameters shared by all springs
     springStiffness = 30.0;
@@ -42,19 +42,19 @@ DynamicSystem::~DynamicSystem()
 
 void DynamicSystem::clear()
 {
-    vector<Particle *>::iterator itF;
-    for (itF = fixed.begin(); itF != fixed.end(); ++itF) {
+    std::vector<Particle *>::iterator itF;
+    for (itF = fixe.begin(); itF != fixe.end(); ++itF) {
         delete(*itF);
     }
-    fixed.clear();
+    fixe.clear();
 
-    vector<Particle *>::iterator itP;
+    std::vector<Particle *>::iterator itP;
     for (itP = particles.begin(); itP != particles.end(); ++itP) {
         delete(*itP);
     }
     particles.clear();
 
-    vector<Spring *>::iterator itS;
+    std::vector<Spring *>::iterator itS;
     for (itS = springs.begin(); itS != springs.end(); ++itS) {
         delete(*itS);
     }
@@ -63,13 +63,13 @@ void DynamicSystem::clear()
 
 const Vec &DynamicSystem::getFixedParticlePosition() const
 {
-    return fixed[0]->getPosition();	// no check on 0!
+    return fixe[0]->getPosition();	// no check on 0!
 }
 
 void DynamicSystem::setFixedParticlePosition(const Vec &pos)
 {
-    if (fixed.size() > 0)
-        fixed[0]->setPosition(pos);
+    if (fixe.size() > 0)
+        fixe[0]->setPosition(pos);
 }
 
 void DynamicSystem::setGravity(bool onOff)
@@ -97,11 +97,10 @@ void DynamicSystem::init(Viewer &viewer)
     viewer.manipulatedFrame()->setPosition(getFixedParticlePosition());
 }
 
-void DynamicSystem::draw()
-{
+void DynamicSystem::drawDownwards(const float *currentTransformationMatrix) {
     // Fixed Particles
-    vector<Particle *>::iterator itP;
-    for (itP = fixed.begin(); itP != fixed.end(); ++itP) {
+    std::vector<Particle *>::iterator itP;
+    for (itP = fixe.begin(); itP != fixe.end(); ++itP) {
         glColor3fv((*itP)->getColor());
         (*itP)->draw();
     }
@@ -115,21 +114,10 @@ void DynamicSystem::draw()
     // Springs
     glColor3f(1.0, 0.28, 0.0);
     glLineWidth(5.0);
-    vector<Spring *>::iterator itS;
+    std::vector<Spring *>::iterator itS;
     for (itS = springs.begin(); itS != springs.end(); ++itS) {
         (*itS)->draw();
     }
-
-    // Ground
-    glColor3f(0.0, 0.0, 1.0);
-    glBegin(GL_QUADS);
-    glVertex3f(-10.0f, -10.0f, groundPosition.z);
-    glVertex3f(-10.0f, 10.0f,  groundPosition.z);
-    glVertex3f( 10.0f, 10.0f,  groundPosition.z);
-    glVertex3f( 10.0f, -10.0f, groundPosition.z);
-    glEnd();
-
-    glColor3f(1.0, 1.0, 1.0);
 }
 
 
@@ -141,7 +129,7 @@ void DynamicSystem::animate()
     map<const Particle *, Vec> forces;
 
     // weights
-    vector<Particle *>::iterator itP;
+    std::vector<Particle *>::iterator itP;
     for (itP = particles.begin(); itP != particles.end(); ++itP) {
         Particle *p = *itP;
         forces[p] = gravity * p->getMass();
@@ -154,7 +142,7 @@ void DynamicSystem::animate()
     }
 
     // damped springs
-    vector<Spring *>::iterator itS;
+    std::vector<Spring *>::iterator itS;
     for (itS = springs.begin(); itS != springs.end(); ++itS) {
         Spring *s = *itS;
         Vec f12 = s->getCurrentForce();

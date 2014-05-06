@@ -17,8 +17,8 @@ SeeweedGroup::SeeweedGroup(unsigned int maxSeeweeds, unsigned int maxSubdivision
 {
 	makeSeeweedsProgram();
 
-	this->addKernel(new ConstantForce(0.02*qglviewer::Vec(0,9.81,0)));
-	this->addKernel(new SeaFlow(qglviewer::Vec(1,0,0), 0.2, 0.01));
+	this->addKernel(new ConstantForce(0.03*qglviewer::Vec(0,9.81,0)));
+	this->addKernel(new SeaFlow(qglviewer::Vec(1,0,0), 0.12f, 0.01));
 	this->addKernel(new SpringsSystem(true));
 	this->addKernel(new DynamicScheme());
 }

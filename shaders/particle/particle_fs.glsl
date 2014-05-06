@@ -1,6 +1,9 @@
 #version 330
 
-flat in float r2;
+in GS_FS_VERTEX {
+	flat float r;
+} vertex_in;
+
 out vec4 out_colour;
 
 uniform float rmin = 0.0f;
@@ -8,7 +11,7 @@ uniform float rmax = 1.0f;
 
 void main (void)
 {	
-	float rr = (r2-rmin)/rmax;
+	float rr = (vertex_in.r-rmin)/rmax;
 	vec4 color1 = vec4(0,rr,1-rr,0.1);
 	vec4 color2 = vec4(0,rr,1-rr,0.8);
 
