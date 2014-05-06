@@ -88,8 +88,8 @@ int main(int argc, char** argv) {
 	log_console.infoStream() << "[Glew Init] " << glewGetErrorString(glewInit());
 
 	//openal 
-	//Audible::initOpenALContext();
-	//alutInit(&argc, argv);
+	Audible::initOpenALContext();
+	alutInit(&argc, argv);
 	log_console.infoStream() << "[Alut Init] ";
 
 	//global vars
@@ -213,7 +213,7 @@ int main(int argc, char** argv) {
 	application.exec();
 
 	//Exit
-	//Audible::closeOpenALContext();
+	Audible::closeOpenALContext();
 
 	alutExit();
 
