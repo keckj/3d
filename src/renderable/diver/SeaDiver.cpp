@@ -30,6 +30,7 @@ SeaDiver::SeaDiver() : RenderTree(), t(0), pos(0, 0, 0) {
     }
 
     cs = new CardinalSpline(trajectoire);
+    rotate(Quaternion(Vec(1, 0, 0), M_PI / 2));
 }
 
 void SeaDiver::drawDownwards(const float *currentTransformationMatrix) {
@@ -43,13 +44,14 @@ void SeaDiver::drawUpwards(const float *currentTransformationMatrix) {
 }
 
 void SeaDiver::animateDownwards() {
+    Globals::pos = (*cs)(t);
     Vec newPos = (*cs)(t);
     Vec offset =  newPos - pos;
     pos = newPos;
+    Globals::offset = offset;
 
     translate(offset);
-    /* t += Globals::dt; */
-    t += 0.1;
+    t += Globals::dt;
 }
 
 // Events
