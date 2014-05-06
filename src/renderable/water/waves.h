@@ -4,6 +4,7 @@
 #include "renderTree.h"
 #include "viewer.h"
 #include "program.h"
+#include "audible.h"
 
 struct Mobile {
     GLfloat x,y,z; // coordinates
@@ -18,6 +19,8 @@ class Waves : public RenderTree
         
     private:
         float xPos, zPos, xWidth, zWidth, meanHeight, deltaX, deltaZ;
+        Audible *underwaterSound;
+        bool underwaterSoundPlaying;
 		
         Viewer *viewer;
         struct Mobile *mobiles;

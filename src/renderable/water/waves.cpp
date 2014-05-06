@@ -9,6 +9,7 @@
 #include "globals.h"
 #include "shader.h"
 #include "viewer.h"
+#include "audible.h"
 #include "waves.h"
 #include "consts.h"
 #include "matrix.h"
@@ -43,6 +44,10 @@ program("Waves") {
     this->stopAnimating = false;
 
 	initializeRelativeModelMatrix();
+
+    // Ambient sounds
+    this->underwaterSound = new Audible("sound/ambiant/UnderWater_Pool.wav", qglviewer::Vec(0,0,0));
+    this-> underwaterSoundPlaying = false;
 
     // Indices used for drawing
     nIndices = 6*(N_MOBILES_X-1)*(N_MOBILES_Z-1);
@@ -161,6 +166,19 @@ void Waves::animateDownwards() {
     time += deltaT;
 
     //std::cout << "time=" << time << std::endl;
+    
+    // Ambient sounds
+    if (Globals::viewer->camera()->position()[1] < meanHeight) {
+        if (!underwaterSoundPlaying) {
+            underwaterSound->playSource();
+            underwaterSoundPlaying = true;
+        }
+    } else {
+        if (underwaterSoundPlaying) {
+            underwaterSound->pauseSource();
+            underwaterSoundPlaying = false;
+        }
+    }
 }
 
 
