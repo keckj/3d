@@ -21,15 +21,18 @@ SeaDiver::SeaDiver() : RenderTree(), t(0), pos(0, 0, 0) {
     addChild("tuyau", pipe);
 
     // Définition de la trajectoire du plongeur
-    // cercle ici
     std::vector<Vec> trajectoire;
-    for (float f = 0; f <= 2 * M_PI; f += 0.1) {
+    for (float f = 0; f <= M_PI; f += 0.1) {
         float x = 6 * cos(f);
         float y = 6 * sin(f);
-        trajectoire.push_back(Vec(x, y, 0));
+        trajectoire.push_back(Vec(x, -22, y));
     }
 
+    trajectoire.push_back(Vec(0, -23, -1));
+
     cs = new CardinalSpline(trajectoire);
+
+    rotate(Quaternion(Vec(1, 0, 0), M_PI / 2));
 }
 
 void SeaDiver::drawDownwards(const float *currentTransformationMatrix) {
@@ -43,13 +46,15 @@ void SeaDiver::drawUpwards(const float *currentTransformationMatrix) {
 }
 
 void SeaDiver::animateDownwards() {
+    Globals::pos = (*cs)(t);
     Vec newPos = (*cs)(t);
     Vec offset =  newPos - pos;
     pos = newPos;
+    Globals::offset = offset;
 
+    /* translateChild("trunk", offset); */
     translate(offset);
-    /* t += Globals::dt; */
-    t += 0.1;
+    t += Globals::dt;
 }
 
 // Events

@@ -4,14 +4,15 @@
 #include "headers.h"
 #include "renderTree.h"
 #include "ObjLoader.h"
+#include "object.h"
+#include <vector>
 
 class Boat : public RenderTree {
     public:
-        Boat ();
+        Boat(const std::vector<Object*> &objs);
         ~Boat ();
 
         void drawDownwards(const float *currentTransformationMatrix = consts::identity4);
-        void drawUpwards(const float *currentTransformationMatrix = consts::identity4);
         void animateDownwards ();
 
     private:

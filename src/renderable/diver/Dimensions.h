@@ -3,7 +3,7 @@
 // PIPE
 #define PIPE_FIXED_PART_X 0.0
 #define PIPE_FIXED_PART_Y 3.0
-#define PIPE_FIXED_PART_Z 9.0
+#define PIPE_FIXED_PART_Z (30.0)
 
 // HEAD
 #define RADIUS_HEAD 0.3
