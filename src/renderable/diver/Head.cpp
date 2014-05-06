@@ -1,8 +1,10 @@
+#include "globals.h"
 #include "Head.h"
 #include "audible.h"
 
-Head::Head (float radius) : RenderTree(), radius(radius)/*,
-    bubbles("sound/diver/water014.wav", qglviewer::Vec(0,0,0))*/ {
+Head::Head (float radius) : RenderTree(), radius(radius) {
+    bubbles = new Audible("sounds/diver/water014.wav", qglviewer::Vec(0,0,0));
+    bubblesPlaying = false;
 }
 
 float Head::getRadius () const {
@@ -21,6 +23,10 @@ void Head::drawUpwards (const float *currentTransformationMatrix) {
     glPopMatrix();
 }
 
-/*void Head::animateDownwards() {
-    bubbles.setSourcePosition(
-}*/
+void Head::animateDownwards() {
+    if (!bubblesPlaying) {
+        bubbles->playSource();
+        bubblesPlaying = true;
+    }
+    bubbles->setSourcePosition(Globals::pos);
+}
