@@ -4,6 +4,9 @@
 #include "utils.h"
 #include "log.h"
 
+#include <QGLViewer/vec.h>
+using namespace qglviewer;  // to use class Vec of the qglviewer lib
+
 int Globals::glMax3DTextureSize = 0;
 int Globals::glMaxTextureSize = 0;
 int Globals::glMaxVertexAttribs = 0;
@@ -25,6 +28,8 @@ Viewer *Globals::viewer = 0;
 unsigned int Globals::projectionViewUniformBlock = 0;
 
 float Globals::dt = 0.1;
+Vec Globals::pos = Vec(0, 0, 0);
+Vec Globals::offset = Vec(0, 0, 0);
 
 void Globals::init() {
 
