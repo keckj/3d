@@ -33,7 +33,7 @@ void Object::createUBOs() {
 
     //test
     Light_s lightsData[5];
-    float lightPos[] = {-100.0f, -40.0f, +50.0f, 0.0f};
+    float lightPos[] = {-100.0f, 10.0f, +50.0f, 0.0f};
     //float lightPos2[] = {0.0f, 0.0f, 1.0f, 0.0f};
     float lightDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
     //float lightDiffuse2[] = {1.0f, 1.0f, 1.0f, 1.0f};
