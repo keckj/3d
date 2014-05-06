@@ -61,14 +61,16 @@ namespace Matrix {
 		M[11]=v.z;
 	}
 		
-	void setRotationMat4f(float *M, qglviewer::Quaternion rot) {
+	void setRotationMat4f(float *M, qglviewer::Quaternion rot, float scale) {
 
-		float R[3][3];
-		rot.getRotationMatrix(R);
+		double R[16];
+		rot.getMatrix(R);
 
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
-				M[4*i+j] = R[i][j];
+				M[4*i+j] = (float) R[4*j+i];
+                                if(i==j)
+                                        M[4*i+j]*=scale;
 			}
 		}
 	}

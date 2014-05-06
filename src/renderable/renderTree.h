@@ -38,7 +38,7 @@ class RenderTree : public Renderable {
 	
 		void move(float x, float y, float z);
 		void move(qglviewer::Vec v);
-		void orientate(qglviewer::Quaternion rot);
+		void orientate(qglviewer::Quaternion rot, float scale);
 
 		void translate(float x, float y, float z);
 		void translate(qglviewer::Vec v);
@@ -50,7 +50,7 @@ class RenderTree : public Renderable {
 
 		void moveChild(std::string childName, float x, float y, float z);
 		void moveChild(std::string childName, qglviewer::Vec v);
-		void orientateChild(std::string childName, qglviewer::Quaternion rot);
+		void orientateChild(std::string childName, qglviewer::Quaternion rot, float scale);
 		void translateChild(std::string childName, float x, float y, float z);
 		void translateChild(std::string childName, qglviewer::Vec v);
 		void scaleChild(std::string childName, float alpha);

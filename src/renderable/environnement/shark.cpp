@@ -3,7 +3,9 @@
 #include "shark.h"
 
 Shark::Shark(const std::vector<Object*> &objs) {
-	this->addChild("shark0",objs[0]);
+        
+        this->scale(0.0002);
+        this->addChild("shark0",objs[0]);
 	this->addChild("shark1",objs[1]);
 	
 	points.push_back(qglviewer::Vec(0,0,0));
@@ -16,13 +18,13 @@ Shark::Shark(const std::vector<Object*> &objs) {
 	trajectory = new CardinalSpline(points);
 
 
-	quat.push_back(qglviewer::Quaternion(0,1,0,3.14));
-	quat.push_back(qglviewer::Quaternion(0,1,0,0));
-	quat.push_back(qglviewer::Quaternion(0,1,0,3.14));
-	quat.push_back(qglviewer::Quaternion(0,1,0,0));
-	quat.push_back(qglviewer::Quaternion(0,1,0,3.14));
-	quat.push_back(qglviewer::Quaternion(0,1,0,0));
-	quat.push_back(qglviewer::Quaternion(0,1,0,3.14));
+	quat.push_back(qglviewer::Quaternion(qglviewer::Vec(0,1,0),0.1).normalized());
+	quat.push_back(qglviewer::Quaternion(0,1,0,0).normalized());
+	quat.push_back(qglviewer::Quaternion(0,1,0,3.14).normalized());
+	quat.push_back(qglviewer::Quaternion(0,1,0,0).normalized());
+	quat.push_back(qglviewer::Quaternion(0,1,0,-3.14).normalized());
+	quat.push_back(qglviewer::Quaternion(0,1,0,0).normalized());
+	quat.push_back(qglviewer::Quaternion(0,1,0,3.14).normalized());
 }
 
 Shark::~Shark() {
@@ -36,12 +38,15 @@ void Shark::animateDownwards() {
 
 	static float t = 0.0f;
 	static int n = 0;
+        
+        if(t>0.01)
+                this->rotate(qglviewer::Quaternion::slerp(quat[n],quat[n+1],t-0.01).inverse());
+        else
+                this->rotate(quat[n].inverse());
 
-	//this->move((*trajectory)(n,t));
-	//this->move(0,0,0);
-	this->orientate(qglviewer::Quaternion::slerp(quat[n], quat[n+1], t, true));
-	this->scale(0.002);
-	
+        this->rotate(qglviewer::Quaternion::slerp(quat[n],quat[n+1],t,true));
+        this->move((*trajectory)(n,t));
+
 	t += 0.01;
 	if(t >= 1.0f) {
 		t = 0.0f;

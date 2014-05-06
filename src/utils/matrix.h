@@ -19,7 +19,7 @@ namespace Matrix {
 		void setOffsetMat4f(float *M, float x, float y, float z);
 		void setOffsetMat4f(float *M, qglviewer::Vec &v);
 
-		void setRotationMat4f(float *M, qglviewer::Quaternion rot);
+		void setRotationMat4f(float *M, qglviewer::Quaternion rot, float scale = 1.0f);
 
 		void rotateMat4f(float *M, qglviewer::Quaternion const &quat);
 
