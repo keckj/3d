@@ -52,9 +52,10 @@ void SeaDiver::animateDownwards() {
     pos = newPos;
     Globals::offset = offset;
 
-    /* translateChild("trunk", offset); */
     translate(offset);
     t += Globals::dt;
+	if(t >= M_PI+1.0f) 
+		t = 0.0f;
 }
 
 // Events

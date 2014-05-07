@@ -168,18 +168,18 @@ void Waves::animateDownwards() {
     //std::cout << "time=" << time << std::endl;
     
     // Ambient sounds
-    if (Globals::viewer->camera()->position()[1] < meanHeight) {
-        if (!underwaterSoundPlaying) {
-            underwaterSound->setGain(max(Globals::viewer->camera()->position().squaredNorm(), 1.0f));
-            underwaterSound->playSource();
-            underwaterSoundPlaying = true;
-        }
-    } else {
-        if (underwaterSoundPlaying) {
-            underwaterSound->pauseSource();
-            underwaterSoundPlaying = false;
-        }
-    }
+    //if (Globals::viewer->camera()->position()[1] < meanHeight) {
+        //if (!underwaterSoundPlaying) {
+            //underwaterSound->setGain(max(Globals::viewer->camera()->position().squaredNorm(), 1.0f));
+            //underwaterSound->playSource();
+            //underwaterSoundPlaying = true;
+        //}
+    //} else {
+        //if (underwaterSoundPlaying) {
+            //underwaterSound->pauseSource();
+            //underwaterSoundPlaying = false;
+        //}
+    //}
 }
 
 
