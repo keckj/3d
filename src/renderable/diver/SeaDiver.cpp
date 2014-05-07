@@ -22,13 +22,16 @@ SeaDiver::SeaDiver() : RenderTree(), t(0), pos(0, 0, 0) {
 
     // Définition de la trajectoire du plongeur
     std::vector<Vec> trajectoire;
-    for (float f = 0; f <= M_PI; f += 0.1) {
+    for (float f = 0; f <= 2 * M_PI; f += 0.1) {
         float x = 6 * cos(f);
         float y = 6 * sin(f);
         trajectoire.push_back(Vec(x, -22, y));
     }
 
-    trajectoire.push_back(Vec(0, -23, -1));
+    /* trajectoire.push_back(Vec(0, -23, -1)); */
+    /* trajectoire.push_back(Vec(0, -23, -1)); */
+    /* trajectoire.push_back(Vec(0, -23, -1)); */
+    /* trajectoire.push_back(Vec(0, -23, -1)); */
 
     cs = new CardinalSpline(trajectoire);
 
@@ -54,7 +57,7 @@ void SeaDiver::animateDownwards() {
 
     translate(offset);
     t += Globals::dt;
-	if(t >= M_PI+1.0f) 
+	if(t >= M_PI/0.1f) 
 		t = 0.0f;
 }
 
