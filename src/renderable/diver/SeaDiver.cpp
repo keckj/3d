@@ -36,6 +36,7 @@ SeaDiver::SeaDiver() : RenderTree(), t(0), pos(0, 0, 0) {
     cs = new CardinalSpline(trajectoire);
 
     rotate(Quaternion(Vec(1, 0, 0), M_PI / 2));
+    translate(0, 0, 10);
 }
 
 void SeaDiver::drawDownwards(const float *currentTransformationMatrix) {
@@ -57,7 +58,7 @@ void SeaDiver::animateDownwards() {
 
     translate(offset);
     t += Globals::dt;
-	if(t >= M_PI/0.1f) 
+	if(t >= 2*M_PI/0.1f) 
 		t = 0.0f;
 }
 
