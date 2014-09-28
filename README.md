@@ -106,3 +106,6 @@ Change `NARCH` according to what your device is capable and recompile from sourc
 If you're using a Mac you might give up at this step.
 If not you can try to update your drivers as a last resort.
 
+## Known bugs
+
+- Some black lines appears when computing the terrain with the fast marching cube.
