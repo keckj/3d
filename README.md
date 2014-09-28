@@ -51,9 +51,13 @@ Make sure you have all these libraries installed on your computer :
     CUDA 5.0+ (6.5 preferred)
 ```
 
+## Frequent problems
+
+### 
+
 Don't forget to add your CUDA library path after a fresh CUDA Toolkit installation.
 
-On linux, simply edit your `~/.bashrc` and add the following lines :
+On linux, assuming `/usr/local/cuda` is where you installed the toolkit, simply edit your `~/.bashrc` and add the following lines :
 ```
     export PATH=/usr/local/cuda/bin:$PATH
     export LD_LIBRARY_PATH=/usr/local/cuda/lib:/usr/local/cuda/lib64:$LD_LIBRARY_PATH
