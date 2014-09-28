@@ -1,29 +1,28 @@
-3d
-==
-Graphique 3D
 
-Compiling:
-    WITH CMAKE 3.0+
-        mkdir build
-        cd build/
-        cmake .. 
-        make
+#Graphique 3D
 
-    WITH THE MAKEFILE (Linux & Mac)
-        Edit the top of Makfile 
-            L_QGLVIEWER=-lQGLViewer or -lqglviewer to match your QGL_viewer lib
-            NARCH=11/20/30 to match your CUDA architecture
-        
-        make
+##Compiling:
+
+###Using CMake 3.0 or above
+
+`mkdir build`
+`cd build/`
+`cmake ..`
+`make`
+
+###Using the Makefile (Linux & Mac)
+Edit the top of Makfile 
+Set `L_QGLVIEWER=-lQGLViewer` or `-lqglviewer` to match your QGLViewer lib
+Set `NARCH=11/20/30` to match your CUDA architecture
+Compile with `make`
 
 
-Executing:
+##Executing:
     Execute the generated binary ('main' by default) from the root of the projet.
 
+##Minimum CUDA architecture required: 11
 
-Minimum CUDA architecture required: 11
-
-Required libraries:  
+##Required libraries:  
     OpenAL
     ALUT
     OpenGL
