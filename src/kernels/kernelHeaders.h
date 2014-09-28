@@ -1,7 +1,7 @@
 #ifndef KERNELHEADERS_H
 #define KERNELHEADERS_H
 
-#include "particleGroup.h"
+struct mappedParticlePointers;
 
 extern void moveVertexKernel(float *vertex, unsigned int nVertex, float dx);
 extern void moveKernel(const struct mappedParticlePointers* pt, unsigned int nParticles);

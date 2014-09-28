@@ -1,5 +1,5 @@
-#ifndef PARAMETER_H
-#define PARAMETER_H
+#ifndef PARAMETER_H_1234
+#define PARAMETER_H_1234
 
 #ifndef __APPLE__
 #include <GL/glut.h>

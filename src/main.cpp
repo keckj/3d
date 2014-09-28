@@ -1,11 +1,5 @@
 #include "headers.h"
-#include "diver/SeaDiver.h"
-#include "diver/Pipe.h"
 #include "terrain.h"
-#include "SeaDiver.h"
-#include "Pipe.h"
-#include "Boat.h"
-#include "octopus.h"
 #include "Rectangle.h"
 #include "log.h"
 #include "program.h"
@@ -30,12 +24,9 @@
 #include "audible.h"
 #include "splines/CardinalSpline.h"
 #include "skybox.h"
-#include "ObjLoader.h"
-#include "object.h"
 #include "marchingCubes.h"
 #include "seaweedGroup.h"
 #include "bubblesGenerator.h"
-#include "shark.h"
 
 #include <qapplication.h>
 #include <QWidget>
@@ -66,13 +57,6 @@ int main(int argc, char** argv) {
         // glut initialisation (mandatory) 
         glutInit(&argc, argv);
         log_console.infoStream() << "[Glut Init] ";
-
-        // ObjLoader
-        //ObjLoader *mouette = new ObjLoader("obj_files/Sea_Gul/SEAGUL", "obj_files/Sea_Gul/");
-        ObjLoader *octopusObj = new ObjLoader("obj_files/octopus/OCTOPUS_", "obj_files/octopus/");
-        ObjLoader *sharkObj = new ObjLoader("obj_files/White_Shark/wshark", "obj_files/White_Shark/");
-        ObjLoader *boatObj = new ObjLoader("obj_files/boat/boat", "obj_files/boat/");
-        SeaDiver *diver = new SeaDiver(); 
 
         // Read command lines arguments.
         QApplication application(argc,argv);
@@ -124,29 +108,14 @@ int main(int argc, char** argv) {
         root->addChild("terrain", terrain);
 
         //Bulles
-        BubblesGenerator *bubbles = new BubblesGenerator(100,50,500,4);
+        BubblesGenerator *bubbles = new BubblesGenerator(100,50,500,10);
         root->addChild("zParticles", bubbles);
 
         //Terrain2
         //Terrain *terrain = new Terrain(black_img, rgb_heightmap.width(), rgb_heightmap.height(), true); 
         //terrain->rotate(qglviewer::Quaternion(qglviewer::Vec(1,0,0), 3.14/2)); 
         //root->addChild("terrain", terrain);
-
-        // Diver
-        root->addChild("diver", diver); 
-
-        // Boat
-        Boat *boat = new Boat(boatObj->getObjects());
-        root->addChild("boat", boat);
-
-        // Octopus
-        Octopus *octopus = new Octopus(octopusObj->getObjects());
-        root->addChild("octopus", octopus);
-
-        Shark *shark = new Shark(sharkObj->getObjects());
-        /* shark->scale(0.001); */
-        root->addChild("shark", shark);
-
+        
         SeeweedGroup *seeweeds = new SeeweedGroup(20000,10,1.0f);
         for (int i = 0; i < 30; i++) {
                 seeweeds->spawnGroup(qglviewer::Vec(Random::randf(-45,40),-26,Random::randf(0,25)), 100, NULL, NULL);

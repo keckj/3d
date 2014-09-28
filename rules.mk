@@ -11,9 +11,6 @@ debug: LINKFLAGS = $(CUDADEBUGFLAGS)
 else
 debug: LINKFLAGS = $(DEBUGFLAGS) 
 endif
-debug: CFLAGS += $(DEBUGFLAGS)
-debug: CXXFLAGS += $(DEBUGFLAGS) 
-debug : NVCCFLAGS = $(CUDADEBUGFLAGS)
 debug: all
 
 profile: LINKFLAGS += $(PROFILINGFLAGS)
@@ -44,9 +41,6 @@ $(SRCDIR)%.moc : $(SRCDIR)%.hpp
 ################
 
 
-$(OBJDIR)%.o : $(SRCDIR)%.c
-	$(CC) $(INCLUDE) -o $@ -c $^ $(CFLAGS) $(DEFINES)
-	@echo
 $(OBJDIR)%.o : $(SRCDIR)%.C 
 	$(CXX) $(INCLUDE) -o $@ -c $^ $(CXXFLAGS) $(DEFINES)
 	@echo
@@ -57,15 +51,6 @@ $(OBJDIR)%.o : $(SRCDIR)%.cpp
 	$(CXX) $(INCLUDE) -o $@ -c $^ $(CXXFLAGS) $(DEFINES)
 	@echo
 
-$(OBJDIR)%.o : $(SRCDIR)%.s
-	@echo
-	$(AS) $(INCLUDE) -o $@ $^ $(ASFLAGS) 
-$(OBJDIR)%.o : $(SRCDIR)%.S
-	@echo
-	$(AS) $(INCLUDE) -o $@ $^ $(ASFLAGS)
-$(OBJDIR)%.o : $(SRCDIR)%.asm
-	@echo
-	$(AS) $(INCLUDE) -o $@ $^ $(ASFLAGS)
 
 $(OBJDIR)%.o: $(SRCDIR)%.cu 
 	@echo
