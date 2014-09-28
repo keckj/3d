@@ -10,6 +10,9 @@ Require a CUDA Compute Capability 1.1 and OpenGL 3.3 capable device.
 
 ##Compiling:
 
+Everything was tested with `gcc-4.8` and `gcc-4.9`. 
+Other c++0x capable compilers might work as well.
+
 ###Using CMake 3.0 or above (preferred method)
 
 ```
