@@ -10,16 +10,18 @@ Require a CUDA Compute Capability 1.1 and OpenGL 3.3 capable device.
 
 ###Using CMake 3.0 or above (preferred method)
 
-`mkdir build`
-`cd build/`
-`cmake ..`
-`make`
+```
+mkdir build
+cd build/
+cmake ..
+make
+```
 
 ###Using the Makefile (Linux & Mac)
-Edit the top of Makfile 
-Set `L_QGLVIEWER=-lQGLViewer` or `-lqglviewer` to match your QGLViewer lib
-Set `NARCH=11/20/30` to match your CUDA architecture
-Compile with `make`
+Edit at the top of Makefile following variables :
+    Set `L_QGLVIEWER` to `-lQGLViewer` or `-lqglviewer` to match your QGLViewer lib
+    Set `NARCH` to match your CUDA architecture (minimum 11)
+Finally compile with `make`
 
 ##Executing:
     Execute the generated binary ('main' by default) from the root of the projet.
