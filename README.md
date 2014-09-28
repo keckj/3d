@@ -2,11 +2,11 @@
 #Graphique 3D
 
 Submarine scene demo in OpenGL and CUDA, featuring :
-[x] Animated bubbles (CUDA particle system, procedural sprites)
-[x] Animated seeweeds (CUDA mass-spring system)
-[x] Animated water (CPU only)
-[x] Procedural terrain and cave (GPU marching cube and procedural marble texture)
-[ ] Animayed wildlife
+- [x] Animated bubbles (CUDA particle system, procedural sprites)
+- [x] Animated seeweeds (CUDA mass-spring system)
+- [x] Animated water (CPU only)
+- [x] Procedural terrain and cave (GPU marching cube and procedural marble texture)
+- [ ] Animayed wildlife
 
 
 Require a CUDA Compute Capability 1.1 and OpenGL 3.3 capable device.
