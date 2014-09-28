@@ -7,6 +7,7 @@ Submarine scene demo in OpenGL and CUDA, featuring :
 - [x] Animated water (CPU only)
 - [x] Procedural terrain and cave (GPU marching cube and procedural marble texture)
 - [ ] Animated wildlife
+- [ ] Animated diver
 
 
 Require a CUDA Compute Capability 1.1 and OpenGL 3.3 capable device.
