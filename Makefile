@@ -1,10 +1,12 @@
 
+include vars.mk
+
 ifndef L_QGLVIEWER
 L_QGLVIEWER=-lQGLViewer
 endif
 
 ifndef NARCH
-NARCH=30
+NARCH=11
 endif
 
 ####################
