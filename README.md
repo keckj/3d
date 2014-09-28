@@ -11,6 +11,18 @@ Submarine scene demo in OpenGL and CUDA, featuring :
 
 Require a CUDA Compute Capability 1.1 and OpenGL 3.3 capable device.
 
+
+##Screenshots
+
+![cave1](http://i.imgur.com/LFbaruf.png)
+
+![cave2](http://i.imgur.com/D1JpAkL.png)
+
+![waves](http://i.imgur.com/j7ZUSQZ.png)
+
+![terrain](http://i.imgur.com/solYgUH.png)
+
+
 -----
 
 ##Compiling:
