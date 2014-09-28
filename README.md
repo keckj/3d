@@ -53,7 +53,7 @@ Make sure you have all these libraries installed on your computer :
 
 ## Frequent problems
 
-### 
+### Everything seems to be ok but ld does not find my CUDA libraries ? 
 
 Don't forget to add your CUDA library path after a fresh CUDA Toolkit installation.
 
@@ -62,5 +62,17 @@ On linux, assuming `/usr/local/cuda` is where you installed the toolkit, simply 
     export PATH=/usr/local/cuda/bin:$PATH
     export LD_LIBRARY_PATH=/usr/local/cuda/lib:/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 ```
+
+Then reload your `.bashrc` with `. ~/.bashrc`.
+
+Sometimes, an additional step might be needed : `sudo ldconfig`
+
+### Compilation was successfull but when I launch the binary I get `ERROR  : Kernel launch failed : invalid device function` ?
+
+You mosy likely set an invalid value to the variable `NARCH` in `vars.mk`.
+Check your device CUDA Compute Capability online, it should be minimum 11 (standing for 1.1).
+Change `NARCH` according to what your device is capable and recompile from sources.
+
+
 
 
