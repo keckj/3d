@@ -53,11 +53,11 @@ Make sure you have all these libraries installed on your computer :
 
 ## Frequent problems
 
-### Everything seems to be ok but ld does not find my CUDA libraries ? 
+#### Everything seems to be ok but the linker does not find my CUDA libraries ? 
 
 Don't forget to add your CUDA library path after a fresh CUDA Toolkit installation.
 
-On linux, assuming `/usr/local/cuda` is where you installed the toolkit, simply edit your `~/.bashrc` and add the following lines :
+On linux, assuming `/usr/local/cuda` is where you installed the CUDA Toolkit, simply edit your `~/.bashrc` and add the following lines :
 ```
     export PATH=/usr/local/cuda/bin:$PATH
     export LD_LIBRARY_PATH=/usr/local/cuda/lib:/usr/local/cuda/lib64:$LD_LIBRARY_PATH
@@ -67,12 +67,20 @@ Then reload your `.bashrc` with `. ~/.bashrc`.
 
 Sometimes, an additional step might be needed : `sudo ldconfig`
 
-### Compilation was successfull but when I launch the binary I get `ERROR  : Kernel launch failed : invalid device function` ?
+#### Compilation was successfull but when I launch the binary I get `ERROR  : Kernel launch failed : invalid device function` ?
 
 You mosy likely set an invalid value to the variable `NARCH` in `vars.mk`.
 Check your device CUDA Compute Capability online, it should be minimum 11 (standing for 1.1).
 Change `NARCH` according to what your device is capable and recompile from sources.
 
+#### Compilation was successfull but when I launch the binary I get some random segfaults on OpenGL API calls ?
+ 
+ First of all, make sure you have an OpenGL 3.3 capable device and that you are using the NVidia proprietary drivers (mandatory for CUDA). 
+ If this is the case, make sure your driver is up to date, as OpenGL implementations are rarely bug free.
+ 
+ 
+#### I have an OpenGL 3.3 capable device but my OpenGL library seems to be out of date ?
 
-
+If you're using a Mac you might give up at this step.
+If not you can try to update your drivers.
 
