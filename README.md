@@ -48,9 +48,9 @@ Edit following variables in `vars.mk` :
 Finally compile with `make`
 
 ##Executing:
-    - Execute the generated binary (`main` by default) at the root of the projet.
-    - Hit `<Enter>` to launch animation and enjoy ! 
-    - You can move around with classical QGLViewer keys.
+- Execute the generated binary (`main` by default) at the root of the projet.
+- Hit `<Enter>` to launch animation and enjoy ! 
+- You can move around with classical QGLViewer keys.
 
 
 ##Required libraries:  
