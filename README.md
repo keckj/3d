@@ -1,8 +1,13 @@
 
 #Graphique 3D
 
-Submarine scene demo in OpenGL and CUDA.
-Animated bubbles, seeweeds.
+Submarine scene demo in OpenGL and CUDA, featuring :
+[x] Animated bubbles (CUDA particle system, procedural sprites)
+[x] Animated seeweeds (CUDA mass-spring system)
+[x] Animated water (CPU only)
+[x] Procedural terrain and cave (GPU marching cube and procedural marble texture)
+[ ] Animayed wildlife
+
 
 Require a CUDA Compute Capability 1.1 and OpenGL 3.3 capable device.
 
@@ -69,7 +74,7 @@ Sometimes, an additional step might be needed : `sudo ldconfig`
 
 #### Compilation was successfull but when I launch the binary I get `ERROR  : Kernel launch failed : invalid device function` ?
 
-You mosy likely set an invalid value to the variable `NARCH` in `vars.mk`.
+You most likely set an invalid value to the variable `NARCH` in `vars.mk`.
 Check your device CUDA Compute Capability online, it should be minimum 11 (standing for 1.1).
 Change `NARCH` according to what your device is capable and recompile from sources.
 
@@ -82,5 +87,5 @@ Change `NARCH` according to what your device is capable and recompile from sourc
 #### I have an OpenGL 3.3 capable device but my OpenGL library seems to be out of date ?
 
 If you're using a Mac you might give up at this step.
-If not you can try to update your drivers.
+If not you can try to update your drivers as a last resort.
 
