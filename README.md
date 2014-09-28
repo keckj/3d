@@ -63,6 +63,7 @@ Edit following variables in `vars.mk` :
 
 - Set `L_QGLVIEWER` to `-lQGLViewer` or `-lqglviewer` to match your QGLViewer library.
 - Set `NARCH` to match your device CUDA Compute Capability (minimum 11)
+
 Finally compile with `make`
 
 ##Executing:
