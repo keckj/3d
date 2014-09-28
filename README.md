@@ -6,6 +6,8 @@ Animated bubbles, seeweeds.
 
 Require a CUDA Compute Capability 1.1 and OpenGL 3.3 capable device.
 
+-----
+
 ##Compiling:
 
 ###Using CMake 3.0 or above (preferred method)
@@ -21,8 +23,8 @@ make
 
 Edit following variables in `vars.mk` :
 
-*Set `L_QGLVIEWER` to `-lQGLViewer` or `-lqglviewer` to match your QGLViewer lib
-*Set `NARCH` to match your CUDA architecture (minimum 11)
+- Set `L_QGLVIEWER` to `-lQGLViewer` or `-lqglviewer` to match your QGLViewer lib
+- Set `NARCH` to match your CUDA architecture (minimum 11)
 Finally compile with `make`
 
 ##Executing:
