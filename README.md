@@ -1,5 +1,5 @@
 
-#Graphique 3D
+# Graphique 3D
 
 Submarine scene demo in OpenGL and CUDA, featuring :
 - [x] Animated bubbles (CUDA particle system, procedural sprites)
@@ -13,7 +13,7 @@ Submarine scene demo in OpenGL and CUDA, featuring :
 Require a CUDA Compute Capability 1.1 and OpenGL 3.3 capable device.
 
 
-##Screenshots (click to enlarge)
+## Screenshots (click to enlarge)
 
 ![cave1](http://i.imgur.com/LFbaruf.png)
 
@@ -26,12 +26,12 @@ Require a CUDA Compute Capability 1.1 and OpenGL 3.3 capable device.
 
 -----
 
-##Compiling:
+## Compiling:
 
 Everything has been tested with `gcc-4.8` and `gcc-4.9`. 
 Other c++0x capable compilers might work as well but have not been tested.
 
-###Required libraries:  
+### Required libraries:  
 
 Make sure you have all these libraries installed on your computer :
 
@@ -48,7 +48,7 @@ Make sure you have all these libraries installed on your computer :
 ```
 
 
-###Using CMake 3.0 or above (preferred method)
+### Using CMake 3.0 or above (preferred method)
 
 ```
 mkdir build
@@ -57,7 +57,7 @@ cmake ..
 make
 ```
 
-###Using the Makefile (Linux & Mac)
+### Using the Makefile (Linux & Mac)
 
 Edit following variables in `vars.mk` :
 
@@ -66,7 +66,7 @@ Edit following variables in `vars.mk` :
 
 Finally compile with `make release`
 
-##Executing:
+## Executing:
 - Execute the generated binary (`main` by default) at the root of the projet.
 - Hit `<Enter>` to launch animation and enjoy ! 
 - You can move around with standard QGLViewer keys.
